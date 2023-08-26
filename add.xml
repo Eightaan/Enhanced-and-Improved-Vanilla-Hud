@@ -1,0 +1,5 @@
+<table directory="assets">
+	<texture path="IEVHUD/screeneffect"/>
+	<texture path="IEVHUD/animate_health_circle"/>
+	<texture path="IEVHUD/health_cooldown_icon"/>
+</table>

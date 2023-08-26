@@ -1,0 +1,84 @@
+<mod name="Enhanced and Improved Vanilla Hud" global_key="IEVHUD">
+    <Hooks directory="lua">
+		<hook file="TabStats.lua" source_file="lib/managers/statisticsmanager"/>
+		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
+		<hook file="TabStats.lua" source_file="lib/managers/moneymanager"/>
+		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
+		<hook file="TabStats.lua" source_file="lib/managers/hud/newhudstatsscreen"/>
+		
+        <hook file="TeamPanel.lua" source_file="lib/managers/playermanager"/>
+        <hook file="TeamPanel.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="TeamPanel.lua" source_file="lib/managers/hud/hudteammate"/>
+		
+        <hook file="ECMTimer.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="ECMTimer.lua" source_file="lib/units/equipment/ecm_jammer/ecmjammerbase"/>
+		<hook file="ECMTimer.lua" source_file="lib/units/beings/player/playerinventory"/>
+		
+        <hook file="Interaction.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="Interaction.lua" source_file="lib/managers/hud/hudinteraction"/>
+		<hook file="Interaction.lua" source_file="lib/units/beings/player/states/playerstandard"/>
+		
+		<hook file="MenuSkip.lua" source_file="lib/managers/menu/lootdropscreengui"/>
+		<hook file="MenuSkip.lua" source_file="lib/managers/menu/stageendscreengui"/>
+		<hook file="MenuSkip.lua" source_file="lib/states/ingamewaitingforplayers"/>
+		
+		<hook file="PacifiedCivs.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
+		
+		<hook file="Inspirecooldown.lua" source_file="lib/units/beings/player/states/playerstandard"/>
+		
+		<hook file="TeamLoadout.lua" source_file="lib/managers/menu/missionbriefinggui"/>
+		
+		<hook file="LevelDisplay.lua" source_file="lib/managers/menumanagerdialogs"/>
+		
+		<hook file="BagInfo.lua" source_file="lib/units/interactions/interactionext"/>
+    </Hooks>
+	
+	 <Localization 
+		directory="loc" default="english.json">
+    </Localization>
+
+	    <Options name="Options" auto_build_menu="true" auto_load="true" save_file="IEVHUDSave.json">
+	    <options>
+			<option_group name="HUD">
+				<option type="bool" default_value="true" name="ScreenEffect"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="ArmorerCooldownRadial"/>-->
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="ArmorerCooldownTimer"/>
+				<option type="color" alpha="false" default_value="Color(1, 0, 0.66, 1)" name="ArmorerCooldownTimerColor"/>
+				<option type="color" alpha="false" default_value="Color(1, 0.5, 1, 0)" name="GraceCooldownTimerColor"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="Trueammo"/>
+				<option type="bool" default_value="true" name="Bulletstorm"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="Inspire"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="Tab"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="Greenciv"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="Infoboxes"/>
+				<option type="bool" default_value="true" name="PagerJam"/>
+				<option type="bool" default_value="false" name="HideBox"/>
+			</option_group>
+			<option_group name="INTERACTION">
+				<option type="number" min="0" max="100" step="0.5" show_value="true" default_value="4.5" name="ToggleInteraction"/>
+				<option type="bool" default_value="true" name="InteruptKey"/>
+				<option type="bool" default_value="true" name="InteruptHint"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="true" name="BagInfo"/>
+			</option_group>
+			<option_group name="MENU">
+				<option type="bool" default_value="true" name="TeamLoadout"/>
+				<option type="bool" default_value="false" name="LevelDisplay"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="false" name="SkipBlackscreen"/>
+				<option type="bool" default_value="false" name="PickCard"/>
+				<option type="number" min="0" max="30" step="1" show_value="true" default_value="0" name="SkipXP"/>
+				<option type="number" min="0" max="30" step="1" show_value="true" default_value="0" name="SkipCard"/>
+			</option_group>
+        </options>
+    </Options>
+
+    <AddFiles file="add.xml"/>
+</mod>
