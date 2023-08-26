@@ -1,8 +1,8 @@
-if not IEVHUD.Options:GetValue("HUD/Greenciv") then
+if not EIVHUD.Options:GetValue("HUD/Greenciv") then
 	return
 end
 
-Hooks:PostHook(GroupAIStateBase, "_upd_criminal_suspicion_progress", "IEVHUD_GroupAIStateBase_upd_criminal_suspicion_progress", function (self, ...)
+Hooks:PostHook(GroupAIStateBase, "_upd_criminal_suspicion_progress", "EIVHUD_GroupAIStateBase_upd_criminal_suspicion_progress", function (self, ...)
 	if self._ai_enabled then
 		for obs_key, obs_susp_data in pairs(self._suspicion_hud_data or {}) do
 			local unit = obs_susp_data.u_observer

@@ -1,4 +1,4 @@
-<mod name="Enhanced and Improved Vanilla Hud" global_key="IEVHUD">
+<mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD">
     <Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/statisticsmanager"/>
 		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
@@ -37,7 +37,7 @@
 		directory="loc" default="english.json">
     </Localization>
 
-	    <Options name="Options" auto_build_menu="true" auto_load="true" save_file="IEVHUDSave.json">
+	    <Options name="Options" auto_build_menu="true" auto_load="true" save_file="EIVHUDSave.json">
 	    <options>
 			<option_group name="HUD">
 				<option type="bool" default_value="true" name="ScreenEffect"/>

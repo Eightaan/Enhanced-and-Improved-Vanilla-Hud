@@ -1,4 +1,4 @@
-if not IEVHUD.Options:GetValue("MENU/TeamLoadout") then 
+if not EIVHUD.Options:GetValue("MENU/TeamLoadout") then 
     return
 end
 

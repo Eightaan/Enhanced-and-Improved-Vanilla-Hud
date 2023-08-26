@@ -1,13 +1,13 @@
-if not _G.IEVH then
-    _G.IEVH = {}
-	IEVH.TotalKills = 0
-	IEVH.CivKill = 0
+if not _G.EIVH then
+    _G.EIVH = {}
+	EIVH.TotalKills = 0
+	EIVH.CivKill = 0
 end
 
 local Color = Color
-local IEVHUD = IEVHUD
+local EIVHUD = EIVHUD
 
-if not IEVHUD.Options:GetValue("HUD/Tab") then 
+if not EIVHUD.Options:GetValue("HUD/Tab") then 
     return
 end
 
@@ -108,7 +108,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					text = civ_kills
 				}), 6)
 
-		    	local trade_delay = (5 + (IEVH.CivKill * 30))
+		    	local trade_delay = (5 + (EIVH.CivKill * 30))
                 local total_time = trade_delay and trade_delay > 30					
 				local delay = total_time and managers.localization:to_upper_text("hud_trade_delay", {TIME = tostring(self:_trade_delay_time(trade_delay))}) or ""
 				placer:add_bottom(self._left:fine_text({
@@ -119,7 +119,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					text = is_whisper_mode and "" or delay
 				}), 0)
 
-				local total_kills = IEVH.TotalKills
+				local total_kills = EIVH.TotalKills
 				local kill_count = total_kills and managers.localization:to_upper_text("menu_aru_job_3_obj") ..": ".. total_kills .. managers.localization:get_default_macro("BTN_SKULL") or ""
 				placer:add_bottom(self._left:fine_text({
 					keep_w = true,
@@ -250,7 +250,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					text = civ_kills
 				}), 6)
 
-		    	local trade_delay = (5 + (IEVH.CivKill * 30))
+		    	local trade_delay = (5 + (EIVH.CivKill * 30))
                 local total_time = trade_delay and trade_delay > 30			
 				local delay = total_time and managers.localization:to_upper_text("hud_trade_delay", {TIME = tostring(self:_trade_delay_time(trade_delay))}) or ""
 				placer:add_bottom(self._left:fine_text({
@@ -261,7 +261,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					text = is_whisper_mode and "" or delay
 				}), 0)
 
-				local total_kills = IEVH.TotalKills
+				local total_kills = EIVH.TotalKills
 				local kill_count = total_kills and managers.localization:to_upper_text("menu_aru_job_3_obj") ..": ".. total_kills .. managers.localization:get_default_macro("BTN_SKULL") or ""
 				placer:add_bottom(self._left:fine_text({
 					keep_w = true,
@@ -541,7 +541,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 
 		placer:new_row(8)
 
-		local total_kills = IEVH.TotalKills
+		local total_kills = EIVH.TotalKills
 		local kill_count = total_kills and managers.localization:to_upper_text("menu_aru_job_3_obj") ..": ".. total_kills ..managers.localization:get_default_macro("BTN_SKULL") or ""
 		placer:add_bottom(self._left:fine_text({
 			keep_w = true,
@@ -621,19 +621,19 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 	    loot_panel:set_leftbottom(0, self._left:h() - 16)
     end
 elseif RequiredScript == "lib/managers/moneymanager" then
-    Hooks:PostHook(MoneyManager, 'civilian_killed', "IEVHUD_civilian_killed", function(self)
-        IEVH.CivKill = IEVH.CivKill + 1
+    Hooks:PostHook(MoneyManager, 'civilian_killed', "EIVHUD_civilian_killed", function(self)
+        EIVH.CivKill = EIVH.CivKill + 1
     end)
 
     function MoneyManager:ResetCivilianKills()
-        IEVH.CivKill = 0
+        EIVH.CivKill = 0
     end
 elseif RequiredScript == "lib/managers/trademanager" then
-    Hooks:PostHook(TradeManager, 'on_player_criminal_death', "IEVHUD_on_player_criminal_death", function(...)
+    Hooks:PostHook(TradeManager, 'on_player_criminal_death', "EIVHUD_on_player_criminal_death", function(...)
         managers.money:ResetCivilianKills()
     end)
 elseif RequiredScript == "lib/managers/statisticsmanager" then
-    Hooks:PostHook( StatisticsManager, "killed", "IEVHUD_StatisticsManager_killed", function(self, data, ...)
+    Hooks:PostHook( StatisticsManager, "killed", "EIVHUD_StatisticsManager_killed", function(self, data, ...)
         if civies[data.name] then
             return
         end
@@ -642,7 +642,7 @@ elseif RequiredScript == "lib/managers/statisticsmanager" then
     	local booms = data.variant == "explosion"
     	local other = not bullets and not melee and not booms
         if bullets or melee or booms or other then
-            IEVH.TotalKills = IEVH.TotalKills + 1
+            EIVH.TotalKills = EIVH.TotalKills + 1
         end
     end)
 end

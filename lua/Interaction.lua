@@ -1,9 +1,9 @@
-if IEVHUD.Options:GetValue("INTERACTION/ToggleInteraction") == 0 then 
+if EIVHUD.Options:GetValue("INTERACTION/ToggleInteraction") == 0 then 
     return
 end
 
 if RequiredScript == "lib/units/beings/player/states/playerstandard" then
-	Hooks:PostHook(PlayerStandard, "_update_interaction_timers", "IEVHUD_PlayerStandard_update_interaction_timers", function(self, t, ...)
+	Hooks:PostHook(PlayerStandard, "_update_interaction_timers", "EIVHUD_PlayerStandard_update_interaction_timers", function(self, t, ...)
 		self:_check_interaction_locked(t)
 	end)
 
@@ -17,11 +17,11 @@ if RequiredScript == "lib/units/beings/player/states/playerstandard" then
 	function PlayerStandard:_check_interaction_locked(t)
 		local is_locked = false
 		if self._interact_params ~= nil then
-			is_locked = self._interact_params and (self._interact_params.timer >= IEVHUD.Options:GetValue("INTERACTION/ToggleInteraction"))
+			is_locked = self._interact_params and (self._interact_params.timer >= EIVHUD.Options:GetValue("INTERACTION/ToggleInteraction"))
 		end
 
 		if self._interaction_locked ~= is_locked then
-			if IEVHUD.Options:GetValue("INTERACTION/InteruptHint") then
+			if EIVHUD.Options:GetValue("INTERACTION/InteruptHint") then
 			    managers.hud:set_interaction_bar_locked(is_locked, self._interact_params and self._interact_params.tweak_data or "")
 			end
 			self._interaction_locked = is_locked
@@ -30,7 +30,7 @@ if RequiredScript == "lib/units/beings/player/states/playerstandard" then
 
 	function PlayerStandard:_check_interact_toggle(t, input)
 		local interrupt_key_press = input.btn_interact_press
-		if IEVHUD.Options:GetValue("INTERACTION/InteruptKey") then
+		if EIVHUD.Options:GetValue("INTERACTION/InteruptKey") then
 			interrupt_key_press = input.btn_use_item_press
 		end
 
@@ -52,7 +52,7 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" then
 	end
 
 elseif RequiredScript == "lib/managers/hud/hudinteraction" then
-	Hooks:PostHook(HUDInteraction, "hide_interaction_bar", "IEVHUD_HUDInteraction_hide_interaction_bar", function(self, complete, ...)
+	Hooks:PostHook(HUDInteraction, "hide_interaction_bar", "EIVHUD_HUDInteraction_hide_interaction_bar", function(self, complete, ...)
 		if self._old_text then
 			self._hud_panel:child(self._child_name_text):set_text(self._old_text or "")
 			self._old_text = nil
@@ -63,9 +63,9 @@ elseif RequiredScript == "lib/managers/hud/hudinteraction" then
 		if status then
 			self._old_text = self._hud_panel:child(self._child_name_text):text()
 			local locked_text = self._old_text
-			if IEVHUD.Options:GetValue("INTERACTION/InteruptHint") then
-				local btn_cancel = IEVHUD.Options:GetValue("INTERACTION/InteruptKey") and (managers.localization:btn_macro("use_item", true) or managers.localization:get_default_macro("BTN_USE_ITEM")) or (managers.localization:btn_macro("interact", true) or managers.localization:get_default_macro("BTN_INTERACT"))
-				locked_text = managers.localization:to_upper_text("IEVHUD_int_locked", {BTN_CANCEL = btn_cancel})
+			if EIVHUD.Options:GetValue("INTERACTION/InteruptHint") then
+				local btn_cancel = EIVHUD.Options:GetValue("INTERACTION/InteruptKey") and (managers.localization:btn_macro("use_item", true) or managers.localization:get_default_macro("BTN_USE_ITEM")) or (managers.localization:btn_macro("interact", true) or managers.localization:get_default_macro("BTN_INTERACT"))
+				locked_text = managers.localization:to_upper_text("EIVHUD_int_locked", {BTN_CANCEL = btn_cancel})
 			end
 			self._hud_panel:child(self._child_name_text):set_text(locked_text)
 			if VoidUI and VoidUI.options.enable_interact then

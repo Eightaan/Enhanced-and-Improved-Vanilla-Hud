@@ -14,7 +14,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
         self._ecm_panel:set_right(self._hud_panel:w() + 11)
 
 	    local ecm_box = HUDBGBox_create(self._ecm_panel, { w = 38, h = 38, },  {})
-		if IEVHUD.Options:GetValue("HUD/HideBox") then
+		if EIVHUD.Options:GetValue("HUD/HideBox") then
 		   ecm_box:child("bg"):hide()
 		   ecm_box:child("left_top"):hide()
 		   ecm_box:child("left_bottom"):hide()
@@ -66,9 +66,9 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
     end
 
 	--Init
-	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "IEVHUD_ECM_setup_player_info_hud_pd2", function(self, ...)
+	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_ECM_setup_player_info_hud_pd2", function(self, ...)
 		self._hud_ecm_counter = HUDECMCounter:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
-		self:add_updator("IEVHUD_ECM_UPDATOR", callback(self._hud_ecm_counter, self._hud_ecm_counter, "update"))
+		self:add_updator("EIVHUD_ECM_UPDATOR", callback(self._hud_ecm_counter, self._hud_ecm_counter, "update"))
 	end)
 
 elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
@@ -80,42 +80,42 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 		return unit
 	end
 
-	Hooks:PostHook(ECMJammerBase, "set_server_information", "IEVHUD_ECMJammerBase_set_server_information", function(self, peer_id, ...)
+	Hooks:PostHook(ECMJammerBase, "set_server_information", "EIVHUD_ECMJammerBase_set_server_information", function(self, peer_id, ...)
 		self:SetPeersID(peer_id)
 	end)
 
-	Hooks:PostHook(ECMJammerBase, "sync_setup", "IEVHUD_ECMJammerBase_sync_setup", function(self, upgrade_lvl, peer_id, ...)
+	Hooks:PostHook(ECMJammerBase, "sync_setup", "EIVHUD_ECMJammerBase_sync_setup", function(self, upgrade_lvl, peer_id, ...)
 		self:SetPeersID(peer_id)
 	end)
 
-	Hooks:PostHook(ECMJammerBase, "set_owner", "IEVHUD_ECMJammerBase_set_owner", function(self, ...)
+	Hooks:PostHook(ECMJammerBase, "set_owner", "EIVHUD_ECMJammerBase_set_owner", function(self, ...)
 		self:SetPeersID(self._owner_id or 0)
 	end)
 
 	function ECMJammerBase:SetPeersID(peer_id)
 		local id = peer_id or 0
-		self._IEVHUD_peer_id = id
-		self._IEVHUD_local_peer = id == managers.network:session():local_peer():id()
+		self._EIVHUD_peer_id = id
+		self._EIVHUD_local_peer = id == managers.network:session():local_peer():id()
 	end
 
 	--ECM Timer Host and Client
-	Hooks:PostHook(ECMJammerBase, "set_active", "IEVHUD_ECMJammerBase_set_active", function(self, active, ...)
-		if active and IEVHUD.Options:GetValue("HUD/Infoboxes") then
+	Hooks:PostHook(ECMJammerBase, "set_active", "EIVHUD_ECMJammerBase_set_active", function(self, active, ...)
+		if active and EIVHUD.Options:GetValue("HUD/Infoboxes") then
 		    local battery_life = self:battery_life()
             if battery_life == 0 then
                 return
             end
 			local ecm_timer = TimerManager:game():time() + battery_life
 			local jam_pagers = false
-			if self._IEVHUD_local_peer then
+			if self._EIVHUD_local_peer then
 				jam_pagers = managers.player:has_category_upgrade("ecm_jammer", "affects_pagers")
-			elseif self._IEVHUD_peer_id ~= 0 then
-				local peer = managers.network:session():peer(self._IEVHUD_peer_id)
+			elseif self._EIVHUD_peer_id ~= 0 then
+				local peer = managers.network:session():peer(self._EIVHUD_peer_id)
 				if peer and peer._unit and peer._unit.base then
 					jam_pagers = peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers")
 				end
 			end
-			if jam_pagers or not IEVHUD.Options:GetValue("HUD/PagerJam") then
+			if jam_pagers or not EIVHUD.Options:GetValue("HUD/PagerJam") then
 				managers.hud._hud_ecm_counter._ecm_timer = ecm_timer
 			else
 				return
@@ -125,7 +125,7 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 
 elseif RequiredScript == "lib/units/beings/player/playerinventory" then
 	-- Pocket ECM
-	Hooks:PostHook(PlayerInventory, "_start_jammer_effect", "IEVHUD_PlayerInventory_start_jammer_effect", function(self, end_time, ...)
+	Hooks:PostHook(PlayerInventory, "_start_jammer_effect", "EIVHUD_PlayerInventory_start_jammer_effect", function(self, end_time, ...)
 		local ecm_timer = end_time or TimerManager:game():time() + self:get_jammer_time()
 		if ecm_timer > managers.hud._hud_ecm_counter._ecm_timer then
 			managers.hud._hud_ecm_counter._ecm_timer = ecm_timer

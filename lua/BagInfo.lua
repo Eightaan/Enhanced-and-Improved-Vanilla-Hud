@@ -1,10 +1,10 @@
-if not IEVHUD.Options:GetValue("INTERACTION/BagInfo") then 
+if not EIVHUD.Options:GetValue("INTERACTION/BagInfo") then 
     return
 end
 
 LocalizationManager:add_localized_strings({["hud_int_hold_grab_the_bag"] = "Hold $INTERACT to grab the $BAG"})
 
-Hooks:PostHook(BaseInteractionExt, "_add_string_macros", "IEVHUD_BaseInteractionExt_add_string_macros", function (self, macros, ...)
+Hooks:PostHook(BaseInteractionExt, "_add_string_macros", "EIVHUD_BaseInteractionExt_add_string_macros", function (self, macros, ...)
 	macros.INTERACT = self:_btn_interact() or managers.localization:get_default_macro("BTN_INTERACT") --Ascii ID for RB
 	if self._unit:carry_data() then
 		local carry_id = self._unit:carry_data():carry_id()
