@@ -9,6 +9,8 @@
 	
 	"Enhanced and Improved Vanilla HudScaleTitleID" : "HUD Scale",
 	"Enhanced and Improved Vanilla HudScaleDescID" : "Scales the entire hud.",
+	"Enhanced and Improved Vanilla HudHideMaskInstructionTitleID" : "Hide mask on instructions",
+	"Enhanced and Improved Vanilla HudHideMaskInstructionDescID" : "Hides the text on the hud telling you which button to use to put the mask on.",
 	"Enhanced and Improved Vanilla HudBulletstormTitleID" : "Bulletstorm Icon",
 	"Enhanced and Improved Vanilla HudBulletstormDescID" : "Displays an infinite ammo symbol when bulletstorm is active.",
 	"Enhanced and Improved Vanilla HudScreenEffectTitleID" : "Swansong / Kingpin Screen Effects",
