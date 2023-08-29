@@ -96,10 +96,10 @@ elseif RequiredScript == "lib/managers/playermanager" then
 			if upgrade_value == 0 then return end
 			local teammate_panel = managers.hud:get_teammate_panel_by_peer()
 			if teammate_panel then
-			    if EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") then
+			    if EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.update_cooldown_timer then
 				    teammate_panel:update_cooldown_timer(upgrade_value[2])
 				end
-				if EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") then
+				if EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.animate_invulnerability then
 				    teammate_panel:animate_invulnerability(upgrade_value[1])
 				end
 			end
@@ -109,10 +109,10 @@ elseif RequiredScript == "lib/managers/playermanager" then
 			if upgrade_value == 0 then return end
 			local teammate_panel = managers.hud:get_teammate_panel_by_peer()
 			if teammate_panel then
-			    if EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") then
+			    if EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.health_cooldown_timer then
 				    teammate_panel:health_cooldown_timer(2)
 				end
-				if EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") then
+				if EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.animate_health_invulnerability then
 				    teammate_panel:animate_health_invulnerability(2)
 				end
 			end
@@ -130,7 +130,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 		end
 
 		local teammate_panel = managers.hud:get_teammate_panel_by_peer()
-		if teammate_panel then
+		if teammate_panel and teammate_panel.animate_bulletstorm then
 			teammate_panel:animate_bulletstorm(bullet_storm[2] - Application:time())
 		end
 	end)

@@ -58,6 +58,8 @@
 	"Enhanced and Improved Vanilla HudTeamLoadoutDescID" : "Display throwables and Second deployables in the preplanning.",
 	"Enhanced and Improved Vanilla HudLevelDisplayTitleID" : "Display rank of joining players",
 	"Enhanced and Improved Vanilla HudLevelDisplayDescID" : "Displays the rank of players joining mid-game.",
+	"Enhanced and Improved Vanilla HudSkipDialogsTitleID" : "No Confirm Dialogs",
+	"Enhanced and Improved Vanilla HudSkipDialogsDescID" : "Remove some of the >Are you sure< messages when navigating menus.",
 	"Enhanced and Improved Vanilla HudSkipBlackscreenTitleID" : "Skip Blackscreen",
 	"Enhanced and Improved Vanilla HudSkipBlackscreenDescID" : "Automatically skip the black loadingscreens.",
 	"Enhanced and Improved Vanilla HudPickCardTitleID" : "Pick Lootcard",

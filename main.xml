@@ -21,6 +21,7 @@
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/lootdropscreengui"/>
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/stageendscreengui"/>
 		<hook file="MenuSkip.lua" source_file="lib/states/ingamewaitingforplayers"/>
+		<hook file="MenuSkip.lua" source_file="lib/managers/missionassetsmanager"/>
 		
 		<hook file="PacifiedCivs.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
 		
@@ -78,6 +79,7 @@
 				<option type="bool" default_value="true" name="TeamLoadout"/>
 				<option type="bool" default_value="true" name="LevelDisplay"/>
 				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="false" name="SkipDialogs"/>
 				<option type="bool" default_value="false" name="SkipBlackscreen"/>
 				<option type="bool" default_value="false" name="PickCard"/>
 				<option type="number" min="0" max="30" step="1" decimal_count="0" show_value="true" default_value="0" name="SkipXP"/>

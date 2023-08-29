@@ -36,4 +36,17 @@ elseif RequiredScript == "lib/managers/menu/lootdropscreengui" then
 			end
 		end
 	end)
+elseif RequiredScript == "lib/managers/missionassetsmanager" then	
+	if EIVHUD.Options:GetValue("MENU/SkipDialogs") then
+		local function expect_yes(self, params) params.yes_func() end
+		MenuManager.show_confirm_mission_asset_buy_all = expect_yes
+		MenuManager.show_confirm_buy_premium_contract = expect_yes
+		MenuManager.show_confirm_blackmarket_buy_mask_slot = expect_yes
+		MenuManager.show_confirm_blackmarket_buy_weapon_slot = expect_yes
+		MenuManager.show_confirm_mission_asset_buy = expect_yes
+		MenuManager.show_confirm_pay_casino_fee = expect_yes
+		MenuManager.show_confirm_mission_asset_buy_all = expect_yes
+		MenuManager.show_confirm_blackmarket_sell = expect_yes
+		MenuManager.show_confirm_blackmarket_mod = expect_yes
+	end	
 end
