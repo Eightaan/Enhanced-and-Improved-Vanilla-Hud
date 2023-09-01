@@ -200,20 +200,30 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	end
 
 	Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammateSetAmmoAmountByType", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
-        local weapon_panel = self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
-		local zero = current_left < 10 and "00" or current_left < 100 and "0" or ""
-
-	    if self._main_player and EIVHUD.Options:GetValue("HUD/Trueammo") then
-		    if current_left - current_clip >= 0 then
-		    	current_left = current_left - current_clip
-	    	end
-			weapon_panel:child("ammo_total"):set_text(zero ..tostring(current_left))
-	    end
+		if EIVHUD.Options:GetValue("HUD/Trueammo") then
+			local weapon_panel = self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
+			if self._main_player then
+				if current_left - current_clip >= 0 then
+					current_left = current_left - current_clip
+				end
+			end
+		
+			local low_ammo = current_left <= math.round(max_clip / 2)
+			local out_of_ammo = current_left <= 0
+			local color_total = out_of_ammo and Color(1, 0.9, 0.3, 0.3)
+			color_total = color_total or low_ammo and Color(1, 0.9, 0.9, 0.3)
+			color_total = color_total or Color.white
+			local ammo_total = weapon_panel:child("ammo_total")
+			local zero = current_left < 10 and "00" or current_left < 100 and "0" or ""
+			ammo_total:set_text(zero ..tostring(current_left))
+			ammo_total:set_color(color_total)
+			ammo_total:set_range_color(0, string.len(zero), color_total:with_alpha(0.5))
+			ammo_total:set_font_size(string.len(current_left) < 4 and 24 or 20)
+		end
     end)
 	
 	Hooks:PostHook(HUDTeammate, "set_custom_radial", "EIVHUD_HUDTeammate_set_custom_radial", function (self, data, ...)
         local duration = data.current / data.total
-
 		if self._main_player and self._cooldown_timer then
 		    if duration > 0 then
 				self._cooldown_timer:set_visible(false)

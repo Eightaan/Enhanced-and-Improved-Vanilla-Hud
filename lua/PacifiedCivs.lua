@@ -1,15 +1,9 @@
-if not EIVHUD.Options:GetValue("HUD/Greenciv") then
-	return
-end
-
 Hooks:PostHook(GroupAIStateBase, "_upd_criminal_suspicion_progress", "EIVHUD_GroupAIStateBase_upd_criminal_suspicion_progress", function (self, ...)
-	if self._ai_enabled then
+	if self._ai_enabled and EIVHUD.Options:GetValue("HUD/Greenciv") then
 		for obs_key, obs_susp_data in pairs(self._suspicion_hud_data or {}) do
 			local unit = obs_susp_data.u_observer
-
 			if managers.enemy:is_civilian(unit) then
 				local waypoint = managers.hud._hud.waypoints["susp1" .. tostring(obs_key)]
-
 				if waypoint then
 					if unit:anim_data().drop then
 						if not obs_susp_data._subdued_civ then
