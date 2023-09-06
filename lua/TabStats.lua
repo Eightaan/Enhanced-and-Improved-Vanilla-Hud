@@ -32,7 +32,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		return text .. (minutes < 10 and "0" .. minutes or minutes) .. ":" .. (seconds < 10 and "0" .. seconds or seconds)
 	end	
 	
-	function HUDStatsScreen:recreate_left()
+	Hooks:OverrideFunction(HUDStatsScreen, "recreate_left", function(self)
 		self._left:clear()
 		self._left:bitmap({
 			texture = "guis/textures/test_blur_df",
@@ -69,20 +69,14 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 				if mission then
 					local level_str = managers.localization:to_upper_text(tweak_data.levels[mission.level.level_id].name_id) or ""
+					local spree_space = string.rep(" ", 2)
 
 					placer:add_row(self._left:fine_text({
 						font = large_font,
 						font_size = tweak_data.hud_stats.objectives_title_size,
-						text = level_str
+						text = level_str..spree_space
 					}))
 				end
-
-				placer:add_row(self._left:fine_text({
-					font = medium_font,
-					font_size = tweak_data.hud_stats.loot_size,
-					text = managers.localization:to_upper_text("menu_lobby_difficulty_title"),
-					color = tweak_data.screen_colors.text
-				}), 8, 0)
 
 				local str = managers.localization:text("menu_cs_level", {
 					level = managers.experience:cash_string(managers.crime_spree:server_spree_level(), "")
@@ -98,10 +92,46 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				local job_chain = managers.job:current_job_chain_data()
 				local day = managers.job:current_stage()
 				local days = job_chain and #job_chain or 0
+				local level_data = managers.job:current_level_data()
+				local space
+				local heist_title
+				
+				if job_data then
+					local job_stars = managers.job:current_job_stars()
+					local difficulty_stars = managers.job:current_difficulty_stars()
+					local difficulty = tweak_data.difficulties[difficulty_stars + 2] or 1
+					local difficulty_string = managers.localization:to_upper_text(tweak_data.difficulty_name_ids[difficulty])
+					local difficulty_text = self._left:fine_text({
+						font = tweak_data.hud_stats.objectives_font,
+						font_size = medium_font_size,
+						text = difficulty_string,
+						color = difficulty_stars > 0 and tweak_data.screen_colors.risk or tweak_data.screen_colors.text
+					})
+
+					if Global.game_settings.one_down then
+						local one_down_string = managers.localization:to_upper_text("menu_one_down")
+						difficulty_text:set_text(difficulty_string .. " " .. one_down_string)
+						difficulty_text:set_range_color(#difficulty_string + 1, math.huge, tweak_data.screen_colors.one_down)
+					end
+
+					local _, _, tw, th = difficulty_text:text_rect()
+
+					difficulty_text:set_size(tw, th)
+					placer:add_right(difficulty_text)
+				end
+				
+	            if level_data then
+	                heist_title = managers.localization:to_upper_text(level_data.name_id) .. ":"
+					space = string.rep(" ", 2)
+	            else
+ 	               heist_title = ""
+ 	               space = ""
+ 	           end				
+
 				local day_title = placer:add_bottom(self._left:fine_text({
 					font = tweak_data.hud_stats.objectives_font,
-					font_size = tweak_data.hud_stats.loot_size,
-					text = managers.localization:to_upper_text("hud_days_title", {
+					font_size = medium_font_size,
+					text = heist_title .. space .. managers.localization:to_upper_text("hud_days_title", {
 						DAY = day,
 						DAYS = days
 					})
@@ -119,64 +149,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					}))
 					ghost:set_center_y(day_title:center_y())
 				end
-
-				placer:new_row(8)
-
-				local level_data = managers.job:current_level_data()
-
-				if level_data then
-					placer:add_bottom(self._left:fine_text({
-						font = large_font,
-						font_size = tweak_data.hud_stats.objectives_title_size,
-						text = managers.localization:to_upper_text(level_data.name_id)
-					}))
-				end
-
-				placer:add_bottom(self._left:fine_text({
-					font = medium_font,
-					font_size = tweak_data.hud_stats.loot_size,
-					text = managers.localization:to_upper_text("menu_lobby_difficulty_title"),
-					color = tweak_data.screen_colors.text
-				}), 0)
-
-				if job_data then
-					local job_stars = managers.job:current_job_stars()
-					local difficulty_stars = managers.job:current_difficulty_stars()
-					local difficulty = tweak_data.difficulties[difficulty_stars + 2] or 1
-					local difficulty_string = managers.localization:to_upper_text(tweak_data.difficulty_name_ids[difficulty])
-					local difficulty_text = self._left:fine_text({
-						font = medium_font,
-						font_size = tweak_data.hud_stats.loot_size,
-						text = difficulty_string,
-						color = difficulty_stars > 0 and tweak_data.screen_colors.risk or tweak_data.screen_colors.text
-					})
-
-					if Global.game_settings.one_down then
-						local one_down_string = managers.localization:to_upper_text("menu_one_down")
-						difficulty_text:set_text(difficulty_string .. " " .. one_down_string)
-						difficulty_text:set_range_color(#difficulty_string + 1, math.huge, tweak_data.screen_colors.one_down)
-					end
-
-					local _, _, tw, th = difficulty_text:text_rect()
-
-					difficulty_text:set_size(tw, th)
-					placer:add_right(difficulty_text)
-				end
-
-				placer:new_row(8, 0)
-
-				local payout = managers.localization:text("hud_day_payout", {
-					MONEY = managers.experience:cash_string(managers.money:get_potential_payout_from_current_stage())
-				})
-
-				placer:add_bottom(self._left:fine_text({
-					keep_w = true,
-					font = tweak_data.hud_stats.objectives_font,
-					font_size = tweak_data.hud_stats.loot_size,
-					text = payout
-				}), 0)
 			end
-
 			placer:new_row()
 		end
 
@@ -257,15 +230,35 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		local max_units = managers.gage_assignment:count_all_units()
         local remaining = managers.gage_assignment:count_active_units()
 		local package_text = managers.job:current_level_id() ~= "chill_combat" and managers.job:current_level_id() ~= "chill" and managers.job:current_level_id() ~= "haunted" and managers.job:current_level_id() ~= "hvh" and managers.localization:to_upper_text("menu_asset_gage_assignment") .. ":" .. " " .. tostring(max_units - remaining) .."/".. tostring(max_units) or ""
-			if remaining < max_units then
-				placer:add_bottom(self._left:fine_text({
-				    keep_w = true,
-				    font = tweak_data.hud_stats.objectives_font,
-				    font_size = small_font_size,
-				    color = Color.white,
-				    text = package_text
-				}), 16)
-			end
+		if remaining < max_units then
+			placer:add_bottom(self._left:fine_text({
+				keep_w = true,
+				font = tweak_data.hud_stats.objectives_font,
+				font_size = small_font_size,
+				color = Color.white,
+				text = package_text
+			}), 16)
+		end
+		
+		local dominated = 0
+		local enemy_count = 0
+		for _, unit in pairs(managers.enemy:all_enemies()) do
+			enemy_count = enemy_count + 1
+			if (unit and unit.unit and alive(unit.unit)) and (unit.unit:anim_data() and unit.unit:anim_data().hands_up or unit.unit:anim_data() and unit.unit:anim_data().surrender or unit.unit:base() and unit.unit:base().mic_is_being_moved)then
+		        dominated = dominated + 1
+	        end
+        end
+
+		local enemies = enemy_count - dominated
+		if enemies > 0 then
+			placer:add_bottom(self._left:fine_text({
+				keep_w = true,
+			    font = tweak_data.hud_stats.objectives_font,
+			    font_size = small_font_size,
+			    color = Color.white,
+			    text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
+		    }), 16)
+        end
 	
 		local loot_panel = ExtendedPanel:new(self._left, {
 			w = self._left:w() - 16 - 8
@@ -298,10 +291,6 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				font = medium_font,
 				font_size = medium_font_size
 			}), 7)
-			if managers.crime_spree:is_active() then
-			    loot_panel:set_size(placer:most_rightbottom())
-			    loot_panel:set_leftbottom(0, self._left:h() - 16)
-			end
 			placer:new_row()
 		end
 
@@ -373,8 +362,6 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			placer:new_row()
 		end
 
-		local mandatory_bags_data = managers.loot:get_mandatory_bags_data()
-		local mandatory_amount = mandatory_bags_data and mandatory_bags_data.amount
 		local secured_amount = managers.loot:get_secured_mandatory_bags_amount()
 		local bonus_amount = managers.loot:get_secured_bonus_bags_amount()
 		local bag_text = placer:add_bottom(loot_panel:fine_text({
@@ -397,23 +384,12 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		}))
 		bag_icon:set_center_y(bag_text:center_y())
 
-		if mandatory_amount and mandatory_amount > 0 then
-			local str = bonus_amount > 0 and string.format("%d/%d+%d", secured_amount, mandatory_amount, bonus_amount) or string.format("%d/%d", secured_amount, mandatory_amount)
-
-			placer:add_left(loot_panel:fine_text({
-				text = str,
-				font = medium_font,
-				color = Color.white,
-				font_size = medium_font_size
-			}))
-		else
-			placer:add_left(loot_panel:fine_text({
-				text = tostring(bonus_amount),
-				font = medium_font,
-				color = Color.white,
-				font_size = medium_font_size
-			}))
-		end
+		placer:add_left(loot_panel:fine_text({
+			text = tostring(secured_amount + bonus_amount),
+			font = medium_font,
+			color = Color.white,
+			font_size = medium_font_size
+		}))
 		placer:new_row()
 		
 		local loot_text = placer:add_bottom(loot_panel:fine_text({
@@ -426,6 +402,8 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 		placer:add_right(nil, 0)
 
+		local border_crossing_fix = Global.game_settings.level_id == "mex" and managers.interaction:get_current_total_loot_count() > 38 and 4
+		local loot_amount = crossing_border_loot_fix or managers.interaction:get_current_total_loot_count()
 		local bag_texture, bag_rect = tweak_data.hud_icons:get_icon_data("bag_icon")
 		local loot_icon = placer:add_left(loot_panel:fit_bitmap({
 			w = 16,
@@ -437,7 +415,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		loot_icon:set_center_y(loot_text:center_y())
 
 		placer:add_left(loot_panel:fine_text({
-			text = tostring(managers.interaction:get_current_total_loot_count()),
+			text = tostring(loot_amount),
 			font = medium_font,
 			color = Color.white,
 			font_size = medium_font_size
@@ -455,6 +433,9 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 		placer:add_right(nil, 0)
 
+		local firestarter_fix = Global.game_settings.level_id == "firestarter_1" and managers.interaction:get_current_crate_count() > 50 and 0
+		local rats_fix = Global.game_settings.level_id == "alex_3" and managers.interaction:get_current_crate_count() > 14 and managers.interaction:get_current_crate_count() - 16
+		local crate_info = firestarter_fix or rats_fix or managers.interaction:get_current_crate_count()
 		local bag_texture, bag_rect = tweak_data.hud_icons:get_icon_data("bag_icon")
 		local crate_icon = placer:add_left(loot_panel:fit_bitmap({
 			w = 16,
@@ -466,7 +447,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		crate_icon:set_center_y(crate_text:center_y())
 
 		placer:add_left(loot_panel:fine_text({
-			text = tostring(managers.interaction:get_current_crate_count()),
+			text = tostring(crate_info),
 			font = medium_font,
 			color = Color.white,
 			font_size = medium_font_size
@@ -518,14 +499,14 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			loot_panel:set_size(placer:most_rightbottom())
 			loot_panel:set_leftbottom(0, self._left:h() - 16)
 		end
-	end
+	end)
 elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 	local large_font = tweak_data.menu.pd2_large_font
 	local medium_font = tweak_data.menu.pd2_medium_font
 	local small_font_size = tweak_data.menu.pd2_small_font_size
 	local medium_font_size = tweak_data.menu.pd2_medium_font_size
 
-	function HUDStatsScreenSkirmish:recreate_left()
+	Hooks:OverrideFunction(HUDStatsScreenSkirmish, "recreate_left", function(self)
 		self._left:clear()
 		self._left:bitmap({
 			texture = "guis/textures/test_blur_df",
@@ -545,14 +526,6 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		lb:child("bg"):set_alpha(1)
 
 		local placer = UiPlacer:new(10, 10, 0, 8)
-		local job_data = managers.job:current_job_data()
-		local title_text_id = managers.skirmish:is_weekly_skirmish() and "hud_weekly_skirmish" or "hud_skirmish"
-		local skirmish_title = placer:add_bottom(self._left:fine_text({
-			text = managers.localization:to_upper_text(title_text_id),
-			font = tweak_data.hud_stats.objectives_font,
-			font_size = tweak_data.hud_stats.loot_size
-		}))
-		placer:new_row(8)
 
 		local level_data = managers.job:current_level_data()
 
@@ -565,39 +538,6 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			placer:new_row()
 		end
 
-		local objectives_title = self._left:fine_text({
-			vertical = "top",
-			align = "left",
-			font_size = tweak_data.hud_stats.objectives_title_size,
-			font = tweak_data.hud_stats.objectives_font,
-			text = managers.localization:to_upper_text("hud_objective")
-		})
-
-		placer:add_bottom(objectives_title, 16)
-		placer:new_row(8)
-
-		local row_w = self._left:w() - placer:current_left() * 2
-
-		for i, data in pairs(managers.objectives:get_active_objectives()) do
-			placer:add_bottom(self._left:fine_text({
-				word_wrap = true,
-				wrap = true,
-				align = "left",
-				text = utf8.to_upper(data.text),
-				font = tweak_data.hud.medium_font,
-				font_size = tweak_data.hud.active_objective_title_font_size,
-				w = row_w
-			}))
-			placer:add_bottom(self._left:fine_text({
-				word_wrap = true,
-				wrap = true,
-				font_size = 24,
-				align = "left",
-				text = data.description,
-				font = tweak_data.hud_stats.objective_desc_font,
-				w = row_w
-			}), 0)
-		end
 		placer:new_row(8)
 		
 		local total_kills = EIVH.TotalKills
@@ -608,7 +548,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			font_size = small_font_size,
 			color = Color.white,
 			text = kill_count
-		}), 75)
+		}), 0)
 
 		local total_accuracy = managers.statistics:session_hit_accuracy()
 		local accuracy = total_accuracy and managers.localization:to_upper_text("menu_stats_hit_accuracy") .." ".. total_accuracy.."%" or ""
@@ -619,6 +559,26 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			color = Color.white,
 			text = accuracy 
 		}), 0)
+		
+		local dominated = 0
+		local enemy_count = 0
+		for _, unit in pairs(managers.enemy:all_enemies()) do
+			enemy_count = enemy_count + 1
+			if (unit and unit.unit and alive(unit.unit)) and (unit.unit:anim_data() and unit.unit:anim_data().hands_up or unit.unit:anim_data() and unit.unit:anim_data().surrender or unit.unit:base() and unit.unit:base().mic_is_being_moved)then
+		        dominated = dominated + 1
+	        end
+        end
+
+		local enemies = enemy_count - dominated
+		if enemies > 0 then
+			placer:add_bottom(self._left:fine_text({
+				keep_w = true,
+			    font = tweak_data.hud_stats.objectives_font,
+			    font_size = small_font_size,
+			    color = Color.white,
+			    text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
+		    }), 16)
+        end
 
 		local loot_panel = ExtendedPanel:new(self._left, {
 			w = self._left:w() - 16 - 8
@@ -668,7 +628,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		}))
 		loot_panel:set_size(placer:most_rightbottom())
 		loot_panel:set_leftbottom(0, self._left:h() - 16)
-	end
+	end)
 elseif RequiredScript == "lib/managers/moneymanager" then
     Hooks:PostHook(MoneyManager, 'civilian_killed', "EIVHUD_civilian_killed", function(self)
         EIVH.CivKill = EIVH.CivKill + 1
@@ -702,32 +662,45 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 		self._total_loot = {}
 		self._count_loot_bags = {}
 		self.loot_crates = {}
-			
 		self._loot_fixes = {
 			family = 						{ money = 1, },
 			watchdogs_2 = 					{ coke = 10, },
 			watchdogs_2_day =				{ coke = 10, },
-			framing_frame_3 = 				{ gold = 16, },
+			framing_frame_3 = 				{ gold = 16, coke = 8 },
 			mia_1 = 						{ money = 1, },
 			welcome_to_the_jungle_1 =		{ money = 1, gold = 1 },
 			welcome_to_the_jungle_1_night =	{ money = 1, gold = 1 },
-			mus = 							{ painting = 2 },
+			mus = 							{ painting = 2, mus_artifact = 1 },
 			arm_und = 						{ money = 8, },
 			ukrainian_job = 				{ money = 3, },
 			jewelry_store = 				{ money = 2, },
 			chill = 						{ painting = 1, },
 			chill_combat = 					{ painting = 1, },
-			fish = 							{ mus_artifact = 1 },
-			--dah = 							{ money = 8 },
-			rvd2 = 							{ money = 1 },
-			des = 							{ mus_artifact = 2, painting = 2 }
+			fish = 							{ mus_artifact = 1, },
+			rvd2 = 							{ money = 1, },
+			arena = 						{ vehicle_falcogini = 1, },
+			shoutout_raid =					{ vehicle_falcogini = 9, },
+			friend = 						{ painting = 8, },
+			pbr2 =							{ money = 8, vehicle_falcogini = 1 },
+			mex_cooking = 					{ roman_armor = 4, },
+			sah =							{ mus_artifact = 2, },
+			corp =							{ painting = 5, },
+			ranc =							{ turret_part = 2, vehicle_falcogini = 2  },
+			trai =							{ turret_part = 2, },
+		--	pex =							{ hydraulic_opener = 1, },
+			pent =							{ mus_artifact = 2, },
+			des = 							{ mus_artifact = 4, painting = 2 }
 		}
 	end)
 		
 	local function _get_unit_type(unit)
 		local interact_type = unit:interaction().tweak_data
-		if interact_type == "weapon_case" or interact_type == "crate_loot" or interact_type == "crate_loot_crowbar" then
-			return "loot_crates"
+		local counted_possible_by_int = {"money_briefcase", "gen_pku_warhead_box", "weapon_case", "weapon_case_axis_z", "crate_loot", "crate_loot_crowbar"}
+		local counted_by_int = {"hold_take_helmet", "take_weapons_axis_z"}
+		if interact_type then
+			if table.contains(counted_possible_by_int, interact_type) then
+				return "loot_crates"
+			end
 		end
 	end
 		
