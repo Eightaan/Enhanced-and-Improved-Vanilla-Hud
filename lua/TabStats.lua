@@ -687,7 +687,6 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			corp =							{ painting = 5, },
 			ranc =							{ turret_part = 2, vehicle_falcogini = 2  },
 			trai =							{ turret_part = 2, },
-		--	pex =							{ hydraulic_opener = 1, },
 			pent =							{ mus_artifact = 2, },
 			des = 							{ mus_artifact = 4, painting = 2 }
 		}
@@ -695,7 +694,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 		
 	local function _get_unit_type(unit)
 		local interact_type = unit:interaction().tweak_data
-		local counted_possible_by_int = {"money_briefcase", "gen_pku_warhead_box", "weapon_case", "weapon_case_axis_z", "crate_loot", "crate_loot_crowbar"}
+		local counted_possible_by_int = {"grenade_briefcase", "money_briefcase", "gen_pku_warhead_box", "weapon_case", "weapon_case_axis_z", "crate_loot", "crate_loot_crowbar"}
 		local counted_by_int = {"hold_take_helmet", "take_weapons_axis_z"}
 		if interact_type then
 			if table.contains(counted_possible_by_int, interact_type) then
@@ -713,7 +712,6 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 				local interact_type = unit:interaction().tweak_data
 				if carry_id and not tweak_data.carry[carry_id].skip_exit_secure or interact_type and tweak_data.carry[interact_type] and not tweak_data.carry[carry_id].skip_exit_secure == true then
 					self._total_loot[unit:id()] = true
-
 					local level_id = managers.job:current_level_id()
 					if carry_id and level_id and self._loot_fixes[level_id] and self._loot_fixes[level_id][carry_id] and self._loot_fixes[level_id][carry_id] > 0 then
 						self._loot_fixes[level_id][carry_id] = self._loot_fixes[level_id][carry_id] - 1
