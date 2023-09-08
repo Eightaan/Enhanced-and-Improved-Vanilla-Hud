@@ -694,7 +694,8 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 		
 	local function _get_unit_type(unit)
 		local interact_type = unit:interaction().tweak_data
-		local counted_possible_by_int = {"grenade_briefcase", "money_briefcase", "gen_pku_warhead_box", "weapon_case", "weapon_case_axis_z", "crate_loot", "crate_loot_crowbar"}
+		local alaskan_deal_fix = Global.game_settings.level_id == "wwh" and "grenade_briefcase" or ""
+		local counted_possible_by_int = {alaskan_deal_fix, "money_briefcase", "gen_pku_warhead_box", "weapon_case", "weapon_case_axis_z", "crate_loot", "crate_loot_crowbar"}
 		local counted_by_int = {"hold_take_helmet", "take_weapons_axis_z"}
 		if interact_type then
 			if table.contains(counted_possible_by_int, interact_type) then
