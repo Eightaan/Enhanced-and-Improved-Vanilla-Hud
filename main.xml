@@ -1,4 +1,5 @@
 <mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD">
+	<AssetUpdates id="43776" provider="modworkshop" version="1"/>
     <Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/statisticsmanager"/>
 		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
