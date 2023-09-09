@@ -403,7 +403,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		placer:add_right(nil, 0)
 
 		local border_crossing_fix = Global.game_settings.level_id == "mex" and managers.interaction:get_current_total_loot_count() > 38 and 4
-		local loot_amount = crossing_border_loot_fix or managers.interaction:get_current_total_loot_count()
+		local loot_amount = border_crossing_fix or managers.interaction:get_current_total_loot_count()
 		local bag_texture, bag_rect = tweak_data.hud_icons:get_icon_data("bag_icon")
 		local loot_icon = placer:add_left(loot_panel:fit_bitmap({
 			w = 16,
@@ -717,7 +717,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 					if carry_id and level_id and self._loot_fixes[level_id] and self._loot_fixes[level_id][carry_id] and self._loot_fixes[level_id][carry_id] > 0 then
 						self._loot_fixes[level_id][carry_id] = self._loot_fixes[level_id][carry_id] - 1
 					else
-						self:update_loot_count(1)
+						self:update_loot(1)
 					end
 				end
 			end
@@ -739,7 +739,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "remove_unit", "EIVHUD_ObjectInteractionManager_remove_unit", function(self, unit)
 		if self._total_loot[unit:id()] then
 			self._total_loot[unit:id()] = nil
-			self:update_loot_count(-1)
+			self:update_loot(-1)
 		end
 
 		if table.contains(self.loot_crates, unit:id()) then
@@ -753,7 +753,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 		self.loot_count.crate_amount = count or 0
 	end
 
-	function ObjectInteractionManager:update_loot_count(update)
+	function ObjectInteractionManager:update_loot(update)
 		self.loot_count.loot_amount = (self.loot_count.loot_amount or 0) + update
 	end
 		
