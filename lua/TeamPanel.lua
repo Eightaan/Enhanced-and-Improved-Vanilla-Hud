@@ -200,7 +200,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 		self:_animate_bullet_storm(weapons_panel:child("secondary_weapon_panel"), duration)
 	end
 
-	Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "HMH_HUDTeammate_set_ammo_amount_by_type", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
+	Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_ammo_amount_by_type", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
 		if EIVHUD.Options:GetValue("HUD/Trueammo") then
 			local weapon_panel = self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
 			if self._main_player then
