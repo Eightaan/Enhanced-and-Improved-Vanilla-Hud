@@ -1,4 +1,4 @@
-<mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD">
+<mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD" core_class="Core.lua">
 	<AssetUpdates id="43776" provider="modworkshop" version="1"/>
     <Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/statisticsmanager"/>
@@ -7,6 +7,8 @@
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
 		<hook file="TabStats.lua" source_file="lib/managers/hud/newhudstatsscreen"/>
 		<hook file="TabStats.lua" source_file="lib/managers/objectinteractionmanager"/>
+		
+		<hook file="Hostages.lua" source_file="lib/managers/hud/hudassaultcorner"/>
 		
         <hook file="TeamPanel.lua" source_file="lib/managers/playermanager"/>
         <hook file="TeamPanel.lua" source_file="lib/managers/hudmanagerpd2"/>
@@ -33,7 +35,7 @@
 		
 		<hook file="LevelDisplay.lua" source_file="lib/managers/menumanagerdialogs"/>
 		
-		<hook file="Localization.lua" source_file="lib/managers/menumanager"/>
+		<hook file="MainMenu.lua" source_file="lib/managers/menu/menuscenemanager"/>
 		
 		<hook file="BagInfo.lua" source_file="lib/units/interactions/interactionext"/>
     </Hooks>
@@ -47,11 +49,13 @@
 			<option_group name="HUD">
 				<option type="number" min="0" max="1" step="0.05" decimal_count="2" show_value="true" default_value="1" name="Scale"/>
 				<divider name="override_divider" size="16"/>
+				<option type="multichoice" default_value="1" name="ShowHostages" values_tbl="EIVHUD.show_hostages"/>
+				<option type="bool" default_value="true" name="Tab"/>
+				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="HideMaskInstruction"/>
 				<option type="bool" default_value="true" name="LevelDisplay"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="ScreenEffect"/>
-				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="ArmorerCooldownRadial"/>-->
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="ArmorerCooldownTimer"/>
@@ -62,9 +66,6 @@
 				<option type="bool" default_value="true" name="Bulletstorm"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="Inspire"/>
-				<divider name="override_divider" size="16"/>
-				<option type="bool" default_value="true" name="Tab"/>
-				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="Greenciv"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="Infoboxes"/>
@@ -80,6 +81,8 @@
 			</option_group>
 			<option_group name="MENU">
 				<option type="bool" default_value="true" name="TeamLoadout"/>
+				<divider name="override_divider" size="16"/>
+				<option type="bool" default_value="false" name="MenuFilter"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="false" name="SkipDialogs"/>
 				<option type="bool" default_value="false" name="SkipBlackscreen"/>

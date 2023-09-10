@@ -10,7 +10,9 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		    w = 200,
 		    h = 200
 	    })
-	    self._ecm_panel:set_top(50)
+
+		local value = EIVHUD.Options:GetValue("HUD/ShowHostages") > 1 and 0 or 50
+	    self._ecm_panel:set_top(value)
         self._ecm_panel:set_right(self._hud_panel:w() + 11)
 
 	    local ecm_box = HUDBGBox_create(self._ecm_panel, { w = 38, h = 38, },  {})

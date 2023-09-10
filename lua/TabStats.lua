@@ -186,7 +186,15 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			}), 0)
 		end
 		placer:new_row(8)
-
+		if EIVHUD.Options:GetValue("HUD/ShowHostages") == 2 then
+			placer:add_bottom(self._left:fine_text({
+				keep_w = true,
+				font = tweak_data.hud_stats.objectives_font,
+				font_size = small_font_size,
+				color = Color.white,
+				text = "HOSTAGES: " .. managers.groupai:state():hostage_count()
+			}), 30)
+		end
 		local civ_kills = managers.statistics:session_total_civilian_kills() ~= 0 and managers.localization:to_upper_text("victory_civilians_killed_penalty") .. " " .. managers.statistics:session_total_civilian_kills() .. managers.localization:get_default_macro("BTN_SKULL") or ""
 		placer:add_bottom(self._left:fine_text({
 			keep_w = true,
@@ -194,7 +202,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			font_size = small_font_size,
 			color = Color.white,
 			text = civ_kills
-		}), 30)
+		}), 1)
 				
 		local trade_delay = (5 + (EIVH.CivKill * 30))
         local total_time = trade_delay and trade_delay > 30					
@@ -539,7 +547,16 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		end
 
 		placer:new_row(8)
-		
+		if EIVHUD.Options:GetValue("HUD/ShowHostages") == 2 then
+			placer:add_bottom(self._left:fine_text({
+				keep_w = true,
+				font = tweak_data.hud_stats.objectives_font,
+				font_size = small_font_size,
+				color = Color.white,
+				text = "HOSTAGES: " .. managers.groupai:state():hostage_count()
+			}), 0)
+		end
+
 		local total_kills = EIVH.TotalKills
 		local kill_count = total_kills and managers.localization:to_upper_text("menu_aru_job_3_obj") ..": ".. total_kills ..managers.localization:get_default_macro("BTN_SKULL") or ""
 		placer:add_bottom(self._left:fine_text({
@@ -548,7 +565,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			font_size = small_font_size,
 			color = Color.white,
 			text = kill_count
-		}), 0)
+		}), 16)
 
 		local total_accuracy = managers.statistics:session_hit_accuracy()
 		local accuracy = total_accuracy and managers.localization:to_upper_text("menu_stats_hit_accuracy") .." ".. total_accuracy.."%" or ""
