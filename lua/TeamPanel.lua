@@ -3,6 +3,7 @@ if _G.IS_VR then
 end
 
 local Color = Color
+local math_lerp = math.lerp
 if RequiredScript == "lib/managers/hudmanagerpd2" then
 	Hooks:PostHook(HUDManager, "set_teammate_custom_radial", "EIVHUD_HUDManager_set_teammate_custom_radial", function (self, i, data, ...)
     	local hud = managers.hud:script( PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
@@ -199,7 +200,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 		self:_animate_bullet_storm(weapons_panel:child("secondary_weapon_panel"), duration)
 	end
 
-	Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammateSetAmmoAmountByType", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
+	Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "HMH_HUDTeammate_set_ammo_amount_by_type", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
 		if EIVHUD.Options:GetValue("HUD/Trueammo") then
 			local weapon_panel = self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
 			if self._main_player then
@@ -207,21 +208,97 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 					current_left = current_left - current_clip
 				end
 			end
-		
+
+			local low_ammo_color = Color(1, 0.9, 0.9, 0.3)
+			local total_ammo_color = Color.white
+			local clip_ammo_color = Color.white
 			local low_ammo = current_left <= math.round(max_clip / 2)
+			local low_clip = current_clip <= math.round(max_clip / 4)
+			local out_of_clip = current_clip <= 0
 			local out_of_ammo = current_left <= 0
-			local color_total = out_of_ammo and Color(1, 0.9, 0.3, 0.3)
-			color_total = color_total or low_ammo and Color(1, 0.9, 0.9, 0.3)
-			color_total = color_total or Color.white
+			local color_total = out_of_ammo and Color(1 , 0.9 , 0.3 , 0.3)
+			local color_clip = out_of_clip and Color(1 , 0.9 , 0.3 , 0.3)
 			local ammo_total = weapon_panel:child("ammo_total")
 			local zero = current_left < 10 and "00" or current_left < 100 and "0" or ""
+			local ammo_clip = weapon_panel:child("ammo_clip")
+			local zero_clip = current_clip < 10 and "00" or current_clip < 100 and "0" or ""
+			local ammo_font = string.len(current_left) < 4 and 24 or 20
+			color_total = color_total or low_ammo and (low_ammo_color)
+			color_total = color_total or (total_ammo_color)
+			color_clip = color_clip or low_clip and (low_ammo_color)
+			color_clip = color_clip or (clip_ammo_color)
+
 			ammo_total:set_text(zero ..tostring(current_left))
 			ammo_total:set_color(color_total)
 			ammo_total:set_range_color(0, string.len(zero), color_total:with_alpha(0.5))
-			ammo_total:set_font_size(string.len(current_left) < 4 and 24 or 20)
+			ammo_total:set_font_size(ammo_font)
+			ammo_clip:set_color(color_clip)
+			ammo_clip:set_range_color(0, string.len(zero_clip), color_clip:with_alpha(0.5))
+
+			ammo_total:stop()
+			ammo_clip:stop()
+				
+			if not self._last_ammo then
+				self._last_ammo = {}
+				self._last_ammo[type] = current_left
+			end
+
+			if not self._last_clip then
+				self._last_clip = {}
+				self._last_clip[type] = current_clip
+			end
+
+			if self._last_ammo and self._last_ammo[type] and self._last_ammo[type] < current_left then
+				ammo_total:animate(function(o)
+					local s = self._last_ammo[type]
+					local e = current_left
+					over(0.5, function(p)
+						local value = math_lerp(s, e, p)
+						local text = string.format("%.0f", value)
+						local zero = math.round(value) < 10 and "00" or math.round(value) < 100 and "0" or ""
+						local low_ammo = value <= math.round(max_clip / 2)
+						local out_of_ammo = value <= 0
+						local color_total = out_of_ammo and Color(1, 0.9, 0.3, 0.3)
+						color_total = color_total or low_ammo and low_ammo_color
+						color_total = color_total or (total_ammo_color)
+
+						ammo_total:set_text(zero .. text)
+						ammo_total:set_color(color_total)
+						ammo_total:set_range_color(0, string.len(zero), color_total:with_alpha(0.5))
+					end)
+					over(1 , function(p)
+						local n = 1 - math.sin((p / 2 ) * 180)
+						ammo_total:set_font_size(math_lerp(ammo_font, ammo_font + 4, n))
+					end)
+				end)
+			end
+
+			if self._last_clip and self._last_clip[type] and self._last_clip[type] < current_clip and not self._infinite_ammo then
+				ammo_clip:animate(function(o)
+					local s = self._last_clip[type]
+					local e = current_clip
+					over(0.25, function(p)
+						local value = math_lerp(s, e, p)
+						local text = string.format( "%.0f", value)
+						local zero = math.round(value) < 10 and "00" or math.round(value) < 100 and "0" or ""
+						local low_clip = value <= math.round(max_clip / 4)
+						local out_of_clip = value <= 0
+						local color_clip = out_of_clip and Color(1, 0.9, 0.3, 0.3)
+
+						color_clip = color_clip or low_clip and low_ammo_color
+						color_clip = color_clip or (clip_ammo_color)
+
+						ammo_clip:set_text(zero .. text)
+						ammo_clip:set_color(color_clip)
+						ammo_clip:set_range_color(0, string.len(zero), color_clip:with_alpha(0.5))
+					end)
+				end)
+			end
+			self._last_ammo[type] = current_left
+			self._last_clip[type] = current_clip
 		end
-    end)
-	
+	end)
+
 	Hooks:PostHook(HUDTeammate, "set_custom_radial", "EIVHUD_HUDTeammate_set_custom_radial", function (self, data, ...)
         local duration = data.current / data.total
 		if self._main_player and self._cooldown_timer then
