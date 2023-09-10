@@ -1,5 +1,4 @@
-local new_option = EIVHUD.Options:GetValue("HUD/ShowHostages") > 1
-if not new_option then 
+if not EIVHUD.Options:GetValue("HUD/ShowHostages") > 1 then 
 	return
 end
 
