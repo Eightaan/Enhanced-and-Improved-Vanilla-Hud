@@ -30,7 +30,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		local text = ""
 
 		return text .. (minutes < 10 and "0" .. minutes or minutes) .. ":" .. (seconds < 10 and "0" .. seconds or seconds)
-	end	
+	end
 	
 	Hooks:OverrideFunction(HUDStatsScreen, "recreate_left", function(self)
 		self._left:clear()
