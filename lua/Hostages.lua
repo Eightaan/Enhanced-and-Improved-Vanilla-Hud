@@ -1,4 +1,4 @@
-if not EIVHUD.Options:GetValue("HUD/ShowHostages") > 1 then 
+if EIVHUD.Options:GetValue("HUD/ShowHostages") < 2 then 
 	return
 end
 

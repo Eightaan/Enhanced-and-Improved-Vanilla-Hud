@@ -5,6 +5,19 @@ end
 local Color = Color
 local math_lerp = math.lerp
 if RequiredScript == "lib/managers/hudmanagerpd2" then
+
+	Hooks:PostHook(HUDManager, "feed_heist_time", "EIVHUD_HUDManager_feed_heist_time", function (self, time, ...)
+		if self._hud_statsscreen and self._hud_statsscreen.feed_heist_time then
+			self._hud_statsscreen:feed_heist_time(time)
+		end
+	end)
+
+	Hooks:PostHook(HUDManager, "modify_heist_time", "EIVHUD_HUDManager_modify_heist_time", function (self, time, ...)
+		if self._hud_statsscreen and self._hud_statsscreen.modify_heist_time then
+			self._hud_statsscreen:modify_heist_time(time)
+		end
+	end)
+
 	Hooks:PostHook(HUDManager, "set_teammate_custom_radial", "EIVHUD_HUDManager_set_teammate_custom_radial", function (self, i, data, ...)
     	local hud = managers.hud:script( PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
     	if not hud.panel:child("swan_song_left") then

@@ -1,9 +1,3 @@
-if not _G.EIVH then
-    _G.EIVH = {}
-	EIVH.TotalKills = 0
-	EIVH.CivKill = 0
-end
-
 if not EIVHUD.Options:GetValue("HUD/Tab") then 
     return
 end
@@ -153,39 +147,43 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			placer:new_row()
 		end
 
-		placer:add_bottom(self._left:fine_text({
-			vertical = "top",
-			align = "left",
-			font_size = medium_font_size,
-			font = tweak_data.hud_stats.objectives_font,
-			text = managers.localization:to_upper_text("hud_objective")
-		}), 16)
-		placer:new_row(8)
-
-		local row_w = self._left:w() - placer:current_left() * 2
-
-		for i, data in pairs(managers.objectives:get_active_objectives()) do
+		if EIVHUD.Options:GetValue("HUD/ShowObjectives") > 1 then
 			placer:add_bottom(self._left:fine_text({
-				word_wrap = true,
-				wrap = true,
+				vertical = "top",
 				align = "left",
-				text = utf8.to_upper(data.text),
-				font = tweak_data.hud.medium_font,
-				font_size = small_font_size,
-				w = row_w
-			}))
-			placer:add_bottom(self._left:fine_text({
-				word_wrap = true,
-				wrap = true,
-				font_size = 24,
-				align = "left",
-				text = data.description,
-				font = tweak_data.hud_stats.objective_desc_font,
-				font_size = tiny_font_size,
-				w = row_w
-			}), 0)
+				font_size = medium_font_size,
+				font = tweak_data.hud_stats.objectives_font,
+				text = managers.localization:to_upper_text("hud_objective")
+			}), 16)
+			placer:new_row(8)
+
+			local row_w = self._left:w() - placer:current_left() * 2
+			for i, data in pairs(managers.objectives:get_active_objectives()) do
+				local current = data.current_amount and data.current_amount .. "/" or ""
+				local amount = data.amount or ""
+				local objective_loot = current .. amount
+				placer:add_bottom(self._left:fine_text({
+					word_wrap = true,
+					wrap = true,
+					align = "left",
+					text = utf8.to_upper(data.text .. "  " .. objective_loot),
+					font = tweak_data.hud.medium_font,
+					font_size = small_font_size,
+					w = row_w
+				}))
+				placer:add_bottom(self._left:fine_text({
+					word_wrap = true,
+					wrap = true,
+					align = "left",
+					text = data.description,
+					font = tweak_data.hud_stats.objective_desc_font,
+					font_size = tiny_font_size,
+					w = row_w
+				}), 0)
+			end
 		end
 		placer:new_row(8)
+
 		if EIVHUD.Options:GetValue("HUD/ShowHostages") == 2 then
 			placer:add_bottom(self._left:fine_text({
 				keep_w = true,
@@ -508,11 +506,75 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			loot_panel:set_leftbottom(0, self._left:h() - 16)
 		end
 	end)
+	
+	if EIVHUD.Options:GetValue("HUD/ShowTimer") > 1 then
+		Hooks:PostHook(HUDStatsScreen, 'recreate_right', "EIVHUD_recreate_right", function(self)
+			local clock_panel = self:_create_clock(self._right)
+			clock_panel:set_right(self._right:w() - self._rightpos[2])
+			clock_panel:set_y(self._rightpos[2])
+		end)
+		
+		function HUDStatsScreen:feed_heist_time(time)
+			if (self._last_heist_time or 0) < math.floor(time) or time < 0 then
+				self._last_heist_time = math.abs(time)
+			end
+		end
+		
+		function HUDStatsScreen:modify_heist_time(time)
+			if time and time ~= 0 then
+				self._last_heist_time = (self._last_heist_time or 0) + time
+			end
+		end
+
+		function HUDStatsScreen:_create_clock(panel)
+			local clock_panel = ExtendedPanel:new(panel, { w = panel:w() * 0.5, h = tweak_data.hud_stats.objectives_font })
+			local placer = UiPlacer:new(0, 0)
+
+			placer:add_row(clock_panel:fine_text({
+				name = "time_text",
+				color = Color.white,
+				font_size = tweak_data.hud_stats.loot_size,
+				font = tweak_data.hud_stats.objectives_font,
+				text = "00:00:00",
+				align = "right",
+				w = clock_panel:w() - tweak_data.hud_stats.loot_size - 5,
+				keep_w = true
+			}))
+			placer:add_right(clock_panel:fit_bitmap({
+				name = "time_icon",
+				texture = "guis/textures/pd2/skilltree/drillgui_icon_faster",
+				color = Color.white,
+				w = tweak_data.hud_stats.loot_size,
+				h = tweak_data.hud_stats.loot_size,
+			}), 5)
+
+			self._clock_panel = clock_panel
+			self._last_clock_update_t = 0
+			return clock_panel
+		end
+
+		Hooks:PostHook(HUDStatsScreen, 'update', "EIVHUD_update", function(self, t, ...)
+			if self._clock_panel and (self._next_clock_update_t or 0) < t then
+				local text = ""
+				local time = math.floor(self._last_heist_time or 0)
+				local hours = math.floor(time / 3600)
+				time = time - hours * 3600
+				local minutes = math.floor(time / 60)
+				time = time - minutes * 60
+				local seconds = math.round(time)
+				text = hours > 0 and string.format("%02d:%02d:%02d", hours, minutes, seconds) or string.format("%02d:%02d", minutes, seconds)
+				self._clock_panel:child("time_text"):set_text(text)
+				self._clock_panel:set_visible(true)
+				self._next_clock_update_t = t + 1
+			end
+		end)
+	end
 elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 	local large_font = tweak_data.menu.pd2_large_font
 	local medium_font = tweak_data.menu.pd2_medium_font
 	local small_font_size = tweak_data.menu.pd2_small_font_size
 	local medium_font_size = tweak_data.menu.pd2_medium_font_size
+	local tiny_font_size = tweak_data.menu.pd2_tiny_font_size
 
 	Hooks:OverrideFunction(HUDStatsScreenSkirmish, "recreate_left", function(self)
 		self._left:clear()
@@ -545,7 +607,43 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			}))
 			placer:new_row()
 		end
+		
+		if EIVHUD.Options:GetValue("HUD/ShowObjectives") > 1 then
+			local objectives_title = self._left:fine_text({
+				vertical = "top",
+				align = "left",
+				font_size = medium_font_size,
+				font = tweak_data.hud_stats.objectives_font,
+				text = managers.localization:to_upper_text("hud_objective")
+			})
 
+			placer:add_bottom(objectives_title, 16)
+			placer:new_row(8)
+
+			local row_w = self._left:w() - placer:current_left() * 2
+
+			for i, data in pairs(managers.objectives:get_active_objectives()) do
+				placer:add_bottom(self._left:fine_text({
+					word_wrap = true,
+					wrap = true,
+					align = "left",
+					text = utf8.to_upper(data.text),
+					font = medium_font,
+					font_size = small_font_size,
+					w = row_w
+				}))
+				placer:add_bottom(self._left:fine_text({
+					word_wrap = true,
+					wrap = true,
+					align = "left",
+					text = data.description,
+					font = tweak_data.hud_stats.objective_desc_font,
+					font_size = tiny_font_size,
+					w = row_w
+				}), 0)
+			end
+		end
+		
 		placer:new_row(8)
 		if EIVHUD.Options:GetValue("HUD/ShowHostages") == 2 then
 			placer:add_bottom(self._left:fine_text({
@@ -554,7 +652,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 				font_size = small_font_size,
 				color = Color.white,
 				text = "HOSTAGES: " .. managers.groupai:state():hostage_count()
-			}), 0)
+			}), 30)
 		end
 
 		local total_kills = EIVH.TotalKills
@@ -671,6 +769,20 @@ elseif RequiredScript == "lib/managers/statisticsmanager" then
             EIVH.TotalKills = EIVH.TotalKills + 1
         end
     end)
+elseif RequiredScript == "lib/managers/hud/hudobjectives" then
+	if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
+		Hooks:OverrideFunction(HUDObjectives, "activate_objective", function(self, data)
+			local objectives_panel = self._hud_panel:child("objectives_panel")
+			objectives_panel:set_alpha(0)
+			objectives_panel:set_visible(false)
+		end)
+	end
+elseif RequiredScript == "lib/managers/hud/hudheisttimer" then
+	if EIVHUD.Options:GetValue("HUD/ShowTimer") == 2 then
+		Hooks:PostHook(HUDHeistTimer, "init", "EIVHUD_HUDHeistTimer_init", function(self)
+			self._timer_text:set_alpha(0)
+		end)
+	end
 elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "init", "EIVHUD_ObjectInteractionManager_init", function(self)
 		self.loot_count = {}
