@@ -508,9 +508,9 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 	
 	if EIVHUD.Options:GetValue("HUD/ShowTimer") > 1 then
 		Hooks:PostHook(HUDStatsScreen, 'recreate_right', "EIVHUD_recreate_right", function(self)
-			local clock_panel = self:_create_clock(self._right)
-			clock_panel:set_right(self._right:w() - self._rightpos[2])
-			clock_panel:set_y(self._rightpos[2])
+			local time_panel = self:_create_time(self._right)
+			time_panel:set_right(self._right:w() - self._rightpos[2])
+			time_panel:set_y(self._rightpos[2])
 		end)
 		
 		function HUDStatsScreen:feed_heist_time(time)
@@ -525,21 +525,21 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			end
 		end
 
-		function HUDStatsScreen:_create_clock(panel)
-			local clock_panel = ExtendedPanel:new(panel, { w = panel:w() * 0.5, h = tweak_data.hud_stats.objectives_font })
+		function HUDStatsScreen:_create_time(panel)
+			local time_panel = ExtendedPanel:new(panel, { w = panel:w() * 0.5, h = tweak_data.hud_stats.objectives_font })
 			local placer = UiPlacer:new(0, 0)
 
-			placer:add_row(clock_panel:fine_text({
+			placer:add_row(time_panel:fine_text({
 				name = "time_text",
 				color = Color.white,
 				font_size = tweak_data.hud_stats.loot_size,
 				font = tweak_data.hud_stats.objectives_font,
 				text = "00:00:00",
 				align = "right",
-				w = clock_panel:w() - tweak_data.hud_stats.loot_size - 5,
+				w = time_panel:w() - tweak_data.hud_stats.loot_size - 5,
 				keep_w = true
 			}))
-			placer:add_right(clock_panel:fit_bitmap({
+			placer:add_right(time_panel:fit_bitmap({
 				name = "time_icon",
 				texture = "guis/textures/pd2/skilltree/drillgui_icon_faster",
 				color = Color.white,
@@ -547,13 +547,13 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				h = tweak_data.hud_stats.loot_size,
 			}), 5)
 
-			self._clock_panel = clock_panel
-			self._last_clock_update_t = 0
-			return clock_panel
+			self._time_panel = time_panel
+			self._last_time_update_t = 0
+			return time_panel
 		end
 
 		Hooks:PostHook(HUDStatsScreen, 'update', "EIVHUD_update", function(self, t, ...)
-			if self._clock_panel and (self._next_clock_update_t or 0) < t then
+			if self._time_panel and (self._next_time_update_t or 0) < t then
 				local text = ""
 				local time = math.floor(self._last_heist_time or 0)
 				local hours = math.floor(time / 3600)
@@ -562,9 +562,9 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				time = time - minutes * 60
 				local seconds = math.round(time)
 				text = hours > 0 and string.format("%02d:%02d:%02d", hours, minutes, seconds) or string.format("%02d:%02d", minutes, seconds)
-				self._clock_panel:child("time_text"):set_text(text)
-				self._clock_panel:set_visible(true)
-				self._next_clock_update_t = t + 1
+				self._time_panel:child("time_text"):set_text(text)
+				self._time_panel:set_visible(true)
+				self._next_time_update_t = t + 1
 			end
 		end)
 	end
@@ -772,6 +772,7 @@ elseif RequiredScript == "lib/managers/statisticsmanager" then
 elseif RequiredScript == "lib/managers/hud/hudobjectives" then
 	if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
 		Hooks:OverrideFunction(HUDObjectives, "activate_objective", function(self, data)
+			if not self._hud_panel:child("objectives_panel") then return end
 			local objectives_panel = self._hud_panel:child("objectives_panel")
 			objectives_panel:set_alpha(0)
 			objectives_panel:set_visible(false)
