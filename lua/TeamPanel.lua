@@ -148,7 +148,16 @@ elseif RequiredScript == "lib/managers/playermanager" then
 			teammate_panel:animate_bulletstorm(bullet_storm[2] - Application:time())
 		end
 	end)
+elseif RequiredScript == "lib/managers/hud/hudplayercustody" then
+	if EIVHUD.Options:GetValue("HUD/Scale") ~= 1 then
+		Hooks:PostHook(HUDPlayerCustody , "set_negotiating_visible", "EIVHUD_HUDPlayerCustody_set_negotiating_visible", function(self, ...)
+			self._hud.trade_text2:set_visible(false)
+		end)
 
+		Hooks:PostHook(HUDPlayerCustody , "set_can_be_trade_visible", "EIVHUD_HUDPlayerCustody_set_can_be_trade_visible", function(self, ...)
+			self._hud.trade_text1:set_visible(false)
+		end)
+	end
 elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	function HUDTeammate:_animate_bullet_storm(weapons_panel, duration)
 		if not weapons_panel then

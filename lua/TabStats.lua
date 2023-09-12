@@ -58,7 +58,6 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 		if stage_data then
 			if managers.crime_spree:is_active() then
-				local level_data = managers.job:current_level_data()
 				local mission = managers.crime_spree:get_mission(managers.crime_spree:current_played_mission())
 
 				if mission then
@@ -596,12 +595,13 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		lb:child("bg"):set_alpha(1)
 
 		local placer = UiPlacer:new(10, 10, 0, 8)
-
+		
+		local waves = EIVHUD.Options:GetValue("HUD/ShowWaves") > 1 and "\n" .. managers.hud._hud_assault_corner:get_completed_waves_string() or ""
 		local level_data = managers.job:current_level_data()
 
 		if level_data then
 			placer:add_bottom(self._left:fine_text({
-				text = managers.localization:to_upper_text(level_data.name_id),
+				text = managers.localization:to_upper_text(level_data.name_id) .. waves,
 				font = large_font,
 				font_size = tweak_data.hud_stats.objectives_title_size
 			}))
