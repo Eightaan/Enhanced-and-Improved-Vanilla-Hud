@@ -84,6 +84,9 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		Hooks:PreHook(HUDManager, "_setup_player_info_hud_pd2", "HMH_Scale_setup_player_info_hud_pd2", function(self, ...)
 			managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect)
 		end)
+		
+		Hooks:OverrideFunction(HUDManager, "set_custody_negotiating_visible", function(self, visible) self._hud_player_custody:set_negotiating_visible(false) end)
+		Hooks:OverrideFunction(HUDManager, "set_custody_can_be_trade_visible", function(self, visible) self._hud_player_custody:set_can_be_trade_visible(false) end)
 
 		core:module("CoreGuiDataManager")
 		Hooks:OverrideFunction(GuiDataManager, "layout_scaled_fullscreen_workspace", function(self, ws)
@@ -148,16 +151,6 @@ elseif RequiredScript == "lib/managers/playermanager" then
 			teammate_panel:animate_bulletstorm(bullet_storm[2] - Application:time())
 		end
 	end)
-elseif RequiredScript == "lib/managers/hud/hudplayercustody" then
-	if EIVHUD.Options:GetValue("HUD/Scale") ~= 1 then
-		Hooks:PostHook(HUDPlayerCustody , "set_negotiating_visible", "EIVHUD_HUDPlayerCustody_set_negotiating_visible", function(self, ...)
-			self._hud.trade_text2:set_visible(false)
-		end)
-
-		Hooks:PostHook(HUDPlayerCustody , "set_can_be_trade_visible", "EIVHUD_HUDPlayerCustody_set_can_be_trade_visible", function(self, ...)
-			self._hud.trade_text1:set_visible(false)
-		end)
-	end
 elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	function HUDTeammate:_animate_bullet_storm(weapons_panel, duration)
 		if not weapons_panel then
@@ -225,10 +218,10 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_ammo_amount_by_type", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
 		if EIVHUD.Options:GetValue("HUD/Trueammo") then
 			local weapon_panel = self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
-			if self._main_player then
-				if current_left - current_clip >= 0 then
-					current_left = current_left - current_clip
-				end
+			local ammo_clip = weapon_panel:child("ammo_clip")
+
+			if self._alt_ammo and ammo_clip:visible() then
+				current_left = math.max(0, current_left - max_clip - (current_clip - max_clip))
 			end
 
 			local low_ammo_color = Color(1, 0.9, 0.9, 0.3)
@@ -242,7 +235,6 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 			local color_clip = out_of_clip and Color(1 , 0.9 , 0.3 , 0.3)
 			local ammo_total = weapon_panel:child("ammo_total")
 			local zero = current_left < 10 and "00" or current_left < 100 and "0" or ""
-			local ammo_clip = weapon_panel:child("ammo_clip")
 			local zero_clip = current_clip < 10 and "00" or current_clip < 100 and "0" or ""
 			local ammo_font = string.len(current_left) < 4 and 24 or 20
 			color_total = color_total or low_ammo and (low_ammo_color)
