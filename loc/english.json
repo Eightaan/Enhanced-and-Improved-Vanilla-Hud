@@ -26,6 +26,8 @@
 	"Hide_hostages" : "Hide hostages",
 	"Enhanced and Improved Vanilla HudTabTitleID" : "Improved Tabstats",
 	"Enhanced and Improved Vanilla HudTabDescID" : "Adds additional information to the tabstats such as kills/accuracy/trade delay.",
+	"Enhanced and Improved Vanilla HudChatTitleID" : "Simple Chat",
+	"Enhanced and Improved Vanilla HudChatDescID" : "Makes the in-game chat less obtrusive.",
 	"Enhanced and Improved Vanilla HudHideMaskInstructionTitleID" : "Hide mask on instructions",
 	"Enhanced and Improved Vanilla HudHideMaskInstructionDescID" : "Hides the text on the hud telling you which button to use to put the mask on.",
 	"Enhanced and Improved Vanilla HudBulletstormTitleID" : "Bulletstorm Icon",
