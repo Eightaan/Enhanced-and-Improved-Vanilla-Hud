@@ -1,4 +1,4 @@
-if not EIVHUD.Options:GetValue("HUD/Chat") then
+if not EIVHUD.Options:GetValue("HUD/Chat") or VHUDPlus and VHUDPlus:getSetting({"HUDChat", "ENABLED"}, true) then
 	return
 end
 
