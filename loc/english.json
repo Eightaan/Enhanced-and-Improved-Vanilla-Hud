@@ -1,6 +1,5 @@
 {	
 	"EIVHUD_inspire_cooldown_text" : "Inspire still has a cooldown of",
-	"EIVHUD_int_locked" : "PRESS $BTN_CANCEL TO INTERRUPT",
 	"hud_stats_bags_unsecured" : "UNSECURED LOOT",
 	"hud_stats_unopened_crates" : "UNOPENED CRATES",
 
@@ -24,7 +23,7 @@
 	"Show_on_hud" : "Show on hud",
 	"Tabstats" : "Display in tabstats",
 	"Hide_hostages" : "Hide hostages",
-	"Enhanced and Improved Vanilla HudTabTitleID" : "Improved Tabstats",
+	"Enhanced and Improved Vanilla HudTabTitleID" : "Extended Tabstats",
 	"Enhanced and Improved Vanilla HudTabDescID" : "Adds additional information to the tabstats such as kills/accuracy/trade delay.",
 	"Enhanced and Improved Vanilla HudChatTitleID" : "Simple Chat",
 	"Enhanced and Improved Vanilla HudChatDescID" : "Makes the in-game chat less obtrusive.",
@@ -42,7 +41,7 @@
 	"Enhanced and Improved Vanilla HudArmorerCooldownTimerColorDescID" : "Choosa a color for the cooldown timer.",
 	"Enhanced and Improved Vanilla HudGraceCooldownTimerColorTitleID" : "Health Cooldown Timer Color",
 	"Enhanced and Improved Vanilla HudGraceCooldownTimerColorDescID" : "Choosa a color for the cooldown timer.",
-	"Enhanced and Improved Vanilla HudTrueammoTitleID" : "Improved Ammo Display",
+	"Enhanced and Improved Vanilla HudTrueammoTitleID" : "Animated Ammo Display",
 	"Enhanced and Improved Vanilla HudTrueammoDescID" : "The ammo display will be animaited when reloading or picking up ammo.",
 	"Enhanced and Improved Vanilla HudGreencivTitleID" : "Green Civilian Pacified Marker",
 	"Enhanced and Improved Vanilla HudGreencivDescID" : "Marks controlled civilians green on the hud.",
@@ -58,12 +57,6 @@
 	"Enhanced and Improved Vanilla HudINTERACTIONOptionsButtonTitleID" : "Interaction",
 	"Enhanced and Improved Vanilla HudINTERACTIONOptionsButtonDescID" : "Interaction options.",
 	
-	"Enhanced and Improved Vanilla HudToggleInteractionTitleID" : "Toggle Interaction (0.0 = Disabled)",
-	"Enhanced and Improved Vanilla HudToggleInteractionDescID" : "Pick how long an interaction have to be for the toggle to activate.",
-	"Enhanced and Improved Vanilla HudInteruptHintTitleID" : "Show Interrupt Hint",
-	"Enhanced and Improved Vanilla HudInteruptHintDescID" : "Displays a text when the interaction is locked and how to cancel the interaction.",
-	"Enhanced and Improved Vanilla HudInteruptKeyTitleID" : "Equipment Interupt Key",
-	"Enhanced and Improved Vanilla HudInteruptKeyDescID" : "Changes the cancel key for interacting from the interaction key to the deploy equipment key (default G).", 
 	"Enhanced and Improved Vanilla HudBagInfoTitleID" : "Detailed Lootbag Text",
 	"Enhanced and Improved Vanilla HudBagInfoDescID" : "Displays the bag content in the interaction text",
 	
