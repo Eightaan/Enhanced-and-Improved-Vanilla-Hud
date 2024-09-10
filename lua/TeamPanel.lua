@@ -85,8 +85,13 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect)
 		end)
 		
-		Hooks:OverrideFunction(HUDManager, "set_custody_negotiating_visible", function(self, visible) self._hud_player_custody:set_negotiating_visible(false) end)
-		Hooks:OverrideFunction(HUDManager, "set_custody_can_be_trade_visible", function(self, visible) self._hud_player_custody:set_can_be_trade_visible(false) end)
+		Hooks:PostHook( HUDPlayerCustody , "set_negotiating_visible", "HMH_HUDPlayerCustody_set_negotiating_visible", function(self, ...)
+			self._hud.trade_text2:set_visible(false)
+		end)
+
+		Hooks:PostHook( HUDPlayerCustody , "set_can_be_trade_visible", "HMH_HUDPlayerCustody_set_can_be_trade_visible", function(self, ...)
+			self._hud.trade_text1:set_visible(false)
+		end)
 
 		core:module("CoreGuiDataManager")
 		Hooks:OverrideFunction(GuiDataManager, "layout_scaled_fullscreen_workspace", function(self, ws)
