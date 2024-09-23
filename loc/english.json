@@ -65,8 +65,6 @@
 	
 	"Enhanced and Improved Vanilla HudTeamLoadoutTitleID" : "Extended Team Briefing Loadout",
 	"Enhanced and Improved Vanilla HudTeamLoadoutDescID" : "Display throwables and Second deployables in the preplanning.",
-	"Enhanced and Improved Vanilla HudMenuFilterTitleID" : "Menu Color Grading",
-	"Enhanced and Improved Vanilla HudMenuFilterDescID" : "This will disable the default blue menu color filter. The menu color grading can be changed in the games video options under advanced settings.",
 	"Enhanced and Improved Vanilla HudLevelDisplayTitleID" : "Display rank of joining players",
 	"Enhanced and Improved Vanilla HudLevelDisplayDescID" : "Displays the rank of players joining mid-game.",
 	"Enhanced and Improved Vanilla HudSkipDialogsTitleID" : "No Confirm Dialogs",
@@ -75,8 +73,8 @@
 	"Enhanced and Improved Vanilla HudSkipBlackscreenDescID" : "Automatically skip the black loadingscreens.",
 	"Enhanced and Improved Vanilla HudPickCardTitleID" : "Pick Lootcard",
 	"Enhanced and Improved Vanilla HudPickCardDescID" : "Automatically pick a lootcard at the loot screen.",
-	"Enhanced and Improved Vanilla HudSkipXPTitleID" : "Skip XP Screen (0.0 = Disabled)",
+	"Enhanced and Improved Vanilla HudSkipXPTitleID" : "Skip XP Screen (0 = Disabled)",
 	"Enhanced and Improved Vanilla HudSkipXPDescID" : "Choose how long it will take for the automatic screen skip to activate.",
-	"Enhanced and Improved Vanilla HudSkipCardTitleID" : "Skip Lootcard Screen (0.0 = Disabled)",
-	"Enhanced and Improved Vanilla HudSkipCardDescID" : "Choose how long it will take for the automatic screen skip to activate." 
+	"Enhanced and Improved Vanilla HudSkipCardTitleID" : "Skip Lootcard Screen (0 = Disabled)",
+	"Enhanced and Improved Vanilla HudSkipCardDescID" : "Choose how long it will take for the automatic screen skip to activate."
 }

@@ -29,7 +29,6 @@
 		<hook file="Inspirecooldown.lua" source_file="lib/units/beings/player/states/playerstandard"/>
 		<hook file="TeamLoadout.lua" source_file="lib/managers/menu/missionbriefinggui"/>
 		<hook file="LevelDisplay.lua" source_file="lib/managers/menumanagerdialogs"/>
-		<hook file="MainMenu.lua" source_file="lib/managers/menu/menuscenemanager"/>
 		<hook file="BagInfo.lua" source_file="lib/units/interactions/interactionext"/>
     </Hooks>
 	
@@ -73,8 +72,6 @@
 			</option_group>
 			<option_group name="MENU">
 				<option type="bool" default_value="true" name="TeamLoadout"/>
-				<divider name="override_divider" size="16"/>
-				<option type="bool" default_value="false" name="MenuFilter"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="false" name="SkipDialogs"/>
 				<option type="bool" default_value="false" name="SkipBlackscreen"/>
