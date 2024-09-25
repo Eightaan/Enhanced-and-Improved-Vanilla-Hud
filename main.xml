@@ -1,5 +1,5 @@
 <mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD" core_class="Core.lua">
-	<AssetUpdates id="43776" provider="modworkshop" version="2.2"/>
+	<AssetUpdates id="43776" provider="modworkshop" version="2.3"/>
     <Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/statisticsmanager"/>
 		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
@@ -26,7 +26,6 @@
 		<hook file="Chat.lua" source_file="lib/managers/hud/hudchat"/>
 		<hook file="Hostages.lua" source_file="lib/managers/hud/hudassaultcorner"/>
 		<hook file="PacifiedCivs.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
-		<hook file="Inspirecooldown.lua" source_file="lib/units/beings/player/states/playerstandard"/>
 		<hook file="TeamLoadout.lua" source_file="lib/managers/menu/missionbriefinggui"/>
 		<hook file="LevelDisplay.lua" source_file="lib/managers/menumanagerdialogs"/>
 		<hook file="BagInfo.lua" source_file="lib/units/interactions/interactionext"/>
@@ -61,6 +60,9 @@
 				<option type="bool" default_value="true" name="Bulletstorm"/>
 				<divider name="override_divider" size="8"/>
 				<option type="bool" default_value="true" name="Inspire"/>
+				<option type="number" min="0" max="123" step="1" decimal_count="0" show_value="true" default_value="123" name="TimerX"/>
+				<option type="number" min="0" max="67" step="1" decimal_count="0" show_value="true" default_value="43" name="TimerY"/>
+				<divider name="override_divider" size="8"/>
 				<option type="bool" default_value="true" name="Greenciv"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="Infoboxes"/>

@@ -1,5 +1,4 @@
-{	
-	"EIVHUD_inspire_cooldown_text" : "Inspire still has a cooldown of",
+{
 	"hud_stats_bags_unsecured" : "UNSECURED LOOT",
 	"hud_stats_unopened_crates" : "UNOPENED CRATES",
 
@@ -51,8 +50,14 @@
 	"Enhanced and Improved Vanilla HudPagerJamDescID" : "If an ECM jammer doesn't block pagers from going off the timer won't be visible.",
 	"Enhanced and Improved Vanilla HudHideBoxTitleID" : "Hide Ecm background box",
 	"Enhanced and Improved Vanilla HudHideBoxDescID" : "Hides the background and white box edges from the timer display.",
-	"Enhanced and Improved Vanilla HudInspireTitleID" : "Inspire Cooldown Hint",
-	"Enhanced and Improved Vanilla HudInspireDescID" : "Adds a hint text displaying remaining cooldown time for inspire.",
+	
+
+	"Enhanced and Improved Vanilla HudInspireTitleID" : "Inspire Cooldown Timer",
+	"Enhanced and Improved Vanilla HudInspireDescID" : "Displays a timer for the inspire cooldown.",
+	"Enhanced and Improved Vanilla HudTimerXTitleID" : "Horisontal Position",
+	"Enhanced and Improved Vanilla HudTimerXDescID" : "Change the horisontal position of the timer. \n The change will be visible next time the timer shows up on the screen.",
+	"Enhanced and Improved Vanilla HudTimerYTitleID" : "Vertical Position",
+	"Enhanced and Improved Vanilla HudTimerYDescID" : "Change the vertical position of the timer. \n The change will be visible next time the timer shows up on the screen.",
 	
 	"Enhanced and Improved Vanilla HudINTERACTIONOptionsButtonTitleID" : "Interaction",
 	"Enhanced and Improved Vanilla HudINTERACTIONOptionsButtonDescID" : "Interaction options.",
