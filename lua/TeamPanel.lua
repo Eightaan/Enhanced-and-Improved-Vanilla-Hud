@@ -66,8 +66,8 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
             	o:set_visible(true)
 				timer_bg:set_visible(true)
 				icon:set_visible(true)
-				panel:set_x(10 * EIVHUD.Options:GetValue("HUD/TimerX"))
-				panel:set_y(10 * EIVHUD.Options:GetValue("HUD/TimerY"))
+				panel:set_x(10 * EIVHUD.Options:GetValue("HUD/INSPIRE/TimerX"))
+				panel:set_y(10 * EIVHUD.Options:GetValue("HUD/INSPIRE/TimerY"))
             	local t_left = t
             	while t_left >= 0.1 do
                 	t_left = t_left - coroutine.yield()
@@ -193,10 +193,10 @@ elseif RequiredScript == "lib/managers/playermanager" then
 			if upgrade_value == 0 then return end
 			local teammate_panel = managers.hud:get_teammate_panel_by_peer()
 			if teammate_panel then
-			    if EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.update_cooldown_timer then
+			    if EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownRadial") and teammate_panel.update_cooldown_timer then
 				    teammate_panel:update_cooldown_timer(upgrade_value[2])
 				end
-				if EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.animate_invulnerability then
+				if EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownRadial") and teammate_panel.animate_invulnerability then
 				    teammate_panel:animate_invulnerability(upgrade_value[1])
 				end
 			end
@@ -206,10 +206,10 @@ elseif RequiredScript == "lib/managers/playermanager" then
 			if upgrade_value == 0 then return end
 			local teammate_panel = managers.hud:get_teammate_panel_by_peer()
 			if teammate_panel then
-			    if EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.health_cooldown_timer then
+			    if EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownRadial") and teammate_panel.health_cooldown_timer then
 				    teammate_panel:health_cooldown_timer(2)
 				end
-				if EIVHUD.Options:GetValue("HUD/ArmorerCooldownRadial") and teammate_panel.animate_health_invulnerability then
+				if EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownRadial") and teammate_panel.animate_health_invulnerability then
 				    teammate_panel:animate_health_invulnerability(2)
 				end
 			end
@@ -217,7 +217,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 	end)
 
 	Hooks:PostHook(PlayerManager, "add_to_temporary_property", "add_to_temporary_property_hophud", function (self, name)
-		if not EIVHUD.Options:GetValue("HUD/Bulletstorm") or name ~= "bullet_storm" then
+		if not EIVHUD.Options:GetValue("HUD/PLAYER/Bulletstorm") or name ~= "bullet_storm" then
 			return
 		end
 
@@ -235,7 +235,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 	Hooks:PreHook(PlayerManager, "disable_cooldown_upgrade", "HMH_PlayerManager_disable_cooldown_upgrade", function (self, category, upgrade)
 		local upgrade_value = self:upgrade_value(category, upgrade)
 		if upgrade_value == 0 then return end
-		if EIVHUD.Options:GetValue("HUD/Inspire") then
+		if EIVHUD.Options:GetValue("HUD/INSPIRE/Inspire") then
 			EIVH:update_inspire_timer(upgrade_value[2])
 		end
 	end)
@@ -304,7 +304,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	end
 
 	Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_ammo_amount_by_type", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
-		if EIVHUD.Options:GetValue("HUD/Trueammo") then
+		if EIVHUD.Options:GetValue("HUD/PLAYER/Trueammo") then
 			local weapon_panel = self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
 			local ammo_clip = weapon_panel:child("ammo_clip")
 
@@ -527,7 +527,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
                 	t_left = t_left - coroutine.yield()
 					t_format = t_left < 10 and "%.1f" or "%.f"
                 	o:set_text(string.format(t_format, t_left))
-					o:set_color(EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimerColor") or Color.blue)
+					o:set_color(EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimerColor") or Color.blue)
             	end
 				self._armor_invulnerability_timer = false
             	o:set_visible(false)
@@ -544,12 +544,12 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
     		o:set_color(Color(1, 1, 1, 1))
 			self._armor_invulnerability_timer = true
 			armor_icon:set_visible(self._armor_invulnerability_timer and not self._health_timer)
-			armor_icon:set_alpha(not EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and 1 or 0.4)
+			armor_icon:set_alpha(not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and 1 or 0.4)
     		o:set_visible(true)
     		over(duration, function (p)
       			o:set_color(Color(1, 1 - p, 1, 1))
     		end)
-			if not EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") then 
+			if not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") then 
 				self._armor_invulnerability_timer = false
 				armor_icon:set_visible(self._armor_invulnerability_timer)
 			end
@@ -571,7 +571,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
                 	t_left = t_left - coroutine.yield()
 					t_format = t_left < 10 and "%.1f" or "%.f"
                 	o:set_text(string.format(t_format, t_left))
-					o:set_color(EIVHUD.Options:GetValue("HUD/GraceCooldownTimerColor") or Color.green)
+					o:set_color(EIVHUD.Options:GetValue("HUD/PLAYER/GraceCooldownTimerColor") or Color.green)
             	end
 				self._health_timer = false
 				armor_icon:set_visible(self._armor_invulnerability_timer)
@@ -591,13 +591,13 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	  	    self._health_timer = true
 			armor_icon:set_visible(not self._health_timer)
 			health_icon:set_visible(self._health_timer)
-			health_icon:set_alpha(not EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and 1 or 0.4)
+			health_icon:set_alpha(not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and 1 or 0.4)
     		o:set_visible(true)
     		over(duration, function (p)
       			o:set_color(Color(1, 1 - p, 1, 1))
     		end)
     		o:set_visible(false)
-			if not EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") then
+			if not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") then
 			    self._health_timer = false
 				health_icon:set_visible(self._health_timer)
 				armor_icon:set_visible(self._armor_invulnerability_timer)
@@ -630,7 +630,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 				self._health_cooldown_icon:set_visible(false)
 				self._cooldown_health_timer:set_visible(false)
 			else
-				self._cooldown_health_timer:set_visible(EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and self._health_timer)
+				self._cooldown_health_timer:set_visible(EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and self._health_timer)
 				self._health_cooldown_icon:set_visible(self._health_timer)
 			end
     	end
@@ -646,7 +646,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	    		end
         	end)
 			self._radial_health_panel:child("animate_health_circle"):set_alpha(1)
-			self._cooldown_health_timer:set_visible(EIVHUD.Options:GetValue("HUD/ArmorerCooldownTimer") and self._health_timer)
+			self._cooldown_health_timer:set_visible(EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and self._health_timer)
 			self._health_cooldown_icon:set_visible(self._health_timer)
      	end)
     end)

@@ -796,7 +796,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			family = 						{ money = 1, },
 			watchdogs_2 = 					{ coke = 10, },
 			watchdogs_2_day =				{ coke = 10, },
-			framing_frame_3 = 				{ gold = 16,
+			framing_frame_3 = 				{ gold = 16, },
 			mia_1 = 						{ money = 1, },
 			welcome_to_the_jungle_1 =		{ money = 1, gold = 1 },
 			welcome_to_the_jungle_1_night =	{ money = 1, gold = 1 },
