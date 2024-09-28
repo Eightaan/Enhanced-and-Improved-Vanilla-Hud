@@ -92,6 +92,18 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			self._hud_statsscreen:modify_heist_time(time)
 		end
 	end)
+	
+	Hooks:PostHook(HUDManager, "set_stamina_value", "EIVHUD_HUDManager_set_stamina_value", function (self, value, ...)
+	    if EIVHUD.Options:GetValue("HUD/PLAYER/Stamina") and self._teammate_panels[self.PLAYER_PANEL].set_stamina_current then --VHUDPlus Compatibility
+		    self._teammate_panels[self.PLAYER_PANEL]:set_stamina_current(value)
+		end
+	end)
+
+	Hooks:PostHook(HUDManager, "set_max_stamina", "EIVHUD_HUDManager_set_max_stamina", function (self, value, ...)
+	    if EIVHUD.Options:GetValue("HUD/PLAYER/Stamina") and self._teammate_panels[self.PLAYER_PANEL] then --VHUDPlus Compatibility
+		    self._teammate_panels[self.PLAYER_PANEL]:set_stamina_max(value)
+		end
+	end)
 
 	Hooks:PostHook(HUDManager, "set_teammate_custom_radial", "EIVHUD_HUDManager_set_teammate_custom_radial", function (self, i, data, ...)
     	local hud = managers.hud:script( PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
@@ -156,15 +168,15 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
     end)
 	
 	if EIVHUD.Options:GetValue("HUD/Scale") ~= 1 then
-		Hooks:PreHook(HUDManager, "_setup_player_info_hud_pd2", "HMH_Scale_setup_player_info_hud_pd2", function(self, ...)
+		Hooks:PreHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_Scale_setup_player_info_hud_pd2", function(self, ...)
 			managers.gui_data:layout_scaled_fullscreen_workspace(managers.hud._saferect)
 		end)
 		
-		Hooks:PostHook( HUDPlayerCustody , "set_negotiating_visible", "HMH_HUDPlayerCustody_set_negotiating_visible", function(self, ...)
+		Hooks:PostHook( HUDPlayerCustody , "set_negotiating_visible", "EIVHUD_HUDPlayerCustody_set_negotiating_visible", function(self, ...)
 			self._hud.trade_text2:set_visible(false)
 		end)
 
-		Hooks:PostHook( HUDPlayerCustody , "set_can_be_trade_visible", "HMH_HUDPlayerCustody_set_can_be_trade_visible", function(self, ...)
+		Hooks:PostHook( HUDPlayerCustody , "set_can_be_trade_visible", "EIVHUD_HUDPlayerCustody_set_can_be_trade_visible", function(self, ...)
 			self._hud.trade_text1:set_visible(false)
 		end)
 
@@ -185,6 +197,14 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			local y = res.y / 2 - sw / (w / h) / 2
 			ws:set_screen(w, h, x, y, math.min(sw, sh * (w / h)))
 		end)
+	end
+elseif RequiredScript == "lib/units/beings/player/playerdamage" then
+	local PlayerDamage_restore_health = PlayerDamage.restore_health
+	function PlayerDamage:restore_health(health_restored, ...)
+		if health_restored * self._healing_reduction == 0 then
+			return
+		end
+		return PlayerDamage_restore_health(self, health_restored, ...)
 	end
 elseif RequiredScript == "lib/managers/playermanager" then
 	Hooks:PreHook(PlayerManager, "activate_temporary_upgrade", "activate_temporary_upgrade_armor_timer", function (self, category, upgrade)
@@ -232,7 +252,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 		end
 	end)
 	
-	Hooks:PreHook(PlayerManager, "disable_cooldown_upgrade", "HMH_PlayerManager_disable_cooldown_upgrade", function (self, category, upgrade)
+	Hooks:PreHook(PlayerManager, "disable_cooldown_upgrade", "EIVHUD_PlayerManager_disable_cooldown_upgrade", function (self, category, upgrade)
 		local upgrade_value = self:upgrade_value(category, upgrade)
 		if upgrade_value == 0 then return end
 		if EIVHUD.Options:GetValue("HUD/INSPIRE/Inspire") then
@@ -240,6 +260,32 @@ elseif RequiredScript == "lib/managers/playermanager" then
 		end
 	end)
 elseif RequiredScript == "lib/managers/hud/hudteammate" then
+	Hooks:PostHook(HUDTeammate, "init", "EIVHUD_Stamina_init", function (self, ...)
+		if self._main_player then
+			self:_create_circle_stamina()
+		end
+	end)
+
+	function HUDTeammate:_create_circle_stamina()
+		local radial_health_panel = self._panel:child("player"):child("radial_health_panel")
+		self._stamina_circle = radial_health_panel:bitmap({
+			name = "radial_stamina",
+			texture = "guis/dlcs/coco/textures/pd2/hud_absorb_stack_fg",
+			render_template = "VertexColorTexturedRadial",
+			w = radial_health_panel:w() * 0.7,
+			h = radial_health_panel:h() * 0.7,
+			layer = 3,
+		})
+		self._stamina_circle:set_center(radial_health_panel:child("radial_health"):center())
+		self._stamina_circle:set_visible(EIVHUD.Options:GetValue("HUD/PLAYER/Stamina"))
+ 
+        -- Hides the stamina display used by VHUDPlus
+		if self._stamina_bar and self._stamina_line then
+		    self._stamina_bar:set_alpha(0)
+			self._stamina_line:set_alpha(0)
+		end
+	end
+
 	function HUDTeammate:_animate_bullet_storm(weapons_panel, duration)
 		if not weapons_panel then
 			return
@@ -517,6 +563,9 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 		local timer = self._cooldown_timer
     	if t and t > 1 and timer then
         	timer:stop()
+			if self._stamina_circle then
+				self._stamina_circle:set_alpha(0)
+			end
         	timer:animate(function(o)
             	o:set_visible(true)
             	local t_left = t
@@ -533,6 +582,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
             	o:set_visible(false)
 				armor_icon:set_visible(false)
 				health_icon:set_visible(self._health_timer)
+				self._stamina_circle:set_alpha(not self._health_timer and 1 or 0)
         	end)
     	end
 	end
@@ -542,6 +592,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
   		self._radial_health_panel:child("radial_armor"):animate(function (o)
 		    local armor_icon = self._cooldown_icon 
     		o:set_color(Color(1, 1, 1, 1))
+			self._stamina_circle:set_alpha(0)
 			self._armor_invulnerability_timer = true
 			armor_icon:set_visible(self._armor_invulnerability_timer and not self._health_timer)
 			armor_icon:set_alpha(not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and 1 or 0.4)
@@ -549,7 +600,8 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
     		over(duration, function (p)
       			o:set_color(Color(1, 1 - p, 1, 1))
     		end)
-			if not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") then 
+			if not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") then
+				self._stamina_circle:set_alpha(1) 
 				self._armor_invulnerability_timer = false
 				armor_icon:set_visible(self._armor_invulnerability_timer)
 			end
@@ -561,6 +613,9 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 		local timer = self._cooldown_health_timer
     	if t and t > 1 and timer then
 			timer:stop()
+			if self._stamina_circle then
+				self._stamina_circle:set_alpha(0)
+			end
         	timer:animate(function(o)
             	o:set_visible(true)
             	local t_left = t + 13
@@ -577,6 +632,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 				armor_icon:set_visible(self._armor_invulnerability_timer)
             	o:set_visible(false)
 				health_icon:set_visible(self._health_timer)
+				self._stamina_circle:set_alpha(not self._armor_invulnerability_timer and 1 or 0)
         	end)
     	end
 	end
@@ -588,6 +644,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 			local armor_icon = self._cooldown_icon
     		o:set_color(Color(1, 1, 1, 1))
 			self._radial_health_panel:child("animate_health_circle"):set_alpha(1)
+			self._stamina_circle:set_alpha(0)
 	  	    self._health_timer = true
 			armor_icon:set_visible(not self._health_timer)
 			health_icon:set_visible(self._health_timer)
@@ -598,6 +655,9 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
     		end)
     		o:set_visible(false)
 			if not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") then
+				if not (self._armor_invulnerability_timer or self._injector_active or self._active_ability) then
+					self._stamina_circle:set_alpha(1)
+				end
 			    self._health_timer = false
 				health_icon:set_visible(self._health_timer)
 				armor_icon:set_visible(self._armor_invulnerability_timer)
@@ -605,9 +665,29 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 			o:set_visible(false)
   		end)
 	end
+	
+	function HUDTeammate:set_stamina_max(value)
+    	if not self._max_stamina or self._max_stamina ~= value then
+	  	   	self._max_stamina = value
+    	end
+   	end
+	
+	function HUDTeammate:set_stamina_current(value)
+        if self._stamina_circle then
+    	    self._stamina_circle:set_color(Color(1, value/self._max_stamina, 0, 0))
+    	    self:set_stamina_visibility(not self._condition_icon:visible())
+    	end
+    end
+	
+	function HUDTeammate:set_stamina_visibility(value)
+    	if self._stamina_circle and self._stamina_circle:visible() ~= value then
+    		self._stamina_circle:set_visible(value)
+	    end
+    end
 
 	Hooks:PostHook(HUDTeammate, "set_condition", "EIVHUD_HUDTeammate_set_condition", function (self, icon_data, ...)
 	    local custody = icon_data ~= "mugshot_normal"
+		self:set_stamina_visibility(not custody and EIVHUD.Options:GetValue("HUD/PLAYER/Stamina"))
 		local timer = self._cooldown_timer
 		local health_timer = self._cooldown_health_timer
 		local icon = self._cooldown_icon
@@ -623,6 +703,10 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	Hooks:PostHook(HUDTeammate, "set_ability_radial", "EIVHUD_HUDTeammate_set_ability_radial", function (self, data, ...)
         local progress = data.current / data.total
         if self._main_player then
+			local stamina_alpha = self._health_timer and 0 or 1
+			if self._stamina_circle then
+				self._stamina_circle:set_alpha(progress > 0 and 0 or stamina_alpha) 
+			end
 			if self._radial_health_panel:child("animate_health_circle") then
 				self._radial_health_panel:child("animate_health_circle"):set_alpha(progress > 0 and 0 or 1)
 			end
@@ -640,11 +724,15 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
       	self._radial_health_panel:child("radial_custom"):animate(function (o)
         	over(time_left, function (p)
 	    	    if self._main_player then
+					self._stamina_circle:set_alpha(0)
 					self._radial_health_panel:child("animate_health_circle"):set_alpha(0)
 					self._health_cooldown_icon:set_visible(false)
 					self._cooldown_health_timer:set_visible(false)
 	    		end
         	end)
+			if not self._health_timer then
+				self._stamina_circle:set_alpha(1) 
+			end
 			self._radial_health_panel:child("animate_health_circle"):set_alpha(1)
 			self._cooldown_health_timer:set_visible(EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") and self._health_timer)
 			self._health_cooldown_icon:set_visible(self._health_timer)

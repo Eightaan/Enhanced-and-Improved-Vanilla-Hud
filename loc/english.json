@@ -14,6 +14,8 @@
 	"Enhanced and Improved Vanilla HudPLAYEROptionsButtonTitleID" : "Player Hud",
 	"Enhanced and Improved Vanilla HudPLAYEROptionsButtonDescID" : "Player hud options.",
 	
+	"Enhanced and Improved Vanilla HudStaminaTitleID" : "Stamina Display",
+	"Enhanced and Improved Vanilla HudStaminaDescID" : "Displays stamina on the hud.\n Requires a heist restart to disable.",
 	"Enhanced and Improved Vanilla HudBulletstormTitleID" : "Bulletstorm Icon",
 	"Enhanced and Improved Vanilla HudBulletstormDescID" : "Displays an infinite ammo symbol when bulletstorm is active.",
 	"Enhanced and Improved Vanilla HudArmorerCooldownRadialTitleID" : "Enable the Invulnerability Duaration/Cooldown",
