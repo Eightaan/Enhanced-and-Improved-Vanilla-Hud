@@ -1,7 +1,8 @@
 <mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD" core_class="Core.lua">
-	<AssetUpdates id="43776" provider="modworkshop" version="2.7"/>
+	<AssetUpdates id="43776" provider="modworkshop" version="2.8"/>
     <Hooks directory="lua">
-		<hook file="TabStats.lua" source_file="lib/managers/statisticsmanager"/>
+		<hook file="KillCounter.lua" source_file="lib/managers/statisticsmanager"/>
+		
 		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
 		<hook file="TabStats.lua" source_file="lib/managers/moneymanager"/>
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
@@ -51,10 +52,16 @@
 					<option type="bool" default_value="true" name="Bulletstorm"/>
 					<option type="bool" default_value="true" name="Stamina"/>
 				</option_group>
-				<option_group name="INSPIRE">
+				<option_group name="BUFFLIST">
 					<option type="bool" default_value="true" name="Inspire"/>
 					<option type="number" min="0" max="123" step="1" decimal_count="0" show_value="true" default_value="123" name="TimerX"/>
 					<option type="number" min="0" max="67" step="1" decimal_count="0" show_value="true" default_value="43" name="TimerY"/>
+					<divider name="override_divider" size="16"/>
+					<option type="bool" default_value="true" name="Bloodthirst"/>
+					<option type="number" min="2" max="16" step="1" decimal_count="0" show_value="true" default_value="6" name="BloodthirstMinKills"/>
+					<divider name="override_divider" size="8"/>
+					<option type="number" min="0" max="123" step="1" decimal_count="0" show_value="true" default_value="123" name="BloodthirstX"/>
+					<option type="number" min="0" max="67" step="1" decimal_count="0" show_value="true" default_value="38" name="BloodthirstY"/>
 				</option_group>
 				<option_group name="ECM">
 					<option type="bool" default_value="true" name="Infoboxes"/>

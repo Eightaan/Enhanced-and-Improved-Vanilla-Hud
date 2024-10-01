@@ -6,34 +6,43 @@ local Color = Color
 local math_lerp = math.lerp
 if RequiredScript == "lib/managers/hudmanagerpd2" then
 
-	Hooks:PostHook(HUDManager, "_player_hud_layout", "EIVH_inspire_cooldown_timer", function(self)
-		EIVH:init()
+	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_bufflist_setup_player_info_hud_pd2", function(self, ...)
+		self._hud_buff_list = HUDBuffList:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
 	end)
+	
+	function HUDManager:Set_bloodthirst(buff)
+       self._hud_buff_list:Set_bloodthirst(buff)
+    end
 
-	function EIVH:init()
+	function HUDManager:update_inspire_timer(buff)
+       self._hud_buff_list:update_inspire_timer(buff)
+    end
+
+	HUDBuffList = HUDBuffList or class()
+	function HUDBuffList:init()
 		if managers.hud ~= nil then 
 			self.hud = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
 			self._cooldown_panel = self.hud.panel:panel({
-            name = "cooldown_panel",
-            x = 0,
-            y = 0
-        })
+				name = "cooldown_panel",
+				x = 0,
+				y = 0
+			})
 			self.cooldown_text = self._cooldown_panel:text({
 				layer = 2,
 				visible = false,
 				text = "0.0",
 				font = tweak_data.hud.medium_font_noshadow,
-				font_size = 20,
-				x = 14,
-				y = 30,
+				font_size = 16,
+				x = 13,
+				y = 25,
 				color = Color.white
 			})
 			self._inspire_cooldown_icon = self._cooldown_panel:bitmap({
 				name = "inspire_cooldown_icon",
 				texture = "guis/textures/pd2/skilltree_2/icons_atlas_2",
 				texture_rect = { 4* 80, 9 * 80, 80, 80 },
-				w = 38,
-				h = 38,
+				w = 28,
+				h = 28,
 				x = 0,
 				y = 0,
 				color = Color.white,
@@ -43,10 +52,49 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			self._inspire_cooldown_timer_bg = self._cooldown_panel:bitmap({
 				name = "inspire_cooldown_timer_bg",
 				texture = "guis/textures/pd2/crimenet_marker_glow",
-				w = 42,
-				h = 42,
+				w = 36,
+				h = 36,
 				x = 0,
-				y = 20,
+				y = 15,
+				color = Color("66ffff"),
+				alpha = 0.5,
+				visible = false,
+				layer = 0
+			})
+			self._bloodthirst_panel = self.hud.panel:panel({
+				name = "bloodthirst_panel",
+				x = 0,
+				y = 0
+			})
+			self.bloodthirst_text = self._bloodthirst_panel:text({
+				layer = 2,
+				visible = false,
+				text = "0.0",
+				font = tweak_data.hud.medium_font_noshadow,
+				font_size = 16,
+				x = 12,
+				y = 25,
+				color = Color.white
+			})
+			self._bloodthirst_icon = self._bloodthirst_panel:bitmap({
+				name = "bloodthirst_icon",
+				texture = "guis/textures/pd2/skilltree_2/icons_atlas_2",
+				texture_rect = { 11* 80, 6 * 80, 80, 80 },
+				w = 28,
+				h = 28,
+				x = 0,
+				y = 0,
+				color = Color.white,
+				visible = false,
+				layer = 1
+			})
+			self._bloodthirst_bg = self._bloodthirst_panel:bitmap({
+				name = "bloodthirst_bg",
+				texture = "guis/textures/pd2/crimenet_marker_glow",
+				w = 36,
+				h = 36,
+				x = 0,
+				y = 15,
 				color = Color("66ffff"),
 				alpha = 0.5,
 				visible = false,
@@ -55,7 +103,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		end
 	end
 
-	function EIVH:update_inspire_timer(t)
+	function HUDBuffList:update_inspire_timer(t)
 		local timer = self.cooldown_text
 		local panel = self._cooldown_panel
 		local timer_bg = self._inspire_cooldown_timer_bg
@@ -66,19 +114,45 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
             	o:set_visible(true)
 				timer_bg:set_visible(true)
 				icon:set_visible(true)
-				panel:set_x(10 * EIVHUD.Options:GetValue("HUD/INSPIRE/TimerX"))
-				panel:set_y(10 * EIVHUD.Options:GetValue("HUD/INSPIRE/TimerY"))
+				panel:set_x(10 * EIVHUD.Options:GetValue("HUD/BUFFLIST/TimerX"))
+				panel:set_y(10 * EIVHUD.Options:GetValue("HUD/BUFFLIST/TimerY"))
             	local t_left = t
             	while t_left >= 0.1 do
                 	t_left = t_left - coroutine.yield()
 					t_format = t_left < 10 and "%.1f" or "%.f"
                 	o:set_text(string.format(t_format, t_left))
             	end
+				o:set_text(false)
 				icon:set_visible(false)
 				timer_bg:set_visible(false)
-            	o:set_text(false)
         	end)
     	end
+	end
+
+	LocalizationManager:add_localized_strings({["EIVH_bloodthirst_multiplier"] = "$NUM"})
+	function HUDBuffList:Set_bloodthirst(buff)
+		local panel = self._bloodthirst_panel
+		local bloodthirst_text = self.bloodthirst_text
+		local bloodthirst_icon = self._bloodthirst_icon
+		local bloodthirst_timer_bg = self._bloodthirst_bg
+		if buff >= EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstMinKills") then
+			bloodthirst_text:set_visible(true)
+			bloodthirst_icon:set_visible(true)
+			bloodthirst_timer_bg:set_visible(true)
+			panel:set_x(10 * EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstX"))
+			panel:set_y(10 * EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstY"))
+			bloodthirst_text:set_text(managers.localization:to_upper_text("EIVH_bloodthirst_multiplier", { NUM = buff }).."x")
+			bloodthirst_text:animate(function(o)
+				over(1 , function(p)
+					local n = 1 - math.sin((p / 2 ) * 180)
+					bloodthirst_text:set_font_size(math_lerp(16, 16 * 1.16 , n))
+				end)
+			end)
+		else
+			bloodthirst_text:set_visible(false)
+			bloodthirst_icon:set_visible(false)
+			bloodthirst_timer_bg:set_visible(false)
+		end
 	end
 
 	Hooks:PostHook(HUDManager, "feed_heist_time", "EIVHUD_HUDManager_feed_heist_time", function (self, time, ...)
@@ -255,8 +329,15 @@ elseif RequiredScript == "lib/managers/playermanager" then
 	Hooks:PreHook(PlayerManager, "disable_cooldown_upgrade", "EIVHUD_PlayerManager_disable_cooldown_upgrade", function (self, category, upgrade)
 		local upgrade_value = self:upgrade_value(category, upgrade)
 		if upgrade_value == 0 then return end
-		if EIVHUD.Options:GetValue("HUD/INSPIRE/Inspire") then
-			EIVH:update_inspire_timer(upgrade_value[2])
+		if EIVHUD.Options:GetValue("HUD/BUFFLIST/Inspire") then
+			managers.hud:update_inspire_timer(upgrade_value[2])
+		end
+	end)
+	
+	Hooks:PostHook(PlayerManager, 'set_melee_dmg_multiplier', "EIVHUD_update_Bloodthirst", function(self, value)
+		if not self:has_category_upgrade("player", "melee_damage_stacking") then return end
+		if self._melee_dmg_mul ~= 1 and EIVHUD.Options:GetValue("HUD/BUFFLIST/Bloodthirst") then
+			managers.hud:Set_bloodthirst(self._melee_dmg_mul)
 		end
 	end)
 elseif RequiredScript == "lib/managers/hud/hudteammate" then

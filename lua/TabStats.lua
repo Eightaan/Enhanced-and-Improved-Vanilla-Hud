@@ -2,13 +2,6 @@ if not EIVHUD.Options:GetValue("HUD/Tab") then
     return
 end
 
-local civies =
-{
-    civilian = true,
-    civilian_female = true,
-    civilian_mariachi = true
-}
-
 if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 	local large_font = tweak_data.menu.pd2_large_font
 	local medium_font = tweak_data.menu.pd2_medium_font
@@ -755,19 +748,6 @@ elseif RequiredScript == "lib/managers/moneymanager" then
 elseif RequiredScript == "lib/managers/trademanager" then
     Hooks:PostHook(TradeManager, 'on_player_criminal_death', "EIVHUD_on_player_criminal_death", function(...)
         managers.money:ResetCivilianKills()
-    end)
-elseif RequiredScript == "lib/managers/statisticsmanager" then
-    Hooks:PostHook( StatisticsManager, "killed", "EIVHUD_StatisticsManager_killed", function(self, data, ...)
-        if civies[data.name] then
-            return
-        end
-    	local bullets = data.variant == "bullet"
-    	local melee = data.variant == "melee" or data.weapon_id and tweak_data.blackmarket.melee_weapons[data.weapon_id]
-    	local booms = data.variant == "explosion"
-    	local other = not bullets and not melee and not booms
-        if bullets or melee or booms or other then
-            EIVH.TotalKills = EIVH.TotalKills + 1
-        end
     end)
 elseif RequiredScript == "lib/managers/hud/hudobjectives" then
 	if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
