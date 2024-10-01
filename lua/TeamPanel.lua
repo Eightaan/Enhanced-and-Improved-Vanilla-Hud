@@ -145,7 +145,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			bloodthirst_text:animate(function(o)
 				over(1 , function(p)
 					local n = 1 - math.sin((p / 2 ) * 180)
-					bloodthirst_text:set_font_size(math_lerp(16, 16 * 1.16 , n))
+					o:set_font_size(math_lerp(16, 16 * 1.16 , n))
 				end)
 			end)
 		else
@@ -326,7 +326,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 		end
 	end)
 	
-	Hooks:PreHook(PlayerManager, "disable_cooldown_upgrade", "EIVHUD_PlayerManager_disable_cooldown_upgrade", function (self, category, upgrade)
+	Hooks:PostHook(PlayerManager, "disable_cooldown_upgrade", "EIVHUD_PlayerManager_disable_cooldown_upgrade", function (self, category, upgrade)
 		local upgrade_value = self:upgrade_value(category, upgrade)
 		if upgrade_value == 0 then return end
 		if EIVHUD.Options:GetValue("HUD/BUFFLIST/Inspire") then
@@ -334,7 +334,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 		end
 	end)
 	
-	Hooks:PostHook(PlayerManager, 'set_melee_dmg_multiplier', "EIVHUD_update_Bloodthirst", function(self, value)
+	Hooks:PostHook(PlayerManager, 'set_melee_dmg_multiplier', "EIVHUD_update_Bloodthirst", function(self, ...)
 		if not self:has_category_upgrade("player", "melee_damage_stacking") then return end
 		if self._melee_dmg_mul ~= 1 and EIVHUD.Options:GetValue("HUD/BUFFLIST/Bloodthirst") then
 			managers.hud:Set_bloodthirst(self._melee_dmg_mul)
