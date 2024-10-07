@@ -6,7 +6,7 @@ local Color = Color
 local math_lerp = math.lerp
 if RequiredScript == "lib/managers/hudmanagerpd2" then
 
-	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "hmh_bufflist_setup_player_info_hud_pd2", function(self, ...)
+	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_bufflist_setup_player_info_hud_pd2", function(self, ...)
         self._hud_buff_list = HUDBuffList:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
     end)
 
@@ -394,7 +394,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 		end
 	end)
 	
-	Hooks:PostHook(PlayerManager, "disable_cooldown_upgrade", "HMH_PlayerManager_disable_cooldown_upgrade", function(self, category, upgrade)
+	Hooks:PostHook(PlayerManager, "disable_cooldown_upgrade", "EIVHUD_PlayerManager_disable_cooldown_upgrade", function(self, category, upgrade)
         local upgrade_value = self:upgrade_value(category, upgrade)
         if upgrade_value and upgrade_value[1] ~= 0 and EIVHUD.Options:GetValue("HUD/BUFFLIST/Inspire") then
             managers.hud:update_inspire_timer(upgrade_value[2])

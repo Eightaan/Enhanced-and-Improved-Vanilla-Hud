@@ -1,8 +1,8 @@
 if RequiredScript == "lib/states/ingamewaitingforplayers" then
     Hooks:PostHook(IngameWaitingForPlayersState, "update", "EIVHUD_IngameWaitingForPlayersState_update", function(self, ...)
-        local skipPromptShown = self._skip_prompt_shown
+        local skipPromtShown = self._skip_promt_shown
         local skipBlackScreen = EIVHUD.Options:GetValue("MENU/SkipBlackscreen")
-        if skipPromptShown and skipBlackScreen then
+        if skipPromtShown and skipBlackScreen then
             self:_skip()
         end
     end)
