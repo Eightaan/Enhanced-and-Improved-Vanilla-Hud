@@ -796,7 +796,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
         }
         self.ignore_ids = {
             [300457] = true,
-            [300458] = true,
+            [300458] = true
         }
     end)
 
