@@ -17,7 +17,7 @@
 	"Enhanced and Improved Vanilla HudTeam_bgTitleID" : "Hide Panel Background",
 	"Enhanced and Improved Vanilla HudTeam_bgDescID" : "Hides the background on the player panels",
 	"Enhanced and Improved Vanilla HudStaminaTitleID" : "Stamina Display",
-	"Enhanced and Improved Vanilla HudStaminaDescID" : "Displays stamina on the hud.\n Requires a heist restart to disable.",
+	"Enhanced and Improved Vanilla HudStaminaDescID" : "Displays stamina on the hud.",
 	"Enhanced and Improved Vanilla HudBulletstormTitleID" : "Bulletstorm Icon",
 	"Enhanced and Improved Vanilla HudBulletstormDescID" : "Displays an infinite ammo symbol when bulletstorm is active.",
 	"Enhanced and Improved Vanilla HudArmorerCooldownRadialTitleID" : "Invulnerability Duaration/Cooldown",
