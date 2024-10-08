@@ -412,6 +412,14 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 		if self._main_player then
 			self:_create_circle_stamina()
 		end
+		if EIVHUD.Options:GetValue("HUD/PLAYER/Team_bg") then
+			self._panel:child("name_bg"):set_visible(false)
+			self._cable_ties_panel:child("bg"):set_visible(false)
+			self._deployable_equipment_panel:child("bg"):set_visible(false)
+			self._grenades_panel:child("bg"):set_visible(false)
+			self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("bg"):set_visible(false)
+			self._player_panel:child("weapons_panel"):child("secondary_weapon_panel"):child("bg"):set_visible(false)
+		end
 	end)
 
 	function HUDTeammate:_create_circle_stamina()
