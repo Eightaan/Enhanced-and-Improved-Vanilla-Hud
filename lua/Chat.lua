@@ -42,7 +42,7 @@ Hooks:PostHook(HUDChat, "init", "EIVHUD_HUDChat_init", function(self, ws, hud, .
 		gradient_points = {
 			0,
 			Color.white:with_alpha(0),
-			0.2,
+			0,
 			Color.white:with_alpha(0),
 			1,
 			Color.white:with_alpha(0)
@@ -128,43 +128,7 @@ Hooks:PostHook(HUDChat, "init", "EIVHUD_HUDChat_init", function(self, ws, hud, .
 end)
 
 Hooks:PostHook(HUDChat, "update_caret", "EIVHUD_HUDChat_update_caret", function(self, ...)
-	local text = self._input_panel:child("input_text")
-	local caret = self._input_panel:child("caret")
-	local s, e = text:selection()
-	local x, y, w, h = text:selection_rect()
-
-	if s == 0 and e == 0 then
-		if text:align() == "center" then
-			x = text:world_x() + text:w() / 2
-		else
-			x = text:world_x()
-		end
-
-		y = text:world_y()
-	end
-
-	h = text:h()
-
-	if w < 3 then
-		w = 3
-	end
-
-	if not self._focus then
-		w = 0
-		h = 0
-	end
-
-	caret:set_world_shape(x, y + 2, w, h - 4)
-	self:set_blinking(s == e and self._focus)
-
-	local mid = x / self._input_panel:child("input_bg"):w()
-
 	self._input_panel:child("input_bg"):set_gradient_points({
-		0,
-		Color.white:with_alpha(0),
-		mid,
-		Color.white:with_alpha(0),
-		1,
-		Color.white:with_alpha(0)
+		0, Color.white:with_alpha(0), 0, Color.white:with_alpha(0), 1, Color.white:with_alpha(0)
 	})
 end)

@@ -14,10 +14,12 @@ Hooks:PostHook( StatisticsManager, "killed", "EIVHUD_StatisticsManager_killed", 
 	local booms = data.variant == "explosion"
 	local other = not (bullets or melee or booms)
 	local is_valid_kill = bullets or melee or booms or other
-	if is_valid_kill then
+
+	if is_valid_kill and EIVHUD.Options:GetValue("HUD/Tab") then
 		EIVH.TotalKills = EIVH.TotalKills + 1
-		if melee then
-			managers.hud:Set_bloodthirst(0)
-		end
+	end
+
+	if melee and EIVHUD.Options:GetValue("HUD/BUFFLIST/Bloodthirst") then
+		managers.hud:Set_bloodthirst(0)
 	end
 end)
