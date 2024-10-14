@@ -79,8 +79,6 @@
 	"Enhanced and Improved Vanilla HudTabDescID" : "Adds additional information to the tabstats such as kills/accuracy/trade delay.",
 	"Enhanced and Improved Vanilla HudChatTitleID" : "Simple Chat",
 	"Enhanced and Improved Vanilla HudChatDescID" : "Makes the in-game chat less obtrusive.",
-	"Enhanced and Improved Vanilla HudHideMaskInstructionTitleID" : "Hide mask on instructions",
-	"Enhanced and Improved Vanilla HudHideMaskInstructionDescID" : "Hides the text on the hud telling you which button to use to put the mask on.",
 	"Enhanced and Improved Vanilla HudGreencivTitleID" : "Green Civilian Pacified Marker",
 	"Enhanced and Improved Vanilla HudGreencivDescID" : "Marks controlled civilians green on the hud.",
 	"Enhanced and Improved Vanilla HudScreenEffectTitleID" : "Swansong / Kingpin Screen Effects",

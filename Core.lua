@@ -30,8 +30,6 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EIVH", fun
 	if EIVHUD.Options:GetValue("MENU/SkipBlackscreen") then
 	    localized_strings["hud_skip_blackscreen"] = ""
 	end
-	if EIVHUD.Options:GetValue("HUD/HideMaskInstruction") then
-		localized_strings["hud_instruct_mask_on"] = ""
-	end
+	localized_strings["hud_instruct_mask_on"] = ""
     loc:add_localized_strings(localized_strings)
 end)
