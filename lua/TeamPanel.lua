@@ -236,7 +236,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	end)
 	
 	Hooks:PostHook(HUDManager, "set_stamina_value", "EIVHUD_HUDManager_set_stamina_value", function (self, value, ...)
-	    if EIVHUD.Options:GetValue("HUD/PLAYER/Stamina") and self._teammate_panels[self.PLAYER_PANEL].set_stamina_current  then --VHUDPlus Compatibility
+	    if EIVHUD.Options:GetValue("HUD/PLAYER/Stamina") and self._teammate_panels[self.PLAYER_PANEL].set_stamina_current then --VHUDPlus Compatibility
 		    self._teammate_panels[self.PLAYER_PANEL]:set_stamina_current(value)
 		elseif self._teammate_panels[self.PLAYER_PANEL].set_stamina_visibility then --VHUDPlus Compatibility
 			self._teammate_panels[self.PLAYER_PANEL]:set_stamina_visibility(false)
