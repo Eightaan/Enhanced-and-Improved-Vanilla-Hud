@@ -30,6 +30,8 @@
 	"Enhanced and Improved Vanilla HudGraceCooldownTimerColorDescID" : "Choosa a color for the cooldown timer.",
 	"Enhanced and Improved Vanilla HudTrueammoTitleID" : "Animated Ammo Display",
 	"Enhanced and Improved Vanilla HudTrueammoDescID" : "The ammo display will be animaited when reloading or picking up ammo.",
+	"Enhanced and Improved Vanilla HudDownsTitleID" : "Alternative Down Counter",
+	"Enhanced and Improved Vanilla HudDownsDescID" : "Changes the way the downs are presented on the hud.",
 
 	"Enhanced and Improved Vanilla HudECMOptionsButtonTitleID" : "ECM Timer",
 	"Enhanced and Improved Vanilla HudECMOptionsButtonDescID" : "ECM timer options.",

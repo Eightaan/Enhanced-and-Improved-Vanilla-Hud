@@ -900,4 +900,31 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 			self._health_cooldown_icon:set_visible(self._health_timer)
      	end)
     end)
+	
+	Hooks:PostHook(HUDTeammate, "set_revives_amount", "EIVHUD_HUDTeammate_set_revives_amount", function(self, revive_amount, ...)
+        if EIVHUD.Options:GetValue("HUD/PLAYER/Downs") and revive_amount then
+            local teammate_panel = self._panel:child("player")
+            local revive_panel = teammate_panel:child("revive_panel")
+            local revive_amount_text = revive_panel:child("revive_amount")
+            local revive_arrow = revive_panel:child("revive_arrow")
+            local revive_bg = revive_panel:child("revive_bg")
+            local team_color = self._peer_id and tweak_data.chat_colors[self._peer_id] or (not self._ai and tweak_data.chat_colors[managers.network:session():local_peer():id()]) or Color.white
+			local bg_alpha = EIVHUD.Options:GetValue("HUD/PLAYER/Team_bg") and 0 or 0.6
+			
+            if revive_amount_text then
+                revive_amount_text:set_text(tostring(math.max(revive_amount - 1, 0)))
+                revive_amount_text:set_color(revive_amount > 1 and team_color or Color.red)
+				revive_amount_text:set_font_size(17)
+				
+				if revive_arrow then
+					revive_arrow:set_color(revive_amount > 1 and team_color or Color.red)
+				end
+				
+				if revive_bg then
+					revive_bg:set_color(Color.black / 3)
+					revive_bg:set_alpha(bg_alpha)
+				end
+            end
+        end
+    end)
 end
