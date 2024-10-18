@@ -213,7 +213,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
 			color = Color.white,
-			text = kill_count	
+			text = kill_count
 		}), 16)
 
 		local total_accuracy = managers.statistics:session_hit_accuracy()
