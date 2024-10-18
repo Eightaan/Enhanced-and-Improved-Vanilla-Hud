@@ -1,9 +1,3 @@
-if not _G.EIVH then
-	_G.EIVH = {}
-	EIVH.TotalKills = 0
-	EIVH.CivKill = 0
-end
-
 EIVHUD.show_hostages = {
 	"Show_on_hud",
 	"Tabstats",

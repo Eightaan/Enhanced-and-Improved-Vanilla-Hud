@@ -9,11 +9,12 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 	local small_font_size = tweak_data.menu.pd2_small_font_size
 	local tiny_font_size = tweak_data.menu.pd2_tiny_font_size
 
-	function HUDStatsScreen:_trade_delay_time(time)
-		time = math.max(math.floor(time), 0)
-		local minutes = math.floor(time / 60)
-		time = time - minutes * 60
-		local seconds = math.round(time)
+	function HUDStatsScreen:_trade_delay_time()
+		local trade_delay = managers.money:get_trade_delay()
+		trade_delay = math.max(math.floor(trade_delay), 0)
+		local minutes = math.floor(trade_delay / 60)
+		trade_delay = trade_delay - minutes * 60
+		local seconds = math.round(trade_delay)
 		local text = ""
 
 		return text .. (minutes < 10 and "0" .. minutes or minutes) .. ":" .. (seconds < 10 and "0" .. seconds or seconds)
@@ -185,18 +186,18 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				text = "HOSTAGES: " .. managers.groupai:state():hostage_count()
 			}), 30)
 		end
-		local civ_kills = managers.statistics:session_total_civilian_kills() ~= 0 and managers.localization:to_upper_text("victory_civilians_killed_penalty") .. " " .. managers.statistics:session_total_civilian_kills() .. managers.localization:get_default_macro("BTN_SKULL") or ""
+		local total_civ_kills = managers.money:TotalCivKills() or 0
+		local civ_kills = total_civ_kills ~= 0 and managers.localization:to_upper_text("victory_civilians_killed_penalty") .. " " .. total_civ_kills .. managers.localization:get_default_macro("BTN_SKULL") or ""
 		placer:add_bottom(self._left:fine_text({
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
 			color = Color.white,
 			text = civ_kills
-		}), 1)
-				
-		local trade_delay = (5 + (EIVH.CivKill * 30))
-		local total_time = trade_delay and trade_delay > 30					
-		local delay = total_time and managers.localization:to_upper_text("hud_trade_delay", {TIME = tostring(self:_trade_delay_time(trade_delay))}) or ""
+		}), 30)
+
+		local total_time = managers.money:get_trade_delay() > 30
+		local delay = total_time and managers.localization:to_upper_text("hud_trade_delay", {TIME = self:_trade_delay_time()}) or ""
 		placer:add_bottom(self._left:fine_text({
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
@@ -205,14 +206,14 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			text = is_whisper_mode and "" or delay
 		}), 0)
 
-		local total_kills = EIVH.TotalKills
+		local total_kills = managers.statistics:TotalKills() or 0
 		local kill_count = total_kills and managers.localization:to_upper_text("menu_aru_job_3_obj") ..": ".. total_kills .. managers.localization:get_default_macro("BTN_SKULL") or ""
 		placer:add_bottom(self._left:fine_text({
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
 			color = Color.white,
-			text = kill_count
+			text = kill_count	
 		}), 16)
 
 		local total_accuracy = managers.statistics:session_hit_accuracy()
@@ -648,7 +649,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			}), 30)
 		end
 
-		local total_kills = EIVH.TotalKills
+		local total_kills = managers.statistics:TotalKills() or 0
 		local kill_count = total_kills and managers.localization:to_upper_text("menu_aru_job_3_obj") ..": ".. total_kills ..managers.localization:get_default_macro("BTN_SKULL") or ""
 		placer:add_bottom(self._left:fine_text({
 			keep_w = true,
@@ -737,13 +738,55 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		loot_panel:set_size(placer:most_rightbottom())
 		loot_panel:set_leftbottom(0, self._left:h() - 16)
 	end)
-elseif RequiredScript == "lib/managers/moneymanager" then
-	Hooks:PostHook(MoneyManager, 'civilian_killed', "EIVHUD_civilian_killed", function(self)
-		EIVH.CivKill = EIVH.CivKill + 1
+elseif RequiredScript == "lib/managers/statisticsmanager" then
+	local civies = {civilian = true, civilian_female = true, civilian_mariachi = true}
+
+	Hooks:PostHook(StatisticsManager, "killed", "EIVHUD_StatisticsManager_killed", function(self, data, ...)
+		if civies[data.name] then
+			return
+		end
+		local bullets = data.variant == "bullet"
+		local melee = data.variant == "melee" or data.weapon_id and tweak_data.blackmarket.melee_weapons[data.weapon_id]
+		local booms = data.variant == "explosion"
+		local other = not (bullets or melee or booms)
+		local is_valid_kill = bullets or melee or booms or other
+
+		if is_valid_kill then
+			self:update_kills()
+		end
 	end)
 
+	function StatisticsManager:update_kills()
+		self._total_kills = (self._total_kills or 0) + 1
+	end
+
+	function StatisticsManager:TotalKills()
+		return self._total_kills or 0
+	end
+elseif RequiredScript == "lib/managers/moneymanager" then
+	Hooks:PostHook(MoneyManager, 'civilian_killed', "EIVHUD_civilian_killed", function(self)
+		self:update_civ_kills()
+	end)
+	
+	function MoneyManager:update_civ_kills()
+		self._total_civ_kills = (self._total_civ_kills or 0) + 1
+		 self:update_trade_delay()
+	end
+	
+	function MoneyManager:update_trade_delay()
+		self._trade_delay = (self._trade_delay or 5) + 30
+	end
+	
+	function MoneyManager:get_trade_delay()
+		return self._trade_delay or 5
+	end
+	
+	function MoneyManager:TotalCivKills()
+		return self._total_civ_kills or 0
+	end
+
 	function MoneyManager:ResetCivilianKills()
-		EIVH.CivKill = 0
+		self._trade_delay = 5
 	end
 elseif RequiredScript == "lib/managers/trademanager" then
 	Hooks:PostHook(TradeManager, 'on_player_criminal_death', "EIVHUD_on_player_criminal_death", function(...)
