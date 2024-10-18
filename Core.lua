@@ -1,5 +1,5 @@
 if not _G.EIVH then
-    _G.EIVH = {}
+	_G.EIVH = {}
 	EIVH.TotalKills = 0
 	EIVH.CivKill = 0
 end
@@ -26,10 +26,10 @@ EIVHUD.show_objectives = {
 }
 
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EIVH", function(loc)
-    local localized_strings = {}
+	local localized_strings = {}
 	if EIVHUD.Options:GetValue("MENU/SkipBlackscreen") then
-	    localized_strings["hud_skip_blackscreen"] = ""
+		localized_strings["hud_skip_blackscreen"] = ""
 	end
 	localized_strings["hud_instruct_mask_on"] = ""
-    loc:add_localized_strings(localized_strings)
+	loc:add_localized_strings(localized_strings)
 end)

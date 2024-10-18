@@ -1,9 +1,4 @@
-local civies =
-{
-    civilian = true,
-    civilian_female = true,
-    civilian_mariachi = true
-}
+local civies = {civilian = true, civilian_female = true, civilian_mariachi = true}
 
 Hooks:PostHook( StatisticsManager, "killed", "EIVHUD_StatisticsManager_killed", function(self, data, ...)
 	if civies[data.name] then

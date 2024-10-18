@@ -1,5 +1,5 @@
 if not EIVHUD.Options:GetValue("MENU/TeamLoadout") then 
-    return
+	return
 end
 
 local preU143melee = false

@@ -1,5 +1,5 @@
 if not EIVHUD.Options:GetValue("HUD/Tab") then 
-    return
+	return
 end
 
 if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
@@ -106,13 +106,13 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					placer:add_right(difficulty_text)
 				end
 				
-	            if level_data then
-	                heist_title = managers.localization:to_upper_text(level_data.name_id) .. ":"
+				if level_data then
+					heist_title = managers.localization:to_upper_text(level_data.name_id) .. ":"
 					space = string.rep(" ", 2)
-	            else
- 	               heist_title = ""
- 	               space = ""
- 	           end				
+				else
+				   heist_title = ""
+				   space = ""
+			   end				
 
 				local day_title = placer:add_bottom(self._left:fine_text({
 					font = tweak_data.hud_stats.objectives_font,
@@ -195,7 +195,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		}), 1)
 				
 		local trade_delay = (5 + (EIVH.CivKill * 30))
-        local total_time = trade_delay and trade_delay > 30					
+		local total_time = trade_delay and trade_delay > 30					
 		local delay = total_time and managers.localization:to_upper_text("hud_trade_delay", {TIME = tostring(self:_trade_delay_time(trade_delay))}) or ""
 		placer:add_bottom(self._left:fine_text({
 			keep_w = true,
@@ -226,7 +226,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		}), 0)
 
 		local max_units = managers.gage_assignment:count_all_units()
-        local remaining = managers.gage_assignment:count_active_units()
+		local remaining = managers.gage_assignment:count_active_units()
 		local package_text = managers.job:current_level_id() ~= "chill_combat" and managers.job:current_level_id() ~= "chill" and managers.job:current_level_id() ~= "haunted" and managers.job:current_level_id() ~= "hvh" and managers.localization:to_upper_text("menu_asset_gage_assignment") .. ":" .. " " .. tostring(max_units - remaining) .."/".. tostring(max_units) or ""
 		if remaining < max_units then
 			placer:add_bottom(self._left:fine_text({
@@ -243,20 +243,20 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		for _, unit in pairs(managers.enemy:all_enemies()) do
 			enemy_count = enemy_count + 1
 			if (unit and unit.unit and alive(unit.unit)) and (unit.unit:anim_data() and unit.unit:anim_data().hands_up or unit.unit:anim_data() and unit.unit:anim_data().surrender or unit.unit:base() and unit.unit:base().mic_is_being_moved)then
-		        dominated = dominated + 1
-	        end
-        end
+				dominated = dominated + 1
+			end
+		end
 
 		local enemies = enemy_count - dominated
 		if enemies > 0 then
 			placer:add_bottom(self._left:fine_text({
 				keep_w = true,
-			    font = tweak_data.hud_stats.objectives_font,
-			    font_size = small_font_size,
-			    color = Color.white,
-			    text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
-		    }), 16)
-        end
+				font = tweak_data.hud_stats.objectives_font,
+				font_size = small_font_size,
+				color = Color.white,
+				text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
+			}), 16)
+		end
 	
 		local loot_panel = ExtendedPanel:new(self._left, {
 			w = self._left:w() - 16 - 8
@@ -332,14 +332,14 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			placer:new_row()
 
 			local body_text = placer:add_bottom(loot_panel:fine_text({
-		 	    keep_w = true,
-		 	    text = managers.localization:to_upper_text("hud_body_bags"),
-			    color = Color.white,
-		 	    font = medium_font,
-			    font_size = medium_font_size
-	   		}))
+				keep_w = true,
+				text = managers.localization:to_upper_text("hud_body_bags"),
+				color = Color.white,
+				font = medium_font,
+				font_size = medium_font_size
+			}))
 
-	   	 	placer:add_right(nil, 0)
+			placer:add_right(nil, 0)
 
 			local body_texture, body_rect = tweak_data.hud_icons:get_icon_data("equipment_body_bag")
 			local body_icon = placer:add_left(loot_panel:fit_bitmap({
@@ -452,8 +452,8 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		}))
 		placer:new_row()
 
-	    if managers.money and managers.statistics and managers.experience then 
-       	    local money_current_stage = managers.money:get_potential_payout_from_current_stage() or 0
+		if managers.money and managers.statistics and managers.experience then 
+			local money_current_stage = managers.money:get_potential_payout_from_current_stage() or 0
 			local offshore_rate = managers.money:get_tweak_value("money_manager", "offshore_rate") or 0
 			local offshore_total = money_current_stage - math.round(money_current_stage * offshore_rate)
 			local offshore_text = managers.experience:cash_string(offshore_total)
@@ -673,20 +673,20 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		for _, unit in pairs(managers.enemy:all_enemies()) do
 			enemy_count = enemy_count + 1
 			if (unit and unit.unit and alive(unit.unit)) and (unit.unit:anim_data() and unit.unit:anim_data().hands_up or unit.unit:anim_data() and unit.unit:anim_data().surrender or unit.unit:base() and unit.unit:base().mic_is_being_moved)then
-		        dominated = dominated + 1
-	        end
-        end
+				dominated = dominated + 1
+			end
+		end
 
 		local enemies = enemy_count - dominated
 		if enemies > 0 then
 			placer:add_bottom(self._left:fine_text({
 				keep_w = true,
-			    font = tweak_data.hud_stats.objectives_font,
-			    font_size = small_font_size,
-			    color = Color.white,
-			    text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
-		    }), 16)
-        end
+				font = tweak_data.hud_stats.objectives_font,
+				font_size = small_font_size,
+				color = Color.white,
+				text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
+			}), 16)
+		end
 
 		local loot_panel = ExtendedPanel:new(self._left, {
 			w = self._left:w() - 16 - 8
@@ -738,17 +738,17 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		loot_panel:set_leftbottom(0, self._left:h() - 16)
 	end)
 elseif RequiredScript == "lib/managers/moneymanager" then
-    Hooks:PostHook(MoneyManager, 'civilian_killed', "EIVHUD_civilian_killed", function(self)
-        EIVH.CivKill = EIVH.CivKill + 1
-    end)
+	Hooks:PostHook(MoneyManager, 'civilian_killed', "EIVHUD_civilian_killed", function(self)
+		EIVH.CivKill = EIVH.CivKill + 1
+	end)
 
-    function MoneyManager:ResetCivilianKills()
-        EIVH.CivKill = 0
-    end
+	function MoneyManager:ResetCivilianKills()
+		EIVH.CivKill = 0
+	end
 elseif RequiredScript == "lib/managers/trademanager" then
-    Hooks:PostHook(TradeManager, 'on_player_criminal_death', "EIVHUD_on_player_criminal_death", function(...)
-        managers.money:ResetCivilianKills()
-    end)
+	Hooks:PostHook(TradeManager, 'on_player_criminal_death', "EIVHUD_on_player_criminal_death", function(...)
+		managers.money:ResetCivilianKills()
+	end)
 elseif RequiredScript == "lib/managers/hud/hudobjectives" then
 	if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
 		Hooks:OverrideFunction(HUDObjectives, "activate_objective", function(self, data)
@@ -766,107 +766,107 @@ elseif RequiredScript == "lib/managers/hud/hudheisttimer" then
 	end
 elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "init", "EIVHUD_ObjectInteractionManager_init", function(self)
-    self._total_loot = {}
-        self._count_loot_bags = {}
-        self.loot_crates = {}
-        self.loot_count = { loot_amount = 0, crate_amount = 0 }
-        self._loot_fixes = {
-            family 							= { money = 1 },
-            watchdogs_2						= { coke = 10 },
-            watchdogs_2_day					= { coke = 10 },
-            framing_frame_3 				= { gold = 16 },
-            mia_1 							= { money = 1 },
-            welcome_to_the_jungle_1 		= { money = 1, gold = 1 },
-            welcome_to_the_jungle_1_night	= { money = 1, gold = 1 },
-            mus 							= { painting = 2, mus_artifact = 1 },
-            arm_und 						= { money = 8 },
-            ukrainian_job 					= { money = 3 },
-            jewelry_store 					= { money = 2 },
-            chill 							= { painting = 1 },
-            chill_combat 					= { painting = 1 },
-            fish 							= { mus_artifact = 1 },
-            rvd2 							= { money = 1 },
-            pbr2 							= { money = 8 },
-            mex_cooking 					= { roman_armor = 4 },
-            sah 							= { mus_artifact = 2 },
-            ranc 							= { turret_part = 2 },
-            trai 							= { turret_part = 2 },
-            pent 							= { mus_artifact = 2 },
-            des 							= { mus_artifact = 4, painting = 2 }
-        }
-        self.ignore_ids = {
-            [300457] = true,
-            [300458] = true
-        }
-    end)
+	self._total_loot = {}
+		self._count_loot_bags = {}
+		self.loot_crates = {}
+		self.loot_count = { loot_amount = 0, crate_amount = 0 }
+		self._loot_fixes = {
+			family 							= { money = 1 },
+			watchdogs_2						= { coke = 10 },
+			watchdogs_2_day					= { coke = 10 },
+			framing_frame_3 				= { gold = 16 },
+			mia_1 							= { money = 1 },
+			welcome_to_the_jungle_1 		= { money = 1, gold = 1 },
+			welcome_to_the_jungle_1_night	= { money = 1, gold = 1 },
+			mus 							= { painting = 2, mus_artifact = 1 },
+			arm_und 						= { money = 8 },
+			ukrainian_job 					= { money = 3 },
+			jewelry_store 					= { money = 2 },
+			chill 							= { painting = 1 },
+			chill_combat 					= { painting = 1 },
+			fish 							= { mus_artifact = 1 },
+			rvd2 							= { money = 1 },
+			pbr2 							= { money = 8 },
+			mex_cooking 					= { roman_armor = 4 },
+			sah 							= { mus_artifact = 2 },
+			ranc 							= { turret_part = 2 },
+			trai 							= { turret_part = 2 },
+			pent 							= { mus_artifact = 2 },
+			des 							= { mus_artifact = 4, painting = 2 }
+		}
+		self.ignore_ids = {
+			[300457] = true,
+			[300458] = true
+		}
+	end)
 
-    local function is_valid_unit(unit)
-        return unit and alive(unit) and unit:interaction() and unit:interaction():active() and (not unit:carry_data() or unit:carry_data():carry_id() ~= "vehicle_falcogini")
-    end
+	local function is_valid_unit(unit)
+		return unit and alive(unit) and unit:interaction() and unit:interaction():active() and (not unit:carry_data() or unit:carry_data():carry_id() ~= "vehicle_falcogini")
+	end
 
-    local function is_ignored_id(unit_id)
-        return managers.interaction.ignore_ids and managers.interaction.ignore_ids[unit_id]
-    end
+	local function is_ignored_id(unit_id)
+		return managers.interaction.ignore_ids and managers.interaction.ignore_ids[unit_id]
+	end
 
-    local function get_unit_type(unit)
-        local interact_type = unit:interaction().tweak_data
-        return (interact_type and table.contains({
-            Global.game_settings.level_id == "election_day_2" and "" or "money_briefcase",
-            "gen_pku_warhead_box",
-            "weapon_case",
-            "weapon_case_axis_z",
-            "crate_loot",
-            "crate_loot_crowbar"
-        }, interact_type)) and "loot_crates" or nil
-    end
+	local function get_unit_type(unit)
+		local interact_type = unit:interaction().tweak_data
+		return (interact_type and table.contains({
+			Global.game_settings.level_id == "election_day_2" and "" or "money_briefcase",
+			"gen_pku_warhead_box",
+			"weapon_case",
+			"weapon_case_axis_z",
+			"crate_loot",
+			"crate_loot_crowbar"
+		}, interact_type)) and "loot_crates" or nil
+	end
 
-    local function is_equipment_bag(carry_id)
-        return carry_id and tweak_data.carry[carry_id].skip_exit_secure == true
-    end
+	local function is_equipment_bag(carry_id)
+		return carry_id and tweak_data.carry[carry_id].skip_exit_secure == true
+	end
 
-    local function process_loot_count(manager, carry_id)
-        local level_id = managers.job:current_level_id()
-        if is_ignored_id(carry_id) or is_equipment_bag(carry_id) then return end
+	local function process_loot_count(manager, carry_id)
+		local level_id = managers.job:current_level_id()
+		if is_ignored_id(carry_id) or is_equipment_bag(carry_id) then return end
 
-        local current_amount = manager._loot_fixes[level_id] and manager._loot_fixes[level_id][carry_id]
-        if current_amount and current_amount > 0 then
-            manager._loot_fixes[level_id][carry_id] = current_amount - 1
-        else
-            manager:update_loot(1)
-        end
-    end
+		local current_amount = manager._loot_fixes[level_id] and manager._loot_fixes[level_id][carry_id]
+		if current_amount and current_amount > 0 then
+			manager._loot_fixes[level_id][carry_id] = current_amount - 1
+		else
+			manager:update_loot(1)
+		end
+	end
 
-    Hooks:PostHook(ObjectInteractionManager, "update", "EIVHUD_Update", function(self, t, dt)
-        for i = #self._count_loot_bags, 1, -1 do
-            local data = self._count_loot_bags[i]
-            local unit = data.unit
-            
-            if is_valid_unit(unit) then
-                local carry_id = unit:carry_data() and unit:carry_data():carry_id()
+	Hooks:PostHook(ObjectInteractionManager, "update", "EIVHUD_Update", function(self, t, dt)
+		for i = #self._count_loot_bags, 1, -1 do
+			local data = self._count_loot_bags[i]
+			local unit = data.unit
+			
+			if is_valid_unit(unit) then
+				local carry_id = unit:carry_data() and unit:carry_data():carry_id()
 				local unit_id = unit:editor_id()
-                if carry_id and not is_equipment_bag(carry_id) and not is_ignored_id(unit_id) then
-                    self._total_loot[unit:id()] = true
-                    process_loot_count(self, carry_id)
-                end
-            end
-            table.remove(self._count_loot_bags, i)
-        end
-    end)
+				if carry_id and not is_equipment_bag(carry_id) and not is_ignored_id(unit_id) then
+					self._total_loot[unit:id()] = true
+					process_loot_count(self, carry_id)
+				end
+			end
+			table.remove(self._count_loot_bags, i)
+		end
+	end)
 
-    Hooks:PostHook(ObjectInteractionManager, "add_unit", "EIVHUD_ObjectInteractionManager_add_unit", function(self, unit)
-        if alive(unit) then
-            local carry_id = unit:carry_data() and unit:carry_data():carry_id()
-            if get_unit_type(unit) == "loot_crates" then
-                table.insert(self.loot_crates, unit:id())
-                self:update_loot_crates()
-            end
-        end
-        table.insert(self._count_loot_bags, { unit = unit })
-    end)
+	Hooks:PostHook(ObjectInteractionManager, "add_unit", "EIVHUD_ObjectInteractionManager_add_unit", function(self, unit)
+		if alive(unit) then
+			local carry_id = unit:carry_data() and unit:carry_data():carry_id()
+			if get_unit_type(unit) == "loot_crates" then
+				table.insert(self.loot_crates, unit:id())
+				self:update_loot_crates()
+			end
+		end
+		table.insert(self._count_loot_bags, { unit = unit })
+	end)
 
-    Hooks:PostHook(ObjectInteractionManager, "remove_unit", "EIVHUD_ObjectInteractionManager_remove_unit", function(self, unit)
-        if alive(unit) then
-            local unit_id = unit:id()
+	Hooks:PostHook(ObjectInteractionManager, "remove_unit", "EIVHUD_ObjectInteractionManager_remove_unit", function(self, unit)
+		if alive(unit) then
+			local unit_id = unit:id()
 			local unit_editor_id = unit:editor_id()
 			if not is_ignored_id(unit_id) then
 				local carry_id = unit:carry_data() and unit:carry_data():carry_id()
@@ -875,35 +875,35 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 					self:update_loot(-1)
 				end
 			end
-            
-            local crate_index = table.index_of(self.loot_crates, unit_id)
-            if crate_index then
-                table.remove(self.loot_crates, crate_index)
-                self:update_loot_crates()
-            end
-            
-            for i = #self._count_loot_bags, 1, -1 do
-                if self._count_loot_bags[i].unit:id() == unit_id then
-                    table.remove(self._count_loot_bags, i)
-                    break
-                end
-            end
-        end
-    end)
+			
+			local crate_index = table.index_of(self.loot_crates, unit_id)
+			if crate_index then
+				table.remove(self.loot_crates, crate_index)
+				self:update_loot_crates()
+			end
+			
+			for i = #self._count_loot_bags, 1, -1 do
+				if self._count_loot_bags[i].unit:id() == unit_id then
+					table.remove(self._count_loot_bags, i)
+					break
+				end
+			end
+		end
+	end)
 
-    function ObjectInteractionManager:update_loot_crates()
-        self.loot_count.crate_amount = #self.loot_crates
-    end
+	function ObjectInteractionManager:update_loot_crates()
+		self.loot_count.crate_amount = #self.loot_crates
+	end
 
-    function ObjectInteractionManager:update_loot(update)
-        self.loot_count.loot_amount = (self.loot_count.loot_amount or 0) + update
-    end
+	function ObjectInteractionManager:update_loot(update)
+		self.loot_count.loot_amount = (self.loot_count.loot_amount or 0) + update
+	end
 
-    function ObjectInteractionManager:get_current_crate_count()
-        return math.max(self.loot_count.crate_amount or 0, 0)
-    end
+	function ObjectInteractionManager:get_current_crate_count()
+		return math.max(self.loot_count.crate_amount or 0, 0)
+	end
 
-    function ObjectInteractionManager:get_current_total_loot_count()
-        return math.max(self.loot_count.loot_amount or 0, 0)
-    end
+	function ObjectInteractionManager:get_current_total_loot_count()
+		return math.max(self.loot_count.loot_amount or 0, 0)
+	end
 end
