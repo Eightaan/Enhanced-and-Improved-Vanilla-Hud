@@ -1,5 +1,5 @@
 <mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD" core_class="Core.lua">
-	<AssetUpdates id="43776" provider="modworkshop" version="3.7"/>
+	<AssetUpdates id="43776" provider="modworkshop" version="3.8"/>
 	<Hooks directory="lua">
 		<hook file="KillCounter.lua" source_file="lib/managers/statisticsmanager"/>
 		

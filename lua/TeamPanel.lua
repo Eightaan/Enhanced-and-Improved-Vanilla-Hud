@@ -915,6 +915,12 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 				revive_amount_text:set_text(tostring(math.max(revive_amount - 1, 0)))
 				revive_amount_text:set_color(revive_amount > 1 and team_color or Color.red)
 				revive_amount_text:set_font_size(17)
+				revive_amount_text:animate(function(o)
+					over(1, function(p)
+						local n = 1 - math.sin((p / 2 ) * 180)
+						revive_amount_text:set_font_size(math_lerp(17, 17 * 0.85, n))
+					end)
+				end)
 				
 				if revive_arrow then
 					revive_arrow:set_color(revive_amount > 1 and team_color or Color.red)
