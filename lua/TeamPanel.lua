@@ -184,6 +184,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			end)
 		end
 	end
+
 	function HUDBuffList:update_bloodthirst_position()
 		local panel = self._bloodthirst_panel
 		local x_position = 10 * (EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstX") or 0)
