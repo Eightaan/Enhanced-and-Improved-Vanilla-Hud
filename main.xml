@@ -34,7 +34,7 @@
 	
 	<Localization directory="loc" default="english.json"/>
 
-		<Options name="Options" auto_build_menu="true" auto_load="true" save_file="EIVHUDSave.json">
+		<Options prefix_id="EIVH" save_file="EIVHUDSave.json">
 		<options>
 			<option_group name="HUD">
 				<option type="number" min="0.5" max="1" step="0.05" decimal_count="2" show_value="true" default_value="1" name="Scale"/>
