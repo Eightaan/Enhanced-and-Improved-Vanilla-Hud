@@ -1,4 +1,4 @@
-<mod name="Enhanced and Improved Vanilla Hud" global_key="EIVHUD" core_class="Core.lua">
+<mod author="Eightan" global_key="EIVHUD" core_class="Core.lua">
 	<AssetUpdates id="43776" provider="modworkshop" version="3.9"/>
 	<Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
@@ -32,9 +32,7 @@
 		<hook file="BagInfo.lua" source_file="lib/units/interactions/interactionext"/>
 	</Hooks>
 	
-	 <Localization 
-		directory="loc" default="english.json">
-	</Localization>
+	<Localization directory="loc" default="english.json"/>
 
 		<Options name="Options" auto_build_menu="true" auto_load="true" save_file="EIVHUDSave.json">
 		<options>
@@ -47,8 +45,8 @@
 					<option type="bool" default_value="true" name="ArmorerCooldownRadial"/>-->
 					<divider name="override_divider" size="8"/>
 					<option type="bool" default_value="true" name="ArmorerCooldownTimer"/>
-					<option type="color" alpha="false" default_value="Color(1, 0, 0.66, 1)" name="ArmorerCooldownTimerColor"/>
-					<option type="color" alpha="false" default_value="Color(1, 0.5, 1, 0)" name="GraceCooldownTimerColor"/>
+					<option type="color" default_value="Color(1, 0, 0.66, 1)" name="ArmorerCooldownTimerColor"/>
+					<option type="color" default_value="Color(1, 0.5, 1, 0)" name="GraceCooldownTimerColor"/>
 					<divider name="override_divider" size="16"/>
 					<option type="bool" default_value="true" name="Trueammo"/>
 					<option type="bool" default_value="true" name="Bulletstorm"/>

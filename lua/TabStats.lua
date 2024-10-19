@@ -8,6 +8,8 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 	local medium_font_size = tweak_data.menu.pd2_medium_font_size
 	local small_font_size = tweak_data.menu.pd2_small_font_size
 	local tiny_font_size = tweak_data.menu.pd2_tiny_font_size
+	local Color = Color
+	local color_white = Color.white
 
 	function HUDStatsScreen:_trade_delay_time()
 		local trade_delay = managers.money:get_trade_delay()
@@ -33,7 +35,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 		local lb = HUDBGBox_create(self._left, {}, {
 			blend_mode = "normal",
-			color = Color.white
+			color = color_white
 		})
 
 		lb:child("bg"):set_color(Color(0, 0, 0):with_alpha(0.75))
@@ -125,7 +127,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				}))
 
 				if managers.job:is_level_ghostable(managers.job:current_level_id()) then
-					local ghost_color = is_whisper_mode and Color.white or tweak_data.screen_colors.important_1
+					local ghost_color = is_whisper_mode and color_white or tweak_data.screen_colors.important_1
 					local ghost = placer:add_right(self._left:bitmap({
 						texture = "guis/textures/pd2/cn_minighost",
 						name = "ghost_icon",
@@ -182,7 +184,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				keep_w = true,
 				font = tweak_data.hud_stats.objectives_font,
 				font_size = small_font_size,
-				color = Color.white,
+				color = color_white,
 				text = "HOSTAGES: " .. managers.groupai:state():hostage_count()
 			}), 30)
 		end
@@ -192,7 +194,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
-			color = Color.white,
+			color = color_white,
 			text = civ_kills
 		}), 30)
 
@@ -202,7 +204,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
-			color = Color.white,
+			color = color_white,
 			text = is_whisper_mode and "" or delay
 		}), 0)
 
@@ -212,7 +214,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
-			color = Color.white,
+			color = color_white,
 			text = kill_count
 		}), 16)
 
@@ -222,7 +224,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
-			color = Color.white,
+			color = color_white,
 			text = accuracy 
 		}), 0)
 
@@ -234,7 +236,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				keep_w = true,
 				font = tweak_data.hud_stats.objectives_font,
 				font_size = small_font_size,
-				color = Color.white,
+				color = color_white,
 				text = package_text
 			}), 16)
 		end
@@ -254,7 +256,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				keep_w = true,
 				font = tweak_data.hud_stats.objectives_font,
 				font_size = small_font_size,
-				color = Color.white,
+				color = color_white,
 				text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
 			}), 16)
 		end
@@ -268,7 +270,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			local minion_text = placer:add_bottom(loot_panel:fine_text({
 				keep_w = true,
 				text = managers.localization:text("hud_stats_enemies_converted"),
-				color = Color.white,
+				color = color_white,
 				font = medium_font,
 				font_size = medium_font_size
 			}))
@@ -278,7 +280,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			local minion_icon = placer:add_left(loot_panel:fit_bitmap({
 				w = 17,
 				h = 17,
-				color = Color.white,
+				color = color_white,
 				texture = minion_texture,
 				texture_rect = minion_rect
 			}))
@@ -286,7 +288,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			minion_icon:set_center_y(minion_text:center_y())
 			placer:add_left(loot_panel:fine_text({
 				text = tostring(managers.player:num_local_minions()),
-				color = Color.white,
+				color = color_white,
 				font = medium_font,
 				font_size = medium_font_size
 			}), 7)
@@ -308,7 +310,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			local pagers_text = placer:add_bottom(loot_panel:fine_text({
 				keep_w = true,
 				text = managers.localization:text("hud_stats_pagers_used"),
-				color = Color.white,
+				color = color_white,
 				font = medium_font,
 				font_size = medium_font_size
 			}))
@@ -318,7 +320,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			local pagers_icon = placer:add_left(loot_panel:fit_bitmap({
 				w = 17,
 				h = 17,
-				color = Color.white,
+				color = color_white,
 				texture = pagers_texture,
 				texture_rect = pagers_rect
 			}))
@@ -326,7 +328,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			pagers_icon:set_center_y(pagers_text:center_y())
 			placer:add_left(loot_panel:fine_text({
 				text = tostring(pagers_used) .. "/" .. tostring(max_num_pagers),
-				color = Color.white,
+				color = color_white,
 				font = medium_font,
 				font_size = medium_font_size
 			}), 7)
@@ -335,7 +337,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			local body_text = placer:add_bottom(loot_panel:fine_text({
 				keep_w = true,
 				text = managers.localization:to_upper_text("hud_body_bags"),
-				color = Color.white,
+				color = color_white,
 				font = medium_font,
 				font_size = medium_font_size
 			}))
@@ -346,7 +348,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			local body_icon = placer:add_left(loot_panel:fit_bitmap({
 				w = 17,
 				h = 17,
-				color = Color.white,
+				color = color_white,
 				texture = body_texture,
 				texture_rect = body_rect
 			}))
@@ -355,7 +357,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			placer:add_left(loot_panel:fine_text({
 				text = tostring(managers.player:get_body_bags_amount()),
 				font = medium_font,
-				color = Color.white,
+				color = color_white,
 				font_size = medium_font_size
 			}), 7)
 			placer:new_row()
@@ -367,7 +369,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			keep_w = true,
 			text = managers.localization:text("hud_stats_bags_secured"),
 			font = medium_font,
-			color = Color.white,
+			color = color_white,
 			font_size = medium_font_size
 		}))
 
@@ -377,7 +379,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		local bag_icon = placer:add_left(loot_panel:fit_bitmap({
 			w = 16,
 			h = 16,
-			color = Color.white,
+			color = color_white,
 			texture = bag_texture,
 			texture_rect = bag_rect
 		}))
@@ -386,7 +388,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		placer:add_left(loot_panel:fine_text({
 			text = tostring(secured_amount + bonus_amount),
 			font = medium_font,
-			color = Color.white,
+			color = color_white,
 			font_size = medium_font_size
 		}))
 		placer:new_row()
@@ -395,7 +397,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			keep_w = true,
 			text = managers.localization:text("hud_stats_bags_unsecured"),
 			font = medium_font,
-			color = Color.white,
+			color = color_white,
 			font_size = medium_font_size
 		}), 20)
 
@@ -407,7 +409,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		local loot_icon = placer:add_left(loot_panel:fit_bitmap({
 			w = 16,
 			h = 16,
-			color = Color.white,
+			color = color_white,
 			texture = bag_texture,
 			texture_rect = bag_rect
 		}))
@@ -416,7 +418,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		placer:add_left(loot_panel:fine_text({
 			text = tostring(loot_amount),
 			font = medium_font,
-			color = Color.white,
+			color = color_white,
 			font_size = medium_font_size
 		}))
 		
@@ -426,7 +428,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			keep_w = true,
 			text = managers.localization:text("hud_stats_unopened_crates"),
 			font = medium_font,
-			color = Color.white,
+			color = color_white,
 			font_size = medium_font_size
 		}))
 
@@ -439,7 +441,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		local crate_icon = placer:add_left(loot_panel:fit_bitmap({
 			w = 16,
 			h = 16,
-			color = Color.white,
+			color = color_white,
 			texture = bag_texture,
 			texture_rect = bag_rect
 		}))
@@ -448,7 +450,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		placer:add_left(loot_panel:fine_text({
 			text = tostring(crate_info),
 			font = medium_font,
-			color = Color.white,
+			color = color_white,
 			font_size = medium_font_size
 		}))
 		placer:new_row()
@@ -467,7 +469,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				keep_w = true,
 				text = managers.localization:to_upper_text("menu_cash_spending"),
 				font = medium_font,
-				color = Color.white,
+				color = color_white,
 				font_size = medium_font_size
 			}), 12)
 
@@ -476,7 +478,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			placer:add_left(loot_panel:fine_text({
 				text = spending_cash_text,
 				font = medium_font,
-				color = Color.white,
+				color = color_white,
 				font_size = medium_font_size
 			}))
 			placer:new_row()
@@ -485,13 +487,13 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				keep_w = true,
 				text = managers.localization:to_upper_text("hud_offshore_account"),
 				font = medium_font,
-				color = Color.white,
+				color = color_white,
 				font_size = medium_font_size
 			}))
 			placer:add_right(nil, 0)
 			placer:add_left(loot_panel:fine_text({
 				text = offshore_text,
-				color = Color.white,
+				color = color_white,
 				font = medium_font,
 				font_size = medium_font_size
 			}))
@@ -525,7 +527,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 			placer:add_row(time_panel:fine_text({
 				name = "time_text",
-				color = Color.white,
+				color = color_white,
 				font_size = tweak_data.hud_stats.loot_size,
 				font = tweak_data.hud_stats.objectives_font,
 				text = "00:00:00",
@@ -536,7 +538,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			placer:add_right(time_panel:fit_bitmap({
 				name = "time_icon",
 				texture = "guis/textures/pd2/skilltree/drillgui_icon_faster",
-				color = Color.white,
+				color = color_white,
 				w = tweak_data.hud_stats.loot_size,
 				h = tweak_data.hud_stats.loot_size,
 			}), 5)
@@ -582,7 +584,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 
 		local lb = HUDBGBox_create(self._left, {}, {
 			blend_mode = "normal",
-			color = Color.white
+			color = color_white
 		})
 
 		lb:child("bg"):set_color(Color(0, 0, 0):with_alpha(0.75))
@@ -644,7 +646,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 				keep_w = true,
 				font = tweak_data.hud_stats.objectives_font,
 				font_size = small_font_size,
-				color = Color.white,
+				color = color_white,
 				text = "HOSTAGES: " .. managers.groupai:state():hostage_count()
 			}), 30)
 		end
@@ -655,7 +657,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
-			color = Color.white,
+			color = color_white,
 			text = kill_count
 		}), 16)
 
@@ -665,7 +667,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			keep_w = true,
 			font = tweak_data.hud_stats.objectives_font,
 			font_size = small_font_size,
-			color = Color.white,
+			color = color_white,
 			text = accuracy 
 		}), 0)
 		
@@ -684,7 +686,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 				keep_w = true,
 				font = tweak_data.hud_stats.objectives_font,
 				font_size = small_font_size,
-				color = Color.white,
+				color = color_white,
 				text = managers.localization:to_upper_text("menu_mutators_category_enemies") .. ": " .. enemies
 			}), 16)
 		end

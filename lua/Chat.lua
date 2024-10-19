@@ -2,6 +2,8 @@ if not EIVHUD.Options:GetValue("HUD/Chat") then
 	return
 end
 
+local Color = Color
+
 Hooks:PostHook(HUDChat, "init", "EIVHUD_HUDChat_init", function(self)
 	local o = self._panel:child("output_panel")
 	if alive(o) and alive(o:child("output_bg")) then
