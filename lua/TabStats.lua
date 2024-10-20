@@ -2,6 +2,15 @@ if not EIVHUD.Options:GetValue("HUD/Tab") then
 	return
 end
 
+local Color = Color
+
+local math_round = math.round
+
+local math_floor = math.floor
+local math_huge = math.huge
+local math_max = math.max
+local math_abs = math.abs
+
 if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 	local large_font = tweak_data.menu.pd2_large_font
 	local medium_font = tweak_data.menu.pd2_medium_font
@@ -13,10 +22,10 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 	function HUDStatsScreen:_trade_delay_time()
 		local trade_delay = managers.money:get_trade_delay()
-		trade_delay = math.max(math.floor(trade_delay), 0)
-		local minutes = math.floor(trade_delay / 60)
+		trade_delay = math_max(math_floor(trade_delay), 0)
+		local minutes = math_floor(trade_delay / 60)
 		trade_delay = trade_delay - minutes * 60
-		local seconds = math.round(trade_delay)
+		local seconds = math_round(trade_delay)
 		local text = ""
 
 		return text .. (minutes < 10 and "0" .. minutes or minutes) .. ":" .. (seconds < 10 and "0" .. seconds or seconds)
@@ -100,7 +109,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					if Global.game_settings.one_down then
 						local one_down_string = managers.localization:to_upper_text("menu_one_down")
 						difficulty_text:set_text(difficulty_string .. " " .. one_down_string)
-						difficulty_text:set_range_color(#difficulty_string + 1, math.huge, tweak_data.screen_colors.one_down)
+						difficulty_text:set_range_color(#difficulty_string + 1, math_huge, tweak_data.screen_colors.one_down)
 					end
 
 					local _, _, tw, th = difficulty_text:text_rect()
@@ -458,7 +467,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		if managers.money and managers.statistics and managers.experience then 
 			local money_current_stage = managers.money:get_potential_payout_from_current_stage() or 0
 			local offshore_rate = managers.money:get_tweak_value("money_manager", "offshore_rate") or 0
-			local offshore_total = money_current_stage - math.round(money_current_stage * offshore_rate)
+			local offshore_total = money_current_stage - math_round(money_current_stage * offshore_rate)
 			local offshore_text = managers.experience:cash_string(offshore_total)
 			local civilian_kills = managers.statistics:session_total_civilian_kills() or 0
 			local cleaner_costs	= (managers.money:get_civilian_deduction() or 0) * civilian_kills
@@ -510,8 +519,8 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		end)
 		
 		function HUDStatsScreen:feed_heist_time(time)
-			if (self._last_heist_time or 0) < math.floor(time) or time < 0 then
-				self._last_heist_time = math.abs(time)
+			if (self._last_heist_time or 0) < math_floor(time) or time < 0 then
+				self._last_heist_time = math_abs(time)
 			end
 		end
 		
@@ -551,12 +560,12 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		Hooks:PostHook(HUDStatsScreen, 'update', "EIVHUD_update", function(self, t, ...)
 			if self._time_panel and (self._next_time_update_t or 0) < t then
 				local text = ""
-				local time = math.floor(self._last_heist_time or 0)
-				local hours = math.floor(time / 3600)
+				local time = math_floor(self._last_heist_time or 0)
+				local hours = math_floor(time / 3600)
 				time = time - hours * 3600
-				local minutes = math.floor(time / 60)
+				local minutes = math_floor(time / 60)
 				time = time - minutes * 60
-				local seconds = math.round(time)
+				local seconds = math_round(time)
 				text = hours > 0 and string.format("%02d:%02d:%02d", hours, minutes, seconds) or string.format("%02d:%02d", minutes, seconds)
 				self._time_panel:child("time_text"):set_text(text)
 				self._time_panel:set_visible(true)
@@ -564,6 +573,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			end
 		end)
 	end
+
 elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 	local large_font = tweak_data.menu.pd2_large_font
 	local medium_font = tweak_data.menu.pd2_medium_font
@@ -740,6 +750,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		loot_panel:set_size(placer:most_rightbottom())
 		loot_panel:set_leftbottom(0, self._left:h() - 16)
 	end)
+
 elseif RequiredScript == "lib/managers/statisticsmanager" then
 	local civies = {civilian = true, civilian_female = true, civilian_mariachi = true}
 
@@ -765,6 +776,7 @@ elseif RequiredScript == "lib/managers/statisticsmanager" then
 	function StatisticsManager:TotalKills()
 		return self._total_kills or 0
 	end
+
 elseif RequiredScript == "lib/managers/moneymanager" then
 	Hooks:PostHook(MoneyManager, 'civilian_killed', "EIVHUD_civilian_killed", function(self)
 		self:update_civ_kills()
@@ -790,10 +802,12 @@ elseif RequiredScript == "lib/managers/moneymanager" then
 	function MoneyManager:ResetCivilianKills()
 		self._trade_delay = 5
 	end
+
 elseif RequiredScript == "lib/managers/trademanager" then
 	Hooks:PostHook(TradeManager, 'on_player_criminal_death', "EIVHUD_on_player_criminal_death", function(...)
 		managers.money:ResetCivilianKills()
 	end)
+
 elseif RequiredScript == "lib/managers/hud/hudobjectives" then
 	if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
 		Hooks:OverrideFunction(HUDObjectives, "activate_objective", function(self, data)
@@ -803,12 +817,14 @@ elseif RequiredScript == "lib/managers/hud/hudobjectives" then
 			objectives_panel:set_visible(false)
 		end)
 	end
+
 elseif RequiredScript == "lib/managers/hud/hudheisttimer" then
 	if EIVHUD.Options:GetValue("HUD/ShowTimer") == 2 then
 		Hooks:PostHook(HUDHeistTimer, "init", "EIVHUD_HUDHeistTimer_init", function(self)
 			self._timer_text:set_alpha(0)
 		end)
 	end
+
 elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "init", "EIVHUD_ObjectInteractionManager_init", function(self)
 	self._total_loot = {}
@@ -945,10 +961,23 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	end
 
 	function ObjectInteractionManager:get_current_crate_count()
-		return math.max(self.loot_count.crate_amount or 0, 0)
+		return math_max(self.loot_count.crate_amount or 0, 0)
 	end
 
 	function ObjectInteractionManager:get_current_total_loot_count()
-		return math.max(self.loot_count.loot_amount or 0, 0)
+		return math_max(self.loot_count.loot_amount or 0, 0)
 	end
+	
+elseif RequiredScript == "lib/managers/hudmanagerpd2" then
+	Hooks:PostHook(HUDManager, "feed_heist_time", "EIVHUD_HUDManager_feed_heist_time", function (self, time, ...)
+		if self._hud_statsscreen and self._hud_statsscreen.feed_heist_time then
+			self._hud_statsscreen:feed_heist_time(time)
+		end
+	end)
+
+	Hooks:PostHook(HUDManager, "modify_heist_time", "EIVHUD_HUDManager_modify_heist_time", function (self, time, ...)
+		if self._hud_statsscreen and self._hud_statsscreen.modify_heist_time then
+			self._hud_statsscreen:modify_heist_time(time)
+		end
+	end)
 end

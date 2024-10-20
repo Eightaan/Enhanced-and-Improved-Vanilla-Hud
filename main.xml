@@ -1,23 +1,30 @@
-<mod author="Eightan" global_key="EIVHUD" core_class="Core.lua">
+<mod name="Enhanced Hud" author="Eightan" global_key="EIVHUD" core_class="Core.lua">
 	<AssetUpdates id="43776" provider="modworkshop" version="4.0"/>
 	<Hooks directory="lua">
-		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
-		<hook file="TabStats.lua" source_file="lib/managers/moneymanager"/>
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
-		<hook file="TabStats.lua" source_file="lib/managers/hud/newhudstatsscreen"/>
 		<hook file="TabStats.lua" source_file="lib/managers/objectinteractionmanager"/>
+		<hook file="TabStats.lua" source_file="lib/managers/hud/newhudstatsscreen"/>
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudobjectives"/>
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudheisttimer"/>
 		<hook file="TabStats.lua" source_file="lib/managers/statisticsmanager"/>
+		<hook file="TabStats.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="TabStats.lua" source_file="lib/managers/trademanager"/>
+		<hook file="TabStats.lua" source_file="lib/managers/moneymanager"/>
 
-		<hook file="TeamPanel.lua" source_file="lib/managers/playermanager"/>
-		<hook file="TeamPanel.lua" source_file="lib/managers/hudmanagerpd2"/>
-		<hook file="TeamPanel.lua" source_file="lib/managers/hud/hudteammate"/>
 		<hook file="TeamPanel.lua" source_file="lib/units/beings/player/playerdamage"/>
+		<hook file="TeamPanel.lua" source_file="lib/managers/hud/hudteammate"/>
 		
-		<hook file="ECMTimer.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="Buffs.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="Buffs.lua" source_file="lib/managers/playermanager"/>
+		
+		<hook file="HealthCircle.lua" source_file="lib/managers/hud/hudteammate"/>
+		<hook file="HealthCircle.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="HealthCircle.lua" source_file="lib/managers/playermanager"/>
+		
+		
 		<hook file="ECMTimer.lua" source_file="lib/units/equipment/ecm_jammer/ecmjammerbase"/>
 		<hook file="ECMTimer.lua" source_file="lib/units/beings/player/playerinventory"/>
+		<hook file="ECMTimer.lua" source_file="lib/managers/hudmanagerpd2"/>
 		
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/lootdropscreengui"/>
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/stageendscreengui"/>
@@ -25,19 +32,22 @@
 		<hook file="MenuSkip.lua" source_file="lib/managers/missionassetsmanager"/>
 
 		<hook file="Chat.lua" source_file="lib/managers/hud/hudchat"/>
-		<hook file="Hostages.lua" source_file="lib/managers/hud/hudassaultcorner"/>
 		<hook file="PacifiedCivs.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
 		<hook file="TeamLoadout.lua" source_file="lib/managers/menu/missionbriefinggui"/>
-		<hook file="LevelDisplay.lua" source_file="lib/managers/menumanagerdialogs"/>
 		<hook file="BagInfo.lua" source_file="lib/units/interactions/interactionext"/>
+		<hook file="LevelDisplay.lua" source_file="lib/managers/menumanagerdialogs"/>
+		<hook file="Hostages.lua" source_file="lib/managers/hud/hudassaultcorner"/>
+		<hook file="ScreenEffects.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="Scale.lua" source_file="lib/managers/hudmanagerpd2"/>
 	</Hooks>
 	
 	<Localization directory="loc" default="english.json"/>
 
-		<Options prefix_id="EIVH" save_file="EIVHUDSave.json">
+	<Options prefix_id="EIVH" save_file="EIVHUDSave.json">
 		<options>
 			<option_group name="HUD">
 				<option type="number" min="0.5" max="1" step="0.05" decimal_count="2" show_value="true" default_value="1" name="Scale"/>
+
 				<divider name="override_divider" size="8"/>
 				<option_group name="PLAYER">
 					<option type="bool" default_value="false" name="Team_bg"/>-->
@@ -54,12 +64,14 @@
 					<option type="bool" default_value="true" name="Stamina"/>
 					<option type="bool" default_value="true" name="Downs"/>
 				</option_group>
+
 				<divider name="override_divider" size="8"/>
 				<option_group name="ECM">
 					<option type="bool" default_value="true" name="Infoboxes"/>
 					<option type="bool" default_value="true" name="PagerJam"/>
 					<option type="bool" default_value="false" name="HideBox"/>
 				</option_group>
+
 				<divider name="override_divider" size="8"/>
 				<option_group name="BUFFLIST">
 					<option type="bool" default_value="true" name="Inspire"/>
@@ -72,6 +84,7 @@
 					<option type="number" min="0" max="123" step="1" decimal_count="0" show_value="true" default_value="123" name="BloodthirstX"/>
 					<option type="number" min="0" max="67" step="1" decimal_count="0" show_value="true" default_value="38" name="BloodthirstY"/>
 				</option_group>
+
 				<option type="bool" default_value="true" name="ScreenEffect"/>
 				<divider name="override_divider" size="8"/>
 				<option type="bool" default_value="true" name="Chat"/>
@@ -86,9 +99,11 @@
 				<option type="multichoice" default_value="1" name="ShowWaves" values_tbl="EIVHUD.show_waves"/>
 				<option type="multichoice" default_value="1" name="ShowHostages" values_tbl="EIVHUD.show_hostages"/>
 			</option_group>
+			
 			<option_group name="INTERACTION">
 				<option type="bool" default_value="true" name="BagInfo"/>
 			</option_group>
+			
 			<option_group name="MENU">
 				<option type="bool" default_value="true" name="TeamLoadout"/>
 				<divider name="override_divider" size="16"/>
