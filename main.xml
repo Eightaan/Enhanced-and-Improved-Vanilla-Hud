@@ -30,10 +30,12 @@
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/stageendscreengui"/>
 		<hook file="MenuSkip.lua" source_file="lib/states/ingamewaitingforplayers"/>
 		<hook file="MenuSkip.lua" source_file="lib/managers/missionassetsmanager"/>
+		
+		<hook file="TeamLoadout.lua" source_file="lib/managers/menu/missionbriefinggui"/>
+		<hook file="TeamLoadout.lua" source_file="lib/managers/hud/hudmissionbriefing"/>
 
 		<hook file="Chat.lua" source_file="lib/managers/hud/hudchat"/>
 		<hook file="PacifiedCivs.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
-		<hook file="TeamLoadout.lua" source_file="lib/managers/menu/missionbriefinggui"/>
 		<hook file="BagInfo.lua" source_file="lib/units/interactions/interactionext"/>
 		<hook file="LevelDisplay.lua" source_file="lib/managers/menumanagerdialogs"/>
 		<hook file="Hostages.lua" source_file="lib/managers/hud/hudassaultcorner"/>
