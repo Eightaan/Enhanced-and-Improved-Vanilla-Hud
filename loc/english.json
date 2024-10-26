@@ -95,6 +95,8 @@
 	"EIVHMENUOptionsButtonTitleID" : "Menu",
 	"EIVHMENUOptionsButtonDescID" : "Menu options.",
 	
+	"EIVHHideAdsTitleID" : "Hide Announcements and Ads",
+	"EIVHHideAdsDescID" : "Hides DLC ads and announcements in the main menu.",
 	"EIVHTeamLoadoutTitleID" : "Extended Team Briefing Loadout",
 	"EIVHTeamLoadoutDescID" : "Display throwables and Second deployables in the preplanning.",
 	"EIVHLevelDisplayTitleID" : "Display rank of joining players",

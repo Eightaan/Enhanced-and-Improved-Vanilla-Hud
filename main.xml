@@ -1,5 +1,5 @@
 <mod name="Enhanced Vanilla Hud" author="Eightan" global_key="EIVHUD" color="Color(0,0.66,1)" core_class="Core.lua">
-	<AssetUpdates id="43776" provider="modworkshop" version="4.1"/>
+	<AssetUpdates id="43776" provider="modworkshop" version="4.2"/>
 	<Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
 		<hook file="TabStats.lua" source_file="lib/managers/objectinteractionmanager"/>
@@ -30,6 +30,10 @@
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/stageendscreengui"/>
 		<hook file="MenuSkip.lua" source_file="lib/states/ingamewaitingforplayers"/>
 		<hook file="MenuSkip.lua" source_file="lib/managers/missionassetsmanager"/>
+		
+		<hook file="RemoveAds.lua" source_file="lib/managers/menu/newheistsgui"/>
+		<hook file="RemoveAds.lua" source_file="lib/managers/menu/menucomponentmanager"/>
+		<hook file="RemoveAds.lua" source_file="lib/managers/menumanager"/>
 		
 		<hook file="TeamLoadout.lua" source_file="lib/managers/menu/missionbriefinggui"/>
 		<hook file="TeamLoadout.lua" source_file="lib/managers/hud/hudmissionbriefing"/>
@@ -107,6 +111,8 @@
 			</option_group>
 			
 			<option_group name="MENU">
+				<option type="bool" default_value="true" name="HideAds"/>
+				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="TeamLoadout"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="false" name="SkipDialogs"/>
