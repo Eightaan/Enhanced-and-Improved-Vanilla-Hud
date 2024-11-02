@@ -170,12 +170,12 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			text = self.cooldown_text
 			bg = self._inspire_cooldown_timer_bg
 			icon = self._inspire_cooldown_icon
-			duration = 0.1  -- Fade out duration for Inspire
+			duration = 0.1
 		elseif buff_type == "bloodthirst" then
 			text = self.bloodthirst_text
 			bg = self._bloodthirst_bg
 			icon = self._bloodthirst_icon
-			duration = 0.3  -- Fade out duration for Bloodthirst
+			duration = 0.3
 		end
 
 		if text and bg and icon then
