@@ -91,6 +91,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				local day = managers.job:current_stage()
 				local days = job_chain and #job_chain or 0
 				local level_data = managers.job:current_level_data()
+				local waves = managers.hud._hud_assault_corner:should_display_waves() and EIVHUD.Options:GetValue("HUD/ShowWaves") > 1 and "\n" .. managers.hud._hud_assault_corner:get_completed_waves_string() or ""
 				local space
 				local heist_title
 				
@@ -132,7 +133,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 					text = heist_title .. space .. managers.localization:to_upper_text("hud_days_title", {
 						DAY = day,
 						DAYS = days
-					})
+					}).. waves
 				}))
 
 				if managers.job:is_level_ghostable(managers.job:current_level_id()) then
