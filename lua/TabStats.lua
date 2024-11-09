@@ -263,7 +263,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				text = managers.localization:to_upper_text("menu_asset_gage_assignment") .. ": " .. tostring(max_units - remaining) .. "/" .. tostring(max_units)
 			}), 16)
 		end
-			
+
 		local dominated = 0
 		local enemy_count = 0
 		for _, unit in pairs(managers.enemy:all_enemies()) do
