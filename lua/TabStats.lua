@@ -238,7 +238,6 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			text = accuracy 
 		}), 0)
 
-
 		local max_units = managers.gage_assignment:count_all_units()
 		local remaining = managers.gage_assignment:count_active_units()
 
