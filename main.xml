@@ -1,5 +1,5 @@
 <mod name="Enhanced Vanilla Hud" author="Eightan" global_key="EIVHUD" color="Color(0,0.66,1)" core_class="Core.lua">
-	<AssetUpdates id="43776" provider="modworkshop" version="4.5"/>
+	<AssetUpdates id="43776" provider="modworkshop" version="4.6"/>
 	<Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
 		<hook file="TabStats.lua" source_file="lib/managers/objectinteractionmanager"/>
@@ -44,6 +44,11 @@
 		<hook file="Hostages.lua" source_file="lib/managers/hud/hudassaultcorner"/>
 		<hook file="ScreenEffects.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="Scale.lua" source_file="lib/managers/hudmanagerpd2"/>
+		
+		<hook file="compatibility/MUI/MUITeam.lua" source_file="lib/managers/hud/hudteammate"/>
+		<hook file="compatibility/MUI/MUITeam.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="compatibility/MUI/MUIManager.lua" source_file="lib/managers/hudmanagerpd2"/>
+		
 	</Hooks>
 	
 	<Localization directory="loc" default="english.json"/>

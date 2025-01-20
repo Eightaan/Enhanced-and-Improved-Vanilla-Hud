@@ -53,7 +53,7 @@ function HUDTeammate:infinite_ammo_glow()
 		color = Color("00AAFF"),
 		layer = 2,
 		blend_mode = "add"
-	 })
+	})
 	self._prim_ammo:set_center_y(self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("ammo_clip"):y() + self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("ammo_clip"):h() / 2 - 2)
 	self._sec_ammo:set_center_y(self._player_panel:child("weapons_panel"):child("secondary_weapon_panel"):child("ammo_clip"):y() + self._player_panel:child("weapons_panel"):child("secondary_weapon_panel"):child("ammo_clip"):h() / 2 - 2)
 	self._prim_ammo:set_center_x(self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("ammo_clip"):x() + self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("ammo_clip"):w() / 2)
@@ -226,7 +226,7 @@ Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_a
 	
 	if self._main_player and self._infinite_ammo then
 		ammo_clip:set_color(Color.white)
-		ammo_clip:set_text( "8" )
+		ammo_clip:set_text("8")
 		ammo_clip:set_rotation(90)
 		if hud_ammo then
 			ammo_clip:set_font_size(30)
