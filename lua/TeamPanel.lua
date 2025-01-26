@@ -4,15 +4,12 @@ end
 
 local Color = Color
 
-local math_map_range = math.map_range
 local math_round = math.round
 local math_lerp = math.lerp
-
 local math_sin = math.sin
 local math_max = math.max
 
 local hud_ammo = EIVHUD.Options:GetValue("HUD/PLAYER/Trueammo")
-
 
 Hooks:PostHook(HUDTeammate, "init", "EIVHUD_hud_teammate_init", function (self, ...)
 	if EIVHUD.Options:GetValue("HUD/PLAYER/Team_bg") then
@@ -65,10 +62,8 @@ function HUDTeammate:_set_infinite_ammo(state)
 	if self._prim_ammo then
 		if self._infinite_ammo then
 			local hudinfo = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2)
-			local pweapon_panel = self._player_panel:child("weapons_panel"):child("primary_weapon_panel")
-			local pammo_clip = pweapon_panel:child("ammo_clip")
-			local sweapon_panel = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel")
-			local sammo_clip = sweapon_panel:child("ammo_clip")
+			local pammo_clip = self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("ammo_clip")
+			local sammo_clip = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel"):child("ammo_clip")
 
 			self._prim_ammo:set_visible(true)
 			self._sec_ammo:set_visible(true)
