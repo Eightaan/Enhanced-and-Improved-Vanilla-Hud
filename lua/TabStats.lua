@@ -870,8 +870,6 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			[102052] = true, [102402] = true,
 			-- Custom Safehouse (1x Painting)
 			[150416] = true,
-			-- Safehouse Raid (1x Painting)
-			[150416] = true,
 			--Yacht (1x artifact painting)
 			[500533] = true,
 			--Watchdogs day 2 (10x coke)
@@ -920,9 +918,8 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 
 	local function process_loot_count(manager, carry_id)
 		local level_id = managers.job:current_level_id()
-		if is_ignored_id(carry_id) or is_equipment_bag(carry_id) then return end
-
 		local current_amount = manager._loot_fixes[level_id] and manager._loot_fixes[level_id][carry_id]
+
 		if current_amount and current_amount > 0 then
 			manager._loot_fixes[level_id][carry_id] = current_amount - 1
 		else
@@ -962,7 +959,6 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "remove_unit", "EIVHUD_ObjectInteractionManager_remove_unit", function(self, unit)
 		if alive(unit) then
 			local unit_id = unit:id()
-			local unit_editor_id = unit:editor_id()
 			if not is_ignored_id(unit_id) then
 				local carry_id = unit:carry_data() and unit:carry_data():carry_id()
 				if self._total_loot[unit_id] then
@@ -996,11 +992,11 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	end
 
 	function ObjectInteractionManager:get_current_crate_count()
-		return math_max(self.loot_count.crate_amount or 0, 0)
+		return self.loot_count.crate_amount or 0
 	end
 
 	function ObjectInteractionManager:get_current_total_loot_count()
-		return math_max(self.loot_count.loot_amount or 0, 0)
+		return self.loot_count.loot_amount or 0
 	end
 	
 elseif RequiredScript == "lib/managers/hudmanagerpd2" then
