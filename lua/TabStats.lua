@@ -893,7 +893,9 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	end)
 
 	local function is_valid_unit(unit)
-		return unit and alive(unit) and unit:interaction() and unit:interaction():active() and (not unit:carry_data() or unit:carry_data():carry_id() ~= "vehicle_falcogini" and unit:carry_data():carry_id() ~= "turret_part")
+		return unit and alive(unit) and unit:interaction() and unit:interaction():active() 
+		and (not unit:carry_data() or unit:carry_data():carry_id() ~= "vehicle_falcogini" 
+		and unit:carry_data():carry_id() ~= "turret_part")
 	end
 
 	local function is_ignored_id(unit_id)
