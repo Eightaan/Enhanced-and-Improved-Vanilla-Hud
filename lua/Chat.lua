@@ -17,4 +17,5 @@ Hooks:PostHook(HUDChat, "update_caret", "EIVHUD_HUDChat_update_caret", function(
 	self._input_panel:child("input_bg"):set_gradient_points({
 		0, Color.white:with_alpha(0), 0, Color.white:with_alpha(0), 1, Color.white:with_alpha(0)
 	})
+	self._panel:set_bottom(self._panel:parent():h() - (EIVHUD.Options:GetValue("HUD/ChatPosition") * 10))
 end)
