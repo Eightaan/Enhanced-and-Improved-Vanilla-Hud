@@ -21,7 +21,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	end
 
 	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_bufflist_setup_player_info_hud_pd2", function(self, ...)
-		self._hud_buff_list = HUDBuffList:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
+		self._hud_buff_list = EIVHUDBuffList:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
 	end)
 
 	function HUDManager:update_inspire_timer(buff)
@@ -32,8 +32,8 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	   self._hud_buff_list:Set_bloodthirst(buff)
 	end
 
-	HUDBuffList = HUDBuffList or class()
-	function HUDBuffList:init()
+	EIVHUDBuffList = EIVHUDBuffList or class()
+	function EIVHUDBuffList:init()
 		local Skilltree2 = "guis/textures/pd2/skilltree_2/icons_atlas_2"
 		local TimeBackground = "guis/textures/pd2/crimenet_marker_glow"
 		
@@ -88,7 +88,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		end
 	end
 	
-	function HUDBuffList:update_timer_visibility_and_position()
+	function EIVHUDBuffList:update_timer_visibility_and_position()
 		local inspire_visible = EIVHUD.Options:GetValue("HUD/BUFFLIST/Inspire")
 		local panel = self._cooldown_panel
 		local timer = self.cooldown_text
@@ -117,7 +117,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		panel:child("inspire_cooldown_icon"):set_h(28 * inspire_timer_scale)
 	end
 
-	function HUDBuffList:update_inspire_timer(duration)
+	function EIVHUDBuffList:update_inspire_timer(duration)
 		local timer = self.cooldown_text
 		local timer_bg = self._inspire_cooldown_timer_bg
 		local icon = self._inspire_cooldown_icon
@@ -145,7 +145,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		end
 	end
 	
-	function HUDBuffList:fade_out(buff_type)
+	function EIVHUDBuffList:fade_out(buff_type)
 		local start_time = os.clock()
 		local text, bg, icon
 		local duration
@@ -183,7 +183,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		end
 	end
 
-	function HUDBuffList:update_bloodthirst_position()
+	function EIVHUDBuffList:update_bloodthirst_position()
 		local panel = self._bloodthirst_panel
 		local text = self.bloodthirst_text
 		local x_position = 10 * (EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstX") or 0)
@@ -202,7 +202,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	end
 
 	LocalizationManager:add_localized_strings({["EIVH_bloodthirst_multiplier"] = "$NUM"})
-	function HUDBuffList:Set_bloodthirst(buff)
+	function EIVHUDBuffList:Set_bloodthirst(buff)
 		local panel = self._bloodthirst_panel
 		local bloodthirst_text = self.bloodthirst_text
 		local bloodthirst_icon = self._bloodthirst_icon

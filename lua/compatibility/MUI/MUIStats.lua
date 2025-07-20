@@ -6,9 +6,6 @@ if EIVHUD and EIVHUD.Options:GetValue("HUD/Tab") then
 		local loot = self._loot_panel;
 		local bag = self._bag_panel;
 		local acquired = bag:child("amount");
-		local gage = loot:child("gage_amount");
-		local gage_icon = loot:child("gage_icon");
-		local gage_text = loot:child("gage_text");
 		
 		local global = managers.loot._global;
 		local secured = global.secured;
@@ -36,10 +33,6 @@ if EIVHUD and EIVHUD.Options:GetValue("HUD/Tab") then
 		end
 
 		acquired:set_text(tostring(required + bonus) .. loot_amount);
-
-		gage:set_visible(remaining < packages);
-		gage_icon:set_visible(remaining < packages);
-		gage_text:set_visible(remaining < packages);
 
 		self:resize_loot();
 	end
