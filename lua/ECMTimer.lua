@@ -10,13 +10,10 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			w = 200,
 			h = 200
 		})
-
-		local value = EIVHUD.Options:GetValue("HUD/ShowHostages") > 1 and 0 or 50
-		self._ecm_panel:set_top(value)
 		self._ecm_panel:set_right(self._hud_panel:w() + 11)
 
 		local ecm_box = HUDBGBox_create(self._ecm_panel, { w = 38, h = 38, },  {})
-		if EIVHUD.Options:GetValue("HUD/ECM/HideBox") then
+		if EIVHUD.Options:GetValue("HUD/TIMER/HideBox") then
 			for _, child in ipairs({"bg", "left_top", "left_bottom", "right_top", "right_bottom"}) do
 				ecm_box:child(child):hide()
 			end
@@ -63,6 +60,12 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		else
 			self._ecm_panel:set_visible(false)
 		end
+		
+		local hostages_panel = self._hud_panel:child("hostages_panel")
+		if hostages_panel and alive(hostages_panel) and EIVHUD.Options:GetValue("HUD/ShowHostages") == 1 then
+			self._ecm_panel:set_top(hostages_panel:bottom() + 5)
+			self._ecm_panel:set_right(hostages_panel:right() + 11)
+		end
 	end
 
 	--Init
@@ -100,7 +103,7 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 
 	--ECM Timer Host and Client
 	Hooks:PostHook(ECMJammerBase, "set_active", "EIVHUD_ECMJammerBase_set_active", function(self, active, ...)
-		if active and EIVHUD.Options:GetValue("HUD/ECM/Infoboxes") then
+		if active and EIVHUD.Options:GetValue("HUD/TIMER/Infoboxes") then
 			local battery_life = self:battery_life()
 			if battery_life == 0 then
 				return
@@ -115,7 +118,7 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 					jam_pagers = peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers")
 				end
 			end
-			if jam_pagers or not EIVHUD.Options:GetValue("HUD/ECM/PagerJam") then
+			if jam_pagers or not EIVHUD.Options:GetValue("HUD/TIMER/PagerJam") then
 				managers.hud._hud_ecm_counter._ecm_timer = ecm_timer
 			else
 				return

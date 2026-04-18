@@ -11,6 +11,9 @@ elseif RequiredScript == "lib/managers/menu/menucomponentmanager" then
 	Hooks:OverrideFunction(MenuComponentManager, "create_newsfeed_gui", function(self)
 		self:close_newsfeed_gui()
 	end)
+	Hooks:OverrideFunction(MenuComponentManager, "create_new_heists_gui", function(self)
+		self:close_new_heists_gui()
+	end)
 
 elseif RequiredScript == "lib/managers/menumanager" then
 	Hooks:OverrideFunction(MenuCallbackHandler, "get_latest_dlc_locked", function(self) return false end)

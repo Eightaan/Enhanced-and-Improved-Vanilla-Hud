@@ -33,8 +33,8 @@
 	"EIVHDownsTitleID" : "Alternative Down Counter",
 	"EIVHDownsDescID" : "Changes the way the downs are presented on the hud.",
 
-	"EIVHECMOptionsButtonTitleID" : "ECM Timer",
-	"EIVHECMOptionsButtonDescID" : "ECM timer options.",
+	"EIVHTIMEROptionsButtonTitleID" : "Timers",
+	"EIVHTIMEROptionsButtonDescID" : "timer options.",
 	
 	"EIVHInfoboxesTitleID" : "ECM Timer",
 	"EIVHInfoboxesDescID" : "Display the duration of active ECM timers.",
@@ -42,32 +42,8 @@
 	"EIVHPagerJamDescID" : "If an ECM jammer doesn't block pagers from going off the timer won't be visible.",
 	"EIVHHideBoxTitleID" : "Hide Ecm background box",
 	"EIVHHideBoxDescID" : "Hides the background and white box edges from the timer display.",
-	
-	"EIVHBUFFLISTOptionsButtonTitleID" : "Buffs",
-	"EIVHBUFFLISTOptionsButtonDescID" : "Buff options.",
-
 	"EIVHInspireTitleID" : "Inspire Cooldown Timer",
 	"EIVHInspireDescID" : "Displays a timer for the inspire cooldown.",
-	"EIVHTimerXTitleID" : "Horisontal Position",
-	"EIVHTimerXDescID" : "Change the horisontal position of the timer display.",
-	"EIVHTimerYTitleID" : "Vertical Position",
-	"EIVHTimerYDescID" : "Change the vertical position of the timer display.",
-	"EIVHTimerScaleTitleID" : "Scale",
-	"EIVHTimerScaleDescID" : "Change the scale of the timer display.",
-	
-	"EIVHBloodthirstTitleID" : "Bloodthirst",
-	"EIVHBloodthirstDescID" : "Displays the melee damage multiplier for bloodthirst.",
-	"EIVHBloodthirstMinKillsTitleID" : "Multiplier Limit",
-	"EIVHBloodthirstMinKillsDescID" : "Change how high the multiplier needs to be before it's shown on the hud.",
-	"EIVHBloodthirstXTitleID" : "Horisontal Position",
-	"EIVHBloodthirstXDescID" : "Change the horisontal position of the multiplier display. \n The change will be visible next time the buff text updates up on the screen.",
-	"EIVHBloodthirstYTitleID" : "Vertical Position",
-	"EIVHBloodthirstYDescID" : "Change the vertical position of the multiplier display. \n The change will be visible next time the buff text updates up on the screen.",
-	"EIVHBloodthirstScaleTitleID" : "Scale",
-	"EIVHBloodthirstScaleDescID" : "Change the scale of the multiplier display. \n The change will be visible next time the buff text updates up on the screen.",
-	
-	"EIVHECMOptionsButtonTitleID" : "ECM Timer",
-	"EIVHECMOptionsButtonDescID" : "ECM timer options.",
 	
 	"EIVHShowObjectivesTitleID" : "Objectives display",
 	"EIVHShowObjectivesDescID" : "Choose how the objectives will be displayed. \n Extended tab stats must be enabled for the objectives to display there.",
