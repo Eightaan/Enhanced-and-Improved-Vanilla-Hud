@@ -10,7 +10,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			w = 200,
 			h = 200
 		})
-			self._ecm_panel:set_right(self._hud_panel:w() + 11)
+		self._ecm_panel:set_right(self._hud_panel:w() + 11)
 
 		local ecm_box = HUDBGBox_create(self._ecm_panel, { w = 38, h = 38, },  {})
 		if EIVHUD.Options:GetValue("HUD/TIMER/HideBox") then

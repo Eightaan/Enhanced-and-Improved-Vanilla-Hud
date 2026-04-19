@@ -40,7 +40,7 @@
 	"EIVHInfoboxesDescID" : "Display the duration of active ECM timers.",
 	"EIVHPagerJamTitleID" : "Only Display ECM Timers With Pager Delay",
 	"EIVHPagerJamDescID" : "If an ECM jammer doesn't block pagers from going off the timer won't be visible.",
-	"EIVHHideBoxTitleID" : "Hide Ecm background box",
+	"EIVHHideBoxTitleID" : "Hide background box",
 	"EIVHHideBoxDescID" : "Hides the background and white box edges from the timer display.",
 	"EIVHInspireTitleID" : "Inspire Cooldown Timer",
 	"EIVHInspireDescID" : "Displays a timer for the inspire cooldown.",
