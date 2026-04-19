@@ -10,7 +10,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			w = 200,
 			h = 200
 		})
-		self._ecm_panel:set_right(self._hud_panel:w() + 11)
+			self._ecm_panel:set_right(self._hud_panel:w() + 11)
 
 		local ecm_box = HUDBGBox_create(self._ecm_panel, { w = 38, h = 38, },  {})
 		if EIVHUD.Options:GetValue("HUD/TIMER/HideBox") then
@@ -46,25 +46,44 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		ecm_icon:set_right(ecm_box:parent():w())
 		ecm_icon:set_center_y(ecm_box:h() / 2)
 		ecm_box:set_right(ecm_icon:left())
+
+		self._show_hostages = EIVHUD.Options:GetValue("HUD/ShowHostages")
+		self._ecm_casing_end_delay = self._ecm_casing_end_delay or 0
 	end
 	
 	function HUDECMCounter:update()
+		local is_stealth = managers.groupai and managers.groupai:state():whisper_mode()
+
 		local current_time = TimerManager:game():time()
 		local t = self._ecm_timer - current_time
-		if managers.groupai and managers.groupai:state():whisper_mode() then
-			self._ecm_panel:set_visible(t > 0)
-			if t > 0.1 then
-				local t_format = t < 10 and "%.1fs" or "%.fs"
-				self._text:set_text(string.format(t_format, t))
-			end
-		else
-			self._ecm_panel:set_visible(false)
+
+		self._ecm_panel:set_visible(is_stealth and t > 0)
+
+		if not is_stealth then
+			return
 		end
-		
+
 		local hostages_panel = self._hud_panel:child("hostages_panel")
-		if hostages_panel and alive(hostages_panel) and EIVHUD.Options:GetValue("HUD/ShowHostages") == 1 then
+
+		if hostages_panel and alive(hostages_panel) and self._show_hostages == 1 then
 			self._ecm_panel:set_top(hostages_panel:bottom() + 5)
-			self._ecm_panel:set_right(hostages_panel:right() + 11)
+		else
+			local assault_corner = managers.hud and managers.hud._hud_assault_corner
+			local is_casing = assault_corner and assault_corner._casing
+			local delay = 1.5
+
+			if self._was_casing and not is_casing then
+				self._ecm_casing_end_delay = current_time + delay
+			end
+			self._was_casing = is_casing
+
+			local in_delay = current_time < (self._ecm_casing_end_delay or 0)
+
+			self._ecm_panel:set_top((is_casing or in_delay) and 50 or 0)
+		end
+
+		if t > 0.1 then
+			self._text:set_text(string.format(t < 10 and "%.1fs" or "%.fs", t))
 		end
 	end
 

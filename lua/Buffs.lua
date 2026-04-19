@@ -12,7 +12,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			self._teammate_panels[self.PLAYER_PANEL]:_set_bulletstorm(false)
 		end
 	end
-	
+
 	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "inspire_timer_setup_player_info_hud_pd2", function(self, ...)
 		self._hud_inspire_timer = HUDInspire:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
 	end)
@@ -22,7 +22,6 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	end
 
 	HUDInspire = HUDInspire or class()
-
 	function HUDInspire:init(hud)
 		self._hud_panel = hud.panel
 		self.hud = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
@@ -31,10 +30,8 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			alpha =	1,
 			visible = false,
 			w = 200,
-			h = 200,
-			y = 23
+			h = 200
 		})
-		self._inspire_panel:set_right(self.hud.panel:w() - 30)
 		
 		local inspire_box = HUDBGBox_create(self._inspire_panel, { w = 38, h = 38, },  {})
 		if EIVHUD.Options:GetValue("HUD/TIMER/HideBox") then
@@ -70,6 +67,8 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		inspire_icon:set_right(inspire_box:parent():w())
 		inspire_icon:set_center_y(inspire_box:h() / 2)
 		inspire_box:set_right(inspire_icon:left())
+
+		self._show_hostages = EIVHUD.Options:GetValue("HUD/ShowHostages")
 	end
 
 	function HUDInspire:inspire_timer(duration)
@@ -97,12 +96,34 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	end
 
 	function HUDInspire:update_position()
-		local hostages_panel = self._hud_panel:child("hostages_panel")
+		local offset = 30
+		local top_pos = 22
 
-		if hostages_panel and alive(hostages_panel) and EIVHUD.Options:GetValue("HUD/ShowHostages") == 1 then
-			self._inspire_panel:set_top(hostages_panel:bottom() + 30)
-			self._inspire_panel:set_right(hostages_panel:right() + 52)
+		local hostages_panel = self._hud_panel:child("hostages_panel")
+		if hostages_panel and alive(hostages_panel) and self._show_hostages == 1 then
+			self._inspire_panel:set_top(hostages_panel:bottom() + offset)
+			self._inspire_panel:set_right(hostages_panel:right() + (offset + top_pos))
+			return
 		end
+
+		local assault_corner = managers.hud and managers.hud._hud_assault_corner
+		if assault_corner and assault_corner._assault and self._show_hostages ~= 1 then
+			local assault_panel = self._hud_panel:child("assault_panel")
+			if assault_panel and alive(assault_panel) then
+				local delay = 1.5
+				self._assault_end_delay = TimerManager:game():time() + delay
+
+				self._inspire_panel:set_top(assault_panel:bottom() - offset)
+				return
+			end
+		end
+
+		if self._assault_end_delay and TimerManager:game():time() < self._assault_end_delay then
+			return
+		end
+
+		self._inspire_panel:set_top(top_pos)
+		self._inspire_panel:set_right(self.hud.panel:w() - offset)
 	end
 	
 elseif RequiredScript == "lib/managers/playermanager" then
