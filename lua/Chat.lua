@@ -11,6 +11,7 @@ Hooks:PostHook(HUDChat, "init", "EIVHUD_HUDChat_init", function(self)
 		o:child("output_bg"):configure(alpha)
 		self._input_panel:child("input_bg"):configure(alpha)
 	end
+	self._panel:set_bottom(self._panel:parent():h() - (EIVHUD.Options:GetValue("HUD/ChatPosition") * 10))
 end)
 
 Hooks:PostHook(HUDChat, "update_caret", "EIVHUD_HUDChat_update_caret", function(self, ...)

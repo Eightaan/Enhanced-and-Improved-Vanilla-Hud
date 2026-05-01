@@ -91,7 +91,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 				local day = managers.job:current_stage()
 				local days = job_chain and #job_chain or 0
 				local level_data = managers.job:current_level_data()
-				local waves = managers.hud._hud_assault_corner:should_display_waves() and EIVHUD.Options:GetValue("HUD/ShowWaves") > 1 and "\n" .. managers.hud._hud_assault_corner:get_completed_waves_string() or ""
+				local waves = managers.hud._hud_assault_corner:should_display_waves() and EIVHUD.Options:GetValue("HUD/ShowWaves") == 2 and "\n" .. managers.hud._hud_assault_corner:get_completed_waves_string() or ""
 				local space
 				local heist_title
 				
@@ -152,7 +152,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			placer:new_row()
 		end
 
-		if EIVHUD.Options:GetValue("HUD/ShowObjectives") > 1 then
+		if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
 			placer:add_bottom(self._left:fine_text({
 				vertical = "top",
 				align = "left",
@@ -524,7 +524,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		end
 	end)
 	
-	if EIVHUD.Options:GetValue("HUD/ShowTimer") > 1 then
+	if EIVHUD.Options:GetValue("HUD/ShowTimer") == 2 then
 		Hooks:PostHook(HUDStatsScreen, 'recreate_right', "EIVHUD_recreate_right", function(self)
 			local time_panel = self:_create_time(self._right)
 			time_panel:set_right(self._right:w() - self._rightpos[2])
@@ -615,7 +615,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 
 		local placer = UiPlacer:new(10, 10, 0, 8)
 		
-		local waves = EIVHUD.Options:GetValue("HUD/ShowWaves") > 1 and "\n" .. managers.hud._hud_assault_corner:get_completed_waves_string() or ""
+		local waves = EIVHUD.Options:GetValue("HUD/ShowWaves") == 2 and "\n" .. managers.hud._hud_assault_corner:get_completed_waves_string() or ""
 		local level_data = managers.job:current_level_data()
 
 		if level_data then
@@ -627,7 +627,7 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 			placer:new_row()
 		end
 		
-		if EIVHUD.Options:GetValue("HUD/ShowObjectives") > 1 then
+		if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
 			local objectives_title = self._left:fine_text({
 				vertical = "top",
 				align = "left",
@@ -822,23 +822,6 @@ elseif RequiredScript == "lib/managers/trademanager" then
 			managers.money:ResetCivilianKills()
 		end
 	end)
-
-elseif RequiredScript == "lib/managers/hud/hudobjectives" then
-	if EIVHUD.Options:GetValue("HUD/ShowObjectives") == 2 then
-		Hooks:OverrideFunction(HUDObjectives, "activate_objective", function(self, data)
-			if not self._hud_panel:child("objectives_panel") then return end
-			local objectives_panel = self._hud_panel:child("objectives_panel")
-			objectives_panel:set_alpha(0)
-			objectives_panel:set_visible(false)
-		end)
-	end
-
-elseif RequiredScript == "lib/managers/hud/hudheisttimer" then
-	if EIVHUD.Options:GetValue("HUD/ShowTimer") == 2 then
-		Hooks:PostHook(HUDHeistTimer, "init", "EIVHUD_HUDHeistTimer_init", function(self)
-			self._timer_text:set_alpha(0)
-		end)
-	end
 
 elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "init", "EIVHUD_ObjectInteractionManager_init", function(self)

@@ -2,13 +2,6 @@ if _G.IS_VR then
 	return
 end
 
-local Color = Color
-
-local math_lerp = math.lerp
-
-local math_max = math.max
-local math_sin = math.sin
-
 if RequiredScript == "lib/managers/hudmanagerpd2" then
 	function HUDManager:set_infinite_ammo(state)
 		if self._teammate_panels[self.PLAYER_PANEL]._set_infinite_ammo then
@@ -20,216 +13,126 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		end
 	end
 
-	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_bufflist_setup_player_info_hud_pd2", function(self, ...)
-		self._hud_buff_list = EIVHUDBuffList:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
+	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "inspire_timer_setup_player_info_hud_pd2", function(self, ...)
+		self._hud_inspire_timer = HUDInspire:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
 	end)
 
-	function HUDManager:update_inspire_timer(buff)
-		self._hud_buff_list:update_inspire_timer(buff)
-	end
-	
-	function HUDManager:Set_bloodthirst(buff)
-	   self._hud_buff_list:Set_bloodthirst(buff)
+	function HUDManager:inspire_timer(buff)
+		self._hud_inspire_timer:inspire_timer(buff)
 	end
 
-	EIVHUDBuffList = EIVHUDBuffList or class()
-	function EIVHUDBuffList:init()
-		local Skilltree2 = "guis/textures/pd2/skilltree_2/icons_atlas_2"
-		local TimeBackground = "guis/textures/pd2/crimenet_marker_glow"
+	HUDInspire = HUDInspire or class()
+	function HUDInspire:init(hud)
+		self._hud_panel = hud.panel
+		self._inspire_panel = self._hud_panel:panel({
+			name = "inspire_timer_panel",
+			alpha =	1,
+			visible = false,
+			w = 200,
+			h = 200
+		})
+		self._inspire_panel:set_right(self._hud_panel:w() + 5)
 		
-		if managers.hud ~= nil then 
-			self.hud = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_FULLSCREEN_PD2)
-
-			--Inspire Cooldown
-			self._cooldown_panel = self.hud.panel:panel()
-
-			self.cooldown_text = self._cooldown_panel:text({
-				layer = 2,
-				font = tweak_data.hud.medium_font_noshadow,
-				visible = false
-			})
-			self._inspire_cooldown_icon = self._cooldown_panel:bitmap({
-				name = "inspire_cooldown_icon",
-				texture = Skilltree2,
-				texture_rect = { 4 * 80, 9 * 80, 80, 80 },
-				layer = 1,
-				visible = false
-			})
-			self._inspire_cooldown_timer_bg = self._cooldown_panel:bitmap({
-				name = "inspire_cooldown_timer_bg",
-				texture = TimeBackground,
-				texture_rect = { 1, 1, 62, 62 }, 
-				color = Color("66ffff"),
-				visible = false
-			})
-
-			--Bloodthirst
-			self._bloodthirst_panel = self.hud.panel:panel()
-
-			self.bloodthirst_text = self._bloodthirst_panel:text({
-				layer = 2,
-				font = tweak_data.hud.medium_font_noshadow,
-				visible = false
-			})
-			self._bloodthirst_icon = self._bloodthirst_panel:bitmap({
-				name = "bloodthirst_icon",
-				texture = Skilltree2,
-				texture_rect = { 11* 80, 6 * 80, 80, 80 },
-				layer = 1,
-				visible = false
-			})
-			self._bloodthirst_bg = self._bloodthirst_panel:bitmap({
-				name = "bloodthirst_bg",
-				texture = TimeBackground,
-				texture_rect = { 1, 1, 62, 62 }, 
-				color = Color("66ffff"),
-				visible = false
-			})
+		local inspire_box = HUDBGBox_create(self._inspire_panel, { w = 38, h = 38, },  {})
+		if EIVHUD.Options:GetValue("HUD/TIMER/HideBox") then
+			for _, child in ipairs({"bg", "left_top", "left_bottom", "right_top", "right_bottom"}) do
+				inspire_box:child(child):hide()
+			end
 		end
+
+		self._text = inspire_box:text({
+			name = "text",
+			text = "0",
+			valign = "center",
+			align = "center",
+			vertical = "center",
+			w = inspire_box:w(),
+			h = inspire_box:h(),
+			layer = 1,
+			color = Color.white,
+			font = tweak_data.hud_corner.assault_font,
+			font_size = tweak_data.hud_corner.numhostages_size * 0.9
+		})
+
+		local icon_scale = 6
+		local inspire_icon = self._inspire_panel:bitmap({
+			name = "inspire_icon",
+			texture = "EIVHUD/hud_icon_inspire",
+			valign = "top",
+			color = Color.white,
+			layer = 1,
+			w = inspire_box:w() - icon_scale,
+			h = inspire_box:h() - icon_scale
+		})
+		inspire_icon:set_right(inspire_box:parent():w())
+		inspire_icon:set_center_y(inspire_box:h() / 2)
+		inspire_box:set_right(inspire_icon:left())
+
+		self._show_hostages = EIVHUD.Options:GetValue("HUD/ShowHostages")
+		self._show_waves = EIVHUD.Options:GetValue("HUD/ShowWaves")
 	end
-	
-	function EIVHUDBuffList:update_timer_visibility_and_position()
-		local inspire_visible = EIVHUD.Options:GetValue("HUD/BUFFLIST/Inspire")
-		local panel = self._cooldown_panel
-		local timer = self.cooldown_text
 
-		local pos_x = 10 * (EIVHUD.Options:GetValue("HUD/BUFFLIST/TimerX") or 0)
-		local pos_y = 10 * (EIVHUD.Options:GetValue("HUD/BUFFLIST/TimerY") or 0)
-		local inspire_timer_scale = (EIVHUD.Options:GetValue("HUD/BUFFLIST/TimerScale") or 1)
-		
-		timer:set_visible(inspire_visible)
-		panel:child("inspire_cooldown_icon"):set_visible(inspire_visible)
-		panel:child("inspire_cooldown_timer_bg"):set_visible(inspire_visible)
-		
-		
-		panel:set_x(pos_x)
-		panel:set_y(pos_y)
-		
-		timer:set_x(13 * inspire_timer_scale)
-		timer:set_y(25 * inspire_timer_scale)
-		timer:set_font_size(16 * inspire_timer_scale)
-		
-		panel:child("inspire_cooldown_timer_bg"):set_w(40 * inspire_timer_scale)
-		panel:child("inspire_cooldown_timer_bg"):set_h(40 * inspire_timer_scale)
-		panel:child("inspire_cooldown_timer_bg"):set_y(13 * inspire_timer_scale)
-		
-		panel:child("inspire_cooldown_icon"):set_w(28 * inspire_timer_scale)
-		panel:child("inspire_cooldown_icon"):set_h(28 * inspire_timer_scale)
-	end
-
-	function EIVHUDBuffList:update_inspire_timer(duration)
-		local timer = self.cooldown_text
-		local timer_bg = self._inspire_cooldown_timer_bg
-		local icon = self._inspire_cooldown_icon
-
-		timer:set_alpha(1)
-		timer_bg:set_alpha(0.5)
-		icon:set_alpha(1)
-
-		if duration and duration > 1 then
-			timer:stop()
-			timer:animate(function(o)
+	function HUDInspire:inspire_timer(duration)
+		if duration and duration > 0.1 then
+			self._inspire_panel:set_visible(true)
+			self._text:stop()
+			self._text:animate(function(o)
 				local t_left = duration
-				self:update_timer_visibility_and_position()
 
-				while t_left >= 0 do
-					if t_left <= 0.1 then
-						self:fade_out("inspire")
-						return
-					end
-					t_left = t_left - coroutine.yield()
-					o:set_text(string.format(t_left < 9.9 and "%.1f" or "%.f", t_left))
-					self:update_timer_visibility_and_position()
-				end
-			end)
-		end
-	end
-	
-	function EIVHUDBuffList:fade_out(buff_type)
-		local start_time = os.clock()
-		local text, bg, icon
-		local duration
-
-		if buff_type == "inspire" then
-			text = self.cooldown_text
-			bg = self._inspire_cooldown_timer_bg
-			icon = self._inspire_cooldown_icon
-			duration = 0.1
-		elseif buff_type == "bloodthirst" then
-			text = self.bloodthirst_text
-			bg = self._bloodthirst_bg
-			icon = self._bloodthirst_icon
-			duration = 0.3
-		end
-
-		if text and bg and icon then
-			text:animate(function()
 				while true do
-					local alpha = math_max(1 - (os.clock() - start_time) / duration, 0)
-					text:set_alpha(alpha)
-					bg:set_alpha(0.5 * alpha)
-					icon:set_alpha(alpha)
-
-					if alpha <= 0 then
-						icon:set_visible(false)
-						bg:set_visible(false)
-						text:set_text("")
+					t_left = t_left - coroutine.yield()
+				self:update_position()
+					if t_left <= 0 then
+						self._inspire_panel:set_visible(false)
 						break
 					end
 
-					coroutine.yield()
+					o:set_text(string.format(
+						t_left < 9.9 and "%.1f" or "%.f",
+						t_left
+					))
 				end
 			end)
 		end
 	end
 
-	function EIVHUDBuffList:update_bloodthirst_position()
-		local panel = self._bloodthirst_panel
-		local text = self.bloodthirst_text
-		local x_position = 10 * (EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstX") or 0)
-		local y_position = 10 * (EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstY") or 0)
-		local bloodthirst_scale = (EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstScale") or 1)
+	function HUDInspire:update_position()
+		local offset = 5
 
-		panel:set_x(x_position)
-		panel:set_y(y_position)
-		text:set_x(12 * bloodthirst_scale)
-		text:set_y(25 * bloodthirst_scale)
-		panel:child("bloodthirst_bg"):set_w(37 * bloodthirst_scale)
-		panel:child("bloodthirst_bg"):set_h(37 * bloodthirst_scale)
-		panel:child("bloodthirst_bg"):set_y(15 * bloodthirst_scale)
-		panel:child("bloodthirst_icon"):set_w(28 * bloodthirst_scale)
-		panel:child("bloodthirst_icon"):set_h(28 * bloodthirst_scale)
-	end
-
-	LocalizationManager:add_localized_strings({["EIVH_bloodthirst_multiplier"] = "$NUM"})
-	function EIVHUDBuffList:Set_bloodthirst(buff)
-		local panel = self._bloodthirst_panel
-		local bloodthirst_text = self.bloodthirst_text
-		local bloodthirst_icon = self._bloodthirst_icon
-		local bloodthirst_timer_bg = self._bloodthirst_bg
-
-		bloodthirst_text:set_alpha(1)
-		bloodthirst_icon:set_alpha(1)
-		bloodthirst_timer_bg:set_alpha(0.5)
-
-		if buff >= EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstMinKills") and EIVHUD.Options:GetValue("HUD/BUFFLIST/Bloodthirst") then
-			bloodthirst_text:set_visible(true)
-			bloodthirst_icon:set_visible(true)
-			bloodthirst_timer_bg:set_visible(true)
-
-			self:update_bloodthirst_position()
-		
-			bloodthirst_text:set_text(managers.localization:to_upper_text("EIVH_bloodthirst_multiplier", { NUM = buff }).."x")
-			local font_size = 16 * (EIVHUD.Options:GetValue("HUD/BUFFLIST/BloodthirstScale") or 1)
-			bloodthirst_text:animate(function(o)
-				over(1, function(p)
-					local n = 1 - math_sin((p / 2) * 180)
-					o:set_font_size(math_lerp(font_size, font_size * 1.16, n))
-				end)
-			end)
-		else
-			self:fade_out("bloodthirst")
+		local hostages_panel = self._hud_panel:child("hostages_panel")
+		if hostages_panel and alive(hostages_panel) and self._show_hostages == 1 then
+			self._inspire_panel:set_top(hostages_panel:bottom() + offset)
+			self._inspire_panel:set_right(hostages_panel:right() + offset)
+			return
 		end
+
+		local assault_corner = managers.hud and managers.hud._hud_assault_corner		
+		if assault_corner and assault_corner:should_display_waves() and self._show_waves == 1 then
+			local wave_panel = self._hud_panel:child("wave_panel")
+
+			if wave_panel and alive(wave_panel) then
+				self._inspire_panel:set_top(wave_panel:bottom() + offset)
+				self._inspire_panel:set_right(wave_panel:right() - offset)
+				return
+			end
+		end
+
+		if assault_corner and assault_corner._assault and self._show_hostages ~= 1 then
+			local assault_panel = self._hud_panel:child("assault_panel")
+			if assault_panel and alive(assault_panel) then
+				local delay = 1.5
+				self._assault_end_delay = TimerManager:game():time() + delay
+				self._inspire_panel:set_top(assault_panel:bottom() - (offset * 10))
+				return
+			end
+		end
+
+		if self._assault_end_delay and TimerManager:game():time() < self._assault_end_delay then
+			return
+		end
+
+		self._inspire_panel:set_top(0)
+		self._inspire_panel:set_right(self._hud_panel:w() + offset)
 	end
 	
 elseif RequiredScript == "lib/managers/playermanager" then
@@ -256,26 +159,8 @@ elseif RequiredScript == "lib/managers/playermanager" then
 	
 	Hooks:PostHook(PlayerManager, "disable_cooldown_upgrade", "EIVHUD_PlayerManager_disable_cooldown_upgrade", function(self, category, upgrade)
 		local upgrade_value = self:upgrade_value(category, upgrade)
-		if upgrade_value and upgrade_value[1] ~= 0 and EIVHUD.Options:GetValue("HUD/BUFFLIST/Inspire") then
-			managers.hud:update_inspire_timer(upgrade_value[2])
+		if upgrade_value and upgrade_value[1] ~= 0 and EIVHUD.Options:GetValue("HUD/TIMER/Inspire") then
+			managers.hud:inspire_timer(upgrade_value[2])
 		end
-	end)
-	
-	Hooks:PostHook(PlayerManager, 'set_melee_dmg_multiplier', "EIVHUD_update_Bloodthirst", function(self, ...)
-		if not self:has_category_upgrade("player", "melee_damage_stacking") then 
-			return 
-		end
-
-		if self._melee_dmg_mul ~= 1 then
-			managers.hud:Set_bloodthirst(self._melee_dmg_mul)
-		end
-	end)
-	
-	Hooks:PostHook(PlayerManager, 'reset_melee_dmg_multiplier', "HMH_reset_Bloodthirst", function(self)
-		if not self:has_category_upgrade("player", "melee_damage_stacking") then 
-			return 
-		end
-
-		managers.hud:Set_bloodthirst(0)
 	end)
 end
