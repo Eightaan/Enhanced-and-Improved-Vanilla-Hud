@@ -1,22 +1,22 @@
 EIVHUD.show_hostages = {
 	"Show_on_hud",
 	"Tabstats",
-	"Hide_hostages"
+	"Hide"
 }
 EIVHUD.show_waves = {
 	"Show_on_hud",
 	"Tabstats",
-	"Both"
+	"Hide"
 }
 EIVHUD.show_timer = {
 	"Show_on_hud",
 	"Tabstats",
-	"Both"
+	"Hide"
 }
 EIVHUD.show_objectives = {
 	"Show_on_hud",
 	"Tabstats",
-	"Both"
+	"Hide"
 }
 
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EIVH", function(loc)
