@@ -16,26 +16,31 @@ if RequiredScript == "lib/managers/hud/hudassaultcorner" then
 		end
 	end
 
-	if EIVHUD.Options:GetValue("HUD/ShowHostages") ~= 1 then 
-		Hooks:PostHook(HUDAssaultCorner, "init", "EIVHUD_HUDAssaultCorner_init", function(self, hud, ...)
-			if not self._hud_panel then return end
+	Hooks:PostHook(HUDAssaultCorner, "init", "EIVHUD_HUDAssaultCorner_init", function(self, hud, ...)
+		if EIVHUD.Options:GetValue("HUD/ShowHostages") ~= 1 then 
+			self:hostages_display()
+		end
+		self:wave_display()
+	end)
 
-			local hostages_panel = safe_child(self._hud_panel, "hostages_panel")
-			hide_elements({
-				self._hostages_bg_box,
-				safe_child(hostages_panel, "hostages_icon")
-			})
 
-			if self.setup_wave_display then
-				self:setup_wave_display(0, self._hud_panel:w() + 9)
-			end
-		end)
+	function HUDAssaultCorner:hostages_display()
+		local hostages_panel = safe_child(self._hud_panel, "hostages_panel")
+		hide_elements({
+			self._hostages_bg_box,
+			safe_child(hostages_panel, "hostages_icon")
+		})
+	end
+	
+	function HUDAssaultCorner:wave_display()
+		if self.setup_wave_display then
+			self:setup_wave_display(0, self._hud_panel:w() + 9)
+		end
 	end
 
 	if EIVHUD.Options:GetValue("HUD/ShowWaves") ~= 1 then
 		Hooks:PostHook(HUDAssaultCorner, "setup_wave_display", "EIVHUD_HUDAssaultCorner_setup_wave_display", function(self, ...)
 			if not self.should_display_waves or not self:should_display_waves() then return end
-
 			local wave_panel = safe_child(self._hud_panel, "wave_panel")
 			hide_elements({
 				wave_panel,
