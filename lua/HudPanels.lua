@@ -72,8 +72,11 @@ elseif RequiredScript == "lib/managers/hud/hudheisttimer" then
 	if EIVHUD.Options:GetValue("HUD/ShowTimer") ~= 1 then
 		Hooks:PostHook(HUDHeistTimer, "init", "EIVHUD_HUDHeistTimer_init", function(self)
 			if alive(self._timer_text) then
-				self._timer_text:set_alpha(0)
+				self:set_timer_text()
 			end
 		end)
+		function HUDHeistTimer:set_timer_text()
+			self._timer_text:set_alpha(0)
+		end
 	end
 end
