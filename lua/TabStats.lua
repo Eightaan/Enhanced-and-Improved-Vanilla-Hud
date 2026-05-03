@@ -288,7 +288,8 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		})
 		placer = UiPlacer:new(16, 0, 8, 4)
 
-		if not is_whisper_mode and managers.player:has_category_upgrade("player", "convert_enemies") then
+		local hide_converts = EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/ShowHostages") ~= 2 or is_whisper_mode
+		if managers.player:has_category_upgrade("player", "convert_enemies") and not hide_converts then
 			local minion_text = placer:add_bottom(loot_panel:fine_text({
 				keep_w = true,
 				text = managers.localization:text("hud_stats_enemies_converted"),
@@ -719,7 +720,8 @@ elseif RequiredScript == "lib/managers/hud/hudstatsscreenskirmish" then
 		})
 		placer = UiPlacer:new(16, 0, 8, 4)
 
-		if managers.player:has_category_upgrade("player", "convert_enemies") then
+		local hide_converts = EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/ShowHostages") ~= 2
+		if managers.player:has_category_upgrade("player", "convert_enemies") and not hide_converts then
 			local minion_text = placer:add_bottom(loot_panel:fine_text({
 				keep_w = true,
 				text = managers.localization:text("hud_stats_enemies_converted"),
