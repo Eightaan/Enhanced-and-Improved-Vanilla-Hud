@@ -2,4 +2,5 @@
 	<texture path="EIVHUD/screeneffect"/>
 	<texture path="EIVHUD/animate_health_circle"/>
 	<texture path="EIVHUD/health_cooldown_icon"/>
+	<texture path="EIVHUD/hud_icon_inspire"/>
 </table>

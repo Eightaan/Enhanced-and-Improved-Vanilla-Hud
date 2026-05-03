@@ -15,6 +15,8 @@
 
 		<hook file="Buffs.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="Buffs.lua" source_file="lib/managers/playermanager"/>
+		
+		<hook file="Converts.lua" source_file="lib/managers/hudmanagerpd2"/>
 
 		<hook file="HealthCircle.lua" source_file="lib/managers/hud/hudteammate"/>
 		<hook file="HealthCircle.lua" source_file="lib/managers/hudmanagerpd2"/>
@@ -44,9 +46,14 @@
 		<hook file="compatibility/MUI/MUITeam.lua" source_file="lib/managers/hud/hudteammate"/>
 		<hook file="compatibility/MUI/MUITeam.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="compatibility/MUI/MUIManager.lua" source_file="lib/managers/hudmanagerpd2"/>
-		<hook file="compatibility/RestorationHud/Timers.lua" source_file="lib/managers/hudmanagerpd2"/>
-		<hook file="compatibility/RestorationHud/Waves.lua" source_file="lib/managers/hud/hudassaultcorner"/>
-		<hook file="compatibility/RestorationHud/InfiniteAmmo.lua" source_file="lib/managers/hud/hudteammate"/>
+		<hook file="compatibility/RestorationHud.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="compatibility/RestorationHud.lua" source_file="lib/managers/hud/hudassaultcorner"/>
+		<hook file="compatibility/RestorationHud.lua" source_file="lib/managers/hud/hudteammate"/>
+		<hook file="compatibility/VoidUI.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="compatibility/VoidUI.lua" source_file="lib/managers/hud/hudheisttimer"/>
+		<hook file="compatibility/VoidUI.lua" source_file="lib/managers/hud/hudobjectives"/>
+		<hook file="compatibility/VoidUI.lua" source_file="lib/managers/hud/newhudstatsscreen"/>
+		<hook file="compatibility/VoidUI.lua" source_file="lib/managers/hud/hudteammate"/>
 
 	</Hooks>
 
@@ -80,6 +87,7 @@
 					<divider name="override_divider" size="8"/>
 					<option type="bool" default_value="true" name="Infoboxes"/>
 					<option type="bool" default_value="true" name="PagerJam"/>
+					<option type="bool" default_value="false" name="ShowPagers"/>
 					<divider name="override_divider" size="8"/>
 					<option type="bool" default_value="false" name="HideBox"/>
 				</option_group>
@@ -102,6 +110,7 @@
 				<option type="multichoice" default_value="1" name="ShowTimer" values_tbl="EIVHUD.show_timer"/>
 				<option type="multichoice" default_value="1" name="ShowWaves" values_tbl="EIVHUD.show_waves"/>
 				<option type="multichoice" default_value="1" name="ShowHostages" values_tbl="EIVHUD.show_hostages"/>
+				<option type="bool" default_value="false" name="Converts"/>
 			</option_group>
 
 			<divider name="override_divider" size="8"/>
