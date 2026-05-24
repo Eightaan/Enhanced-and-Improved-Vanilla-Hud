@@ -19,6 +19,8 @@
 		<hook file="Buffs.lua" source_file="lib/managers/playermanager"/>
 		
 		<hook file="Converts.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="Converts.lua" source_file="lib/managers/playermanager"/>
+		<hook file="Converts.lua" source_file="lib/managers/hud/hudassaultcorner"/>
 
 		<hook file="HealthCircle.lua" source_file="lib/managers/hud/hudteammate"/>
 		<hook file="HealthCircle.lua" source_file="lib/managers/hudmanagerpd2"/>
@@ -27,6 +29,8 @@
 		<hook file="ECMTimer.lua" source_file="lib/units/equipment/ecm_jammer/ecmjammerbase"/>
 		<hook file="ECMTimer.lua" source_file="lib/units/beings/player/playerinventory"/>
 		<hook file="ECMTimer.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="ECMTimer.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
+		<hook file="ECMTimer.lua" source_file="lib/managers/hud/hudassaultcorner"/>
 
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/lootdropscreengui"/>
 		<hook file="MenuSkip.lua" source_file="lib/managers/menu/stageendscreengui"/>

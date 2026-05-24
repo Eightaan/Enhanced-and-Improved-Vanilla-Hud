@@ -1,56 +1,51 @@
 if RequiredScript == "lib/managers/hudmanagerpd2" then
-	HUDECMCounter = HUDECMCounter or class()
-	function HUDECMCounter:init(hud)
+	StealthPanel = StealthPanel or class()
+	function StealthPanel:init(hud)
 		self._ecm_timer = 0
 		self._hud_panel = hud.panel
-		self._ecm_panel = self._hud_panel:panel({
-			name = "ecm_counter_panel",
+		self._stealth_panel = self._hud_panel:panel({
+			name = "stealth_panel",
 			alpha = 1,
 			visible = false,
 			w = 200,
 			h = 200
 		})
-		self._ecm_panel:set_right(self._hud_panel:w() + 11)
+		self._stealth_panel:set_right(self._hud_panel:w() + 11)
 
-		local ecm_box = HUDBGBox_create(self._ecm_panel, { w = 38, h = 38, },  {})
+		local box = HUDBGBox_create(self._stealth_panel, { w = 38, h = 38, },  {})
 		if EIVHUD.Options:GetValue("HUD/TIMER/HideBox") then
 			for _, child in ipairs({"bg", "left_top", "left_bottom", "right_top", "right_bottom"}) do
-				ecm_box:child(child):hide()
+				box:child(child):hide()
 			end
 		end
 
-		self._text = ecm_box:text({
+		self._text = box:text({
 			name = "text",
 			text = "0",
 			valign = "center",
 			align = "center",
 			vertical = "center",
-			w = ecm_box:w(),
-			h = ecm_box:h(),
+			w = box:w(),
+			h = box:h(),
 			layer = 1,
 			color = Color.white,
 			font = tweak_data.hud_corner.assault_font,
 			font_size = tweak_data.hud_corner.numhostages_size * 0.9
 		})
 
-		self._icon = self._ecm_panel:bitmap({
-			name = "ecm_icon",
+		self._icon = self._stealth_panel:bitmap({
+			name = "icon",
 			texture = "guis/textures/pd2/skilltree/icons_atlas",
 			texture_rect = { 1 * 64, 4 * 64, 64, 64 },
 			valign = "top",
 			color = Color.white,
 			layer = 1,
-			w = ecm_box:w(),
-			h = ecm_box:h()	
+			w = box:w(),
+			h = box:h()	
 		})
-		self._icon:set_right(ecm_box:parent():w())
-		self._icon:set_center_y(ecm_box:h() / 2)
-		ecm_box:set_right(self._icon:left())
-		self._box = ecm_box
-
-		self._show_hostages = EIVHUD.Options:GetValue("HUD/ShowHostages")
-		self._ecm_casing_end_delay = self._ecm_casing_end_delay or 0
-		self._last_state = nil
+		self._icon:set_right(box:parent():w())
+		self._icon:set_center_y(box:h() / 2)
+		box:set_right(self._icon:left())
 
 		-- Change the icon textures for ecms and pagers
 		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 64, 4*64, 64, 64 }
@@ -98,100 +93,78 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		self._get_pager_bluffs = self._groupai and self._groupai.get_nr_successful_alarm_pager_bluffs
 
 		self._hostages_panel = self._hud_panel:child("hostages_panel")
-		self._assault_corner = managers.hud and managers.hud._hud_assault_corner
+		self:_refresh_pager_text()
+		self:_set_panel_position(false)
 	end
-
-	function HUDECMCounter:update()
-		local current_time = TimerManager:game():time()
-		local t = self._ecm_timer - current_time
-
-		if not self:_update_panel_position(current_time) then
+	
+	function StealthPanel:_set_panel_position(is_casing)
+		local enabled = EIVHUD.Options:GetValue("HUD/ShowHostages")
+		if self._hostages_panel and alive(self._hostages_panel) and enabled == 1 then
+			self._stealth_panel:set_top(self._hostages_panel:bottom() + 5)
 			return
 		end
-
-		local state = self:_get_state(t)
-
-		self:_apply_state(state)
-		self:_update_text(state, t)
+		self._stealth_panel:set_top(is_casing and 50 or 0)
 	end
 
-	function HUDECMCounter:_update_panel_position(current_time)
+	function StealthPanel:start_ecm_timer(end_time)
 		local is_stealth = self._groupai and self._groupai:whisper_mode()
 
 		if not is_stealth then
-			self._ecm_panel:set_visible(false)
-			return false
+			return
 		end
-		-- Change the panel position depending on if casing is active or if the hostages are hidden in the settings
-		-- Probably a better way to handle this?
-		if self._hostages_panel and alive(self._hostages_panel) and self._show_hostages == 1 then
-			self._ecm_panel:set_top(self._hostages_panel:bottom() + 5)
-		else
-			local is_casing = self._assault_corner and self._assault_corner._casing
-			-- Adding a delay to let the casing box complete its closing animation, clunky but works
-			local delay = 1.5
+		self._ecm_active = true
+		self._stealth_panel:set_visible(true)
+		self._ecm_timer = end_time
+		self._icon:set_image(unpack(self._icons.ecm))
 
-			if self._was_casing and not is_casing then
-				self._ecm_casing_end_delay = current_time + delay
+		self._text:stop()
+		self._text:animate(function(o)
+			while alive(o) do
+				local t = self._ecm_timer - TimerManager:game():time()
+				if t <= 0 then
+					break
+				end
+
+				o:set_text(
+					string.format(
+						t < 10 and "%.1fs" or "%.0fs",
+						t
+					)
+				)
+
+				coroutine.yield()
 			end
-			self._was_casing = is_casing
-
-			local in_delay = current_time < (self._ecm_casing_end_delay or 0)
-			self._ecm_panel:set_top((is_casing or in_delay) and 50 or 0)
-		end
-		return true
+			self._ecm_active = false
+			self:_refresh_pager_text()
+		end)
 	end
-
-	function HUDECMCounter:_get_state(t)
-		-- Set the current state to switch between ecms and pagers since they use the same box
-		if t > 0.1 then
-			return "ecm"
-		end
-		-- The pagers will only show if the heist is set as ghostable or if pagers should be shown or hidden on specific levels
+	
+	function StealthPanel:_refresh_pager_text()
 		local enabled = EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers")
-		if (self._show_pagers or self._is_ghostable) and enabled and not self._hide_pagers then
-			return "pager"
-		end
+		local is_stealth = self._groupai and self._groupai:whisper_mode()
 
-		return "none"
-	end
-	function HUDECMCounter:_apply_state(state)
-		-- Apply the sates, change visibility if pagers or ecms are active
-		if state == self._last_state then
+		if not ((self._show_pagers or self._is_ghostable) and enabled and not self._hide_pagers) or not is_stealth then
+			self._stealth_panel:set_visible(false)
 			return
 		end
 
-		if state == "ecm" then
-			self._icon:set_image(unpack(self._icons.ecm))
-			self._ecm_panel:set_visible(true)
-		elseif state == "pager" then
+		local pagers_used = 0
+
+		if self._get_pager_bluffs and self._groupai then
+			pagers_used = self._get_pager_bluffs(self._groupai)
+		end
+
+		if not self._ecm_active then
 			self._icon:set_image(unpack(self._icons.pager))
-			self._ecm_panel:set_visible(true)
-		else
-			self._ecm_panel:set_visible(false)
 		end
-	
-		self._last_state = state
-	end
-
-	function HUDECMCounter:_update_text(state, t)
-		-- Set the text inside the box depending on what sate we are in
-		if state == "ecm" then
-			self._text:set_text(string.format(t < 10 and "%.1fs" or "%.fs", t))
-		elseif state == "pager" then
-			local pagers_used = 0
-			if self._get_pager_bluffs and self._groupai then
-				pagers_used = self._get_pager_bluffs(self._groupai)
-			end
-
-			self._text:set_text(pagers_used .. "/" .. self._max_pagers)
-		end
+		self._text:set_text(pagers_used .. "/" .. self._max_pagers)
+		self._stealth_panel:set_visible(true)
 	end
 
 	--Setup
 	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_ECM_setup_player_info_hud_pd2", function(self, ...)
-		self._hud_ecm_counter = HUDECMCounter:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
-		self:add_updator("EIVHUD_ECM_UPDATOR", callback(self._hud_ecm_counter, self._hud_ecm_counter, "update"))
+		self._hud_stealth_panel = StealthPanel:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
+		--self:add_updator("EIVHUD_STEALTH_UPDATOR", callback(self._hud_stealth_panel, self._hud_stealth_panel, "update"))
 	end)
 
 elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
@@ -228,7 +201,6 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 			if battery_life == 0 then
 				return
 			end
-			local ecm_timer = TimerManager:game():time() + battery_life
 			local jam_pagers = false
 			if self._EIVHUD_local_peer then
 				jam_pagers = managers.player:has_category_upgrade("ecm_jammer", "affects_pagers")
@@ -239,7 +211,8 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 				end
 			end
 			if jam_pagers or not EIVHUD.Options:GetValue("HUD/TIMER/PagerJam") then
-				managers.hud._hud_ecm_counter._ecm_timer = ecm_timer
+				local end_time = TimerManager:game():time() + battery_life
+				managers.hud._hud_stealth_panel:start_ecm_timer(end_time)
 			else
 				return
 			end
@@ -249,9 +222,61 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 elseif RequiredScript == "lib/units/beings/player/playerinventory" then
 	-- Pocket ECM
 	Hooks:PostHook(PlayerInventory, "_start_jammer_effect", "EIVHUD_PlayerInventory_start_jammer_effect", function(self, end_time, ...)
-		local ecm_timer = end_time or TimerManager:game():time() + self:get_jammer_time()
-		if ecm_timer > managers.hud._hud_ecm_counter._ecm_timer and EIVHUD.Options:GetValue("HUD/TIMER/Infoboxes") then
-			managers.hud._hud_ecm_counter._ecm_timer = ecm_timer
+		if not EIVHUD.Options:GetValue("HUD/TIMER/Infoboxes") then
+			return
+		end
+
+		local ecm_end_time = end_time or (TimerManager:game():time() + self:get_jammer_time())
+		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+
+		if not stealth_panel then
+			return
+		end
+
+		if ecm_end_time <= (stealth_panel._ecm_timer or 0) then
+			return
+		end
+
+		stealth_panel:start_ecm_timer(ecm_end_time)
+	end)
+
+elseif RequiredScript == "lib/managers/group_ai_states/groupaistatebase" then
+	Hooks:PostHook(GroupAIStateBase, "on_successful_alarm_pager_bluff", "EIVHUD_on_successful_alarm_pager_bluff", function(self)
+		if not EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers") then
+			return
+		end
+		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+
+		if not stealth_panel then
+			return
+		end
+		managers.hud._hud_stealth_panel:_refresh_pager_text()
+	end)
+
+	Hooks:PostHook(GroupAIStateBase, "set_whisper_mode", "EIVHUD_set_whisper_mode", function(self, enabled)
+		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+		if stealth_panel and alive(stealth_panel._stealth_panel) then
+			stealth_panel._stealth_panel:set_visible(enabled)
+		end
+	end)
+
+elseif RequiredScript == "lib/managers/hud/hudassaultcorner" then
+	Hooks:PostHook(HUDAssaultCorner, "_animate_show_casing", "EIVHUD_animate_show_casing", function(self, ...)
+		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+		if stealth_panel and alive(stealth_panel._stealth_panel) then
+			stealth_panel:_set_panel_position(true)
+		end
+	end)
+
+	Hooks:PostHook(HUDAssaultCorner, "hide_casing", "EIVHUD_hide_casing", function(self)
+		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+
+		if stealth_panel then
+			DelayedCalls:Add("EIVHUD_CasingDelay", 1.2, function()
+				if stealth_panel and alive(stealth_panel._stealth_panel) then
+					stealth_panel:_set_panel_position(false)
+				end
+			end)
 		end
 	end)
 end

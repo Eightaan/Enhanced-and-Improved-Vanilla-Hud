@@ -179,7 +179,7 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" and VoidUI.options.enable_
 			self._inspire_panel:set_right(parent_panel:left())
 
 			self._inspire_panel_bg = self._inspire_panel:bitmap({
-				name = "kills_background",
+				name = "inspire_bg",
 				texture = highlight_texture,
 				texture_rect = {0,316,171,150},
 				layer = 1,
@@ -219,8 +219,8 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" and VoidUI.options.enable_
 				valign = "top",
 				alpha = 0.6,
 				layer = 2,
-				w = panel_w / 2.2,
-				h = panel_h / 1.8,
+				w = panel_w / 1.5,
+				h = panel_h / 1.5,
 				x = 0,
 				y = 0
 			})
@@ -232,16 +232,21 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" and VoidUI.options.enable_
 	end
 
 	function HUDInspire:update_position()
-		return
+		local assault_corner = managers.hud and managers.hud._hud_assault_corner	
+		local icons_panel = assault_corner._custom_hud_panel:child("icons_panel")
+		local cuffed_panel = icons_panel:child("cuffed_panel")
+		local hostages_panel = icons_panel:child("hostages_panel")
+		local parent_panel = (VoidUI.options.hostages or assault_corner:should_display_waves()) and cuffed_panel or hostages_panel
+		self._inspire_panel:set_right(parent_panel:left())
 	end
 
-	function HUDECMCounter:update() 
-		return 
-	end
+	function StealthPanel:start_ecm_timer(end_time) end
+
+	function StealthPanel:_set_panel_position(is_casing) end
+
+	function StealthPanel:_refresh_pager_text() end
 	if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/ShowHostages") == 1 then
-		function HUDConverts:update()
-			self._convert_panel:set_visible(false)
-		end
+		function HUDConverts:_refresh_minion_text() end
 	end
 
 elseif RequiredScript == "lib/managers/hud/newhudstatsscreen" then

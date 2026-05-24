@@ -82,45 +82,47 @@ elseif RequiredScript == "lib/managers/hud/hudheisttimer" then
 elseif RequiredScript == "lib/managers/hud/hudpresenter" then
 	Hooks:PostHook(HUDPresenter, "_present_information", "EIVHUD_HUDPresenter_present_information", function(self, params, ...)
 		if EIVHUD.Options:GetValue("HUD/Presenter") ~= 1 then
-			local present_panel = self._hud_panel:child("present_panel")
-			local title = self._bg_box:child("title")
-			local text = self._bg_box:child("text")
+			if self._bg_box then
+				local present_panel = self._hud_panel:child("present_panel")
+				local title = self._bg_box:child("title")
+				local text = self._bg_box:child("text")
 
-			title:set_text(utf8.to_upper(params.title or ""))
-			text:set_text(utf8.to_upper(params.text))
-			title:set_visible(false)
-			text:set_visible(false)
+				title:set_text(utf8.to_upper(params.title or ""))
+				text:set_text(utf8.to_upper(params.text))
+				title:set_visible(false)
+				text:set_visible(false)
 
-			local _, _, w, _ = title:text_rect()
+				local _, _, w, _ = title:text_rect()
 
-			title:set_w(w)
+				title:set_w(w)
 
-			local _, _, w2, _ = text:text_rect()
+				local _, _, w2, _ = text:text_rect()
 
-			text:set_w(w2)
+				text:set_w(w2)
 
-			local tw = math.max(w, w2)
+				local tw = math.max(w, w2)
 
-			self._bg_box:set_w(tw + 16)
-			self._bg_box:set_left(self._bg_box:parent():w() - self._bg_box:w())
-			self._bg_box:set_y(150)
+				self._bg_box:set_w(tw + 16)
+				self._bg_box:set_left(self._bg_box:parent():w() - self._bg_box:w())
+				self._bg_box:set_y(150)
 
-			if params.icon then end
+				if params.icon then end
 
-			if params.event then
-				managers.hud._sound_source:post_event(params.event)
+				if params.event then
+					managers.hud._sound_source:post_event(params.event)
+				end
+
+				local callback_params = {
+					has_title = params.title ~= nil,
+					seconds = params.time or 4,
+					use_icon = params.icon,
+					done_cb = callback(self, self, "_present_done")
+				}
+
+				present_panel:animate(callback(self, self, "_animate_present_information"), callback_params)
+
+				self._presenting = true
 			end
-
-			local callback_params = {
-				has_title = params.title ~= nil,
-				seconds = params.time or 4,
-				use_icon = params.icon,
-				done_cb = callback(self, self, "_present_done")
-			}
-
-			present_panel:animate(callback(self, self, "_animate_present_information"), callback_params)
-
-			self._presenting = true
 		end
 	end)
 elseif RequiredScript == "lib/managers/hud/hudhint" then
