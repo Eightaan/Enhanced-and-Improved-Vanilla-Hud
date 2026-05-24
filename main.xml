@@ -21,6 +21,7 @@
 		<hook file="Converts.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="Converts.lua" source_file="lib/managers/playermanager"/>
 		<hook file="Converts.lua" source_file="lib/managers/hud/hudassaultcorner"/>
+		<hook file="Converts.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
 
 		<hook file="HealthCircle.lua" source_file="lib/managers/hud/hudteammate"/>
 		<hook file="HealthCircle.lua" source_file="lib/managers/hudmanagerpd2"/>
