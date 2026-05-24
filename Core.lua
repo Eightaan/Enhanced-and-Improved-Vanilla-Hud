@@ -18,6 +18,14 @@ EIVHUD.show_objectives = {
 	"Tabstats",
 	"Hide"
 }
+EIVHUD.presenter = {
+	"Center",
+	"Right"
+}
+EIVHUD.hints = {
+	"Center",
+	"Top"
+}
 
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EIVH", function(loc)
 	local localized_strings = {}

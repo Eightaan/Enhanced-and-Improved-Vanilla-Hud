@@ -3,9 +3,9 @@ if ArmStatic and MUIMenu and MUIMenu:ClassEnabled("MUIStats") and MUIStats then
 		dofile(EIVHUD.ModPath .. "lua/compatibility/MUI/MUIStats.lua")
     end)
 
-	function HUDConverts:init(hud) end
+	function HUDConverts:init(hud) return end
 	
-	function HUDConverts:update() end
+	function HUDConverts:update() return end
 	
 	function HUDInspire:update_position()
 		local offset = 5

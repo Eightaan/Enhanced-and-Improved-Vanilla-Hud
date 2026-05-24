@@ -56,8 +56,10 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 	function HUDConverts:update()
 		local is_stealth = managers.groupai and managers.groupai:state():whisper_mode()
 		local converts = managers.player:has_category_upgrade("player", "convert_enemies")
-		self._convert_panel:set_visible(converts and not is_stealth)
-		if not converts or is_stealth then
+		local hostage_panel = self._hud_panel:child("hostages_panel")
+		local hostages_visible = alive(hostage_panel) and hostage_panel:visible()
+		self._convert_panel:set_visible(hostages_visible and converts and not is_stealth)
+		if not (converts or hostages_visible) or is_stealth then
 			return
 		end
 

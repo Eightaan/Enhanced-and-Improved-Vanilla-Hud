@@ -46,15 +46,15 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		self._icon:set_right(ecm_box:parent():w())
 		self._icon:set_center_y(ecm_box:h() / 2)
 		ecm_box:set_right(self._icon:left())
-		self._ecm_box = ecm_box
+		self._box = ecm_box
 
 		self._show_hostages = EIVHUD.Options:GetValue("HUD/ShowHostages")
 		self._ecm_casing_end_delay = self._ecm_casing_end_delay or 0
 		self._last_state = nil
 
 		-- Change the icon textures for ecms and pagers
-		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 1 * 64, 4 * 64, 64, 64 }
-		local specialization_atlas = { "guis/textures/pd2/specialization/icons_atlas", 1 * 64, 4 * 64, 64, 64 }
+		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 64, 4*64, 64, 64 }
+		local specialization_atlas = { "guis/textures/pd2/specialization/icons_atlas", 10+64, 4*64, 64, 64 }
 		self._icons = {
 			ecm = skilltree_atlas,
 			pager = specialization_atlas
@@ -84,7 +84,8 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		-- Some jobs are set as ghostable but pagers have no meaning
 		self._hide_pagers_jobs = {
 			["nmh"] = true,
-			["welcome_to_the_jungle_1"] = true
+			["welcome_to_the_jungle_1"] = true,
+			["firestarter_1"] = true
 		
 		}
 		-- Set if pagers should be shown or hidden on specific levels
@@ -121,8 +122,6 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			self._ecm_panel:set_visible(false)
 			return false
 		end
-		self._ecm_panel:set_visible(true)
-
 		-- Change the panel position depending on if casing is active or if the hostages are hidden in the settings
 		-- Probably a better way to handle this?
 		if self._hostages_panel and alive(self._hostages_panel) and self._show_hostages == 1 then
@@ -149,41 +148,30 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			return "ecm"
 		end
 		-- The pagers will only show if the heist is set as ghostable or if pagers should be shown or hidden on specific levels
-		local setting = EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers")
-		if (self._show_pagers or self._is_ghostable) and setting and not self._hide_pagers then
+		local enabled = EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers")
+		if (self._show_pagers or self._is_ghostable) and enabled and not self._hide_pagers then
 			return "pager"
 		end
 
 		return "none"
 	end
 	function HUDECMCounter:_apply_state(state)
-		-- Apply the sates, change visibility and the icon position since the pager icon needs to be moved to fit the screen
+		-- Apply the sates, change visibility if pagers or ecms are active
 		if state == self._last_state then
 			return
 		end
 
 		if state == "ecm" then
 			self._icon:set_image(unpack(self._icons.ecm))
-			self._icon:set_right(self._ecm_box:parent():w()) 
-			self._ecm_box:set_right(self._icon:left())
-			self:_set_visible(true)
+			self._ecm_panel:set_visible(true)
 		elseif state == "pager" then
 			self._icon:set_image(unpack(self._icons.pager))
-			self._icon:set_right(self._ecm_box:parent():w() - 5) 
-			self._ecm_box:set_right(self._icon:left() + 5)
-			self:_set_visible(true)
+			self._ecm_panel:set_visible(true)
 		else
-			self:_set_visible(false)
+			self._ecm_panel:set_visible(false)
 		end
-
-		self._last_state = state
-	end
 	
-	function HUDECMCounter:_set_visible(visibility)
-		-- Setting the visibility is just a way to make sure the boxes hide properly based on the settings, also probably a better way to handle this
-		self._ecm_box:set_visible(visibility)
-		self._icon:set_visible(visibility)
-		self._text:set_visible(visibility)
+		self._last_state = state
 	end
 
 	function HUDECMCounter:_update_text(state, t)

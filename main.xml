@@ -1,5 +1,5 @@
 <mod name="Enhanced Vanilla Hud" author="Eightan" global_key="EIVHUD" color="Color(0,0.66,1)" core_class="Core.lua">
-	<AssetUpdates id="43776" provider="modworkshop" version="5.7.1"/>
+	<AssetUpdates id="43776" provider="modworkshop" version="5.7.2"/>
 	<Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
 		<hook file="TabStats.lua" source_file="lib/managers/objectinteractionmanager"/>
@@ -12,6 +12,8 @@
 		<hook file="HudPanels.lua" source_file="lib/managers/hud/hudobjectives"/>
 		<hook file="HudPanels.lua" source_file="lib/managers/hud/hudheisttimer"/>
 		<hook file="HudPanels.lua" source_file="lib/managers/hud/hudassaultcorner"/>
+		<hook file="HudPanels.lua" source_file="lib/managers/hud/hudpresenter"/>
+		<hook file="HudPanels.lua" source_file="lib/managers/hud/hudhint"/>
 
 		<hook file="Buffs.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="Buffs.lua" source_file="lib/managers/playermanager"/>
@@ -104,6 +106,9 @@
 				<option type="bool" default_value="true" name="LevelDisplay"/>
 				<divider name="override_divider" size="8"/>
 				<option type="bool" default_value="true" name="Greenciv"/>
+				<divider name="override_divider" size="16"/>
+				<option type="multichoice" default_value="1" name="Presenter" values_tbl="EIVHUD.presenter"/>
+				<option type="multichoice" default_value="1" name="Hints" values_tbl="EIVHUD.hints"/>
 				<divider name="override_divider" size="16"/>
 				<option type="bool" default_value="true" name="Tab"/>
 				<option type="multichoice" default_value="1" name="ShowObjectives" values_tbl="EIVHUD.show_objectives"/>
