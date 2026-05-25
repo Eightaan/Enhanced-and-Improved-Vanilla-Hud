@@ -36,7 +36,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		self._icon = self._stealth_panel:bitmap({
 			name = "icon",
 			texture = "guis/textures/pd2/skilltree/icons_atlas",
-			texture_rect = { 1 * 64, 4 * 64, 64, 64 },
+			texture_rect = { 64, 4 * 64, 64, 64 },
 			valign = "top",
 			color = Color.white,
 			layer = 1,
@@ -48,12 +48,9 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		box:set_right(self._icon:left())
 
 		-- Change the icon textures for ecms and pagers
-		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 64, 4*64, 64, 64 }
-		local specialization_atlas = { "guis/textures/pd2/specialization/icons_atlas", 10+64, 4*64, 64, 64 }
-		self._icons = {
-			ecm = skilltree_atlas,
-			pager = specialization_atlas
-		}
+		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 64, 4 * 64, 64, 64 }
+		local specialization_atlas = { "guis/textures/pd2/specialization/icons_atlas", 10 + 64, 4 * 64, 64, 64 }
+		self._icons = {ecm = skilltree_atlas, pager = specialization_atlas}
 
 		-- Set max number of pagers
 		local tweak_data_pager = tweak_data.player.alarm_pager
@@ -124,14 +121,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 				if t <= 0 then
 					break
 				end
-
-				o:set_text(
-					string.format(
-						t < 10 and "%.1fs" or "%.0fs",
-						t
-					)
-				)
-
+				o:set_text(string.format(t < 10 and "%.1fs" or "%.0fs", t))
 				coroutine.yield()
 			end
 			self._ecm_active = false
@@ -164,11 +154,10 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	--Setup
 	Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EIVHUD_ECM_setup_player_info_hud_pd2", function(self, ...)
 		self._hud_stealth_panel = StealthPanel:new(managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2))
-		--self:add_updator("EIVHUD_STEALTH_UPDATOR", callback(self._hud_stealth_panel, self._hud_stealth_panel, "update"))
 	end)
 
 elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
-	--Check if pagers will block pagers
+
 	local original_spawn = ECMJammerBase.spawn
 	function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
 		local unit = original_spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
@@ -222,22 +211,12 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 elseif RequiredScript == "lib/units/beings/player/playerinventory" then
 	-- Pocket ECM
 	Hooks:PostHook(PlayerInventory, "_start_jammer_effect", "EIVHUD_PlayerInventory_start_jammer_effect", function(self, end_time, ...)
-		if not EIVHUD.Options:GetValue("HUD/TIMER/Infoboxes") then
-			return
+		if EIVHUD.Options:GetValue("HUD/TIMER/Infoboxes") then
+			local ecm_end_time = end_time or (TimerManager:game():time() + self:get_jammer_time())
+			if managers.hud and managers.hud._hud_stealth_panel and ecm_end_time > managers.hud._hud_stealth_panel._ecm_timer then
+				managers.hud._hud_stealth_panel:start_ecm_timer(ecm_end_time)
+			end
 		end
-
-		local ecm_end_time = end_time or (TimerManager:game():time() + self:get_jammer_time())
-		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
-
-		if not stealth_panel then
-			return
-		end
-
-		if ecm_end_time <= (stealth_panel._ecm_timer or 0) then
-			return
-		end
-
-		stealth_panel:start_ecm_timer(ecm_end_time)
 	end)
 
 elseif RequiredScript == "lib/managers/group_ai_states/groupaistatebase" then
