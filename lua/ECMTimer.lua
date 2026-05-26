@@ -50,12 +50,15 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		-- Change the icon textures for ecms and pagers
 		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 64, 4 * 64, 64, 64 }
 		local specialization_atlas = { "guis/textures/pd2/specialization/icons_atlas", 10 + 64, 4 * 64, 64, 64 }
-		self._icons = {ecm = skilltree_atlas, pager = specialization_atlas}
+		self._icons = {
+			ecm = skilltree_atlas,
+			pager = specialization_atlas
+		}
 
 		-- Set max number of pagers
 		local tweak_data_pager = tweak_data.player.alarm_pager
-		local has_upgarde = managers.player:has_category_upgrade("player", "corpse_alarm_pager_bluff")
-		local max_pagers_data = has_upgarde and tweak_data_pager.bluff_success_chance_w_skill or tweak_data_pager.bluff_success_chance
+		local has_upgrade = managers.player:has_category_upgrade("player", "corpse_alarm_pager_bluff")
+		local max_pagers_data = has_upgrade and tweak_data_pager.bluff_success_chance_w_skill or tweak_data_pager.bluff_success_chance
 
 		local max_num_pagers = #max_pagers_data
 
@@ -157,7 +160,6 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	end)
 
 elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
-
 	local original_spawn = ECMJammerBase.spawn
 	function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
 		local unit = original_spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
@@ -249,7 +251,6 @@ elseif RequiredScript == "lib/managers/hud/hudassaultcorner" then
 
 	Hooks:PostHook(HUDAssaultCorner, "hide_casing", "EIVHUD_hide_casing", function(self)
 		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
-
 		if stealth_panel then
 			DelayedCalls:Add("EIVHUD_CasingDelay", 1.2, function()
 				if stealth_panel and alive(stealth_panel._stealth_panel) then

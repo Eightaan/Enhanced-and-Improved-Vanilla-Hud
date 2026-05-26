@@ -4,7 +4,9 @@ Hooks:PostHook(BaseInteractionExt, "_add_string_macros", "EIVHUD_BaseInteraction
 
 	if self._unit and self._unit:carry_data() and EIVHUD.Options:GetValue("HUD/BagInfo") then
 		local carry_id = self._unit:carry_data():carry_id()
-		hold_message = string.format("Hold %s to grab the %s", interact_text, managers.localization:text(tweak_data.carry[carry_id].name_id))
+		if carry_id then
+			hold_message = string.format("Hold %s to grab the %s", interact_text, managers.localization:text(tweak_data.carry[carry_id].name_id))
+		end
 	end
 
 	LocalizationManager:add_localized_strings({["hud_int_hold_grab_the_bag"] = hold_message})

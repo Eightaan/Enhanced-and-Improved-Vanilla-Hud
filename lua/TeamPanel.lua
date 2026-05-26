@@ -180,7 +180,8 @@ Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_a
 			self._last_clip[type] = current_clip
 		end
 
-		if self._last_ammo and self._last_ammo[type] and self._last_ammo[type] < current_left then
+		local ammo_gain = current_left - (self._last_ammo[type] or current_left)
+		if ammo_gain >= 2 then
 			ammo_total:animate(function(o)
 				local s = self._last_ammo[type]
 				local e = current_left
@@ -205,7 +206,8 @@ Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_a
 			end)
 		end
 
-		if self._last_clip and self._last_clip[type] and self._last_clip[type] < current_clip and not self._infinite_ammo then
+		local clip_gain = current_clip - (self._last_clip[type] or current_clip)
+		if clip_gain >= 2 and not self._infinite_ammo then
 			ammo_clip:animate(function(o)
 				local s = self._last_clip[type]
 				local e = current_clip
@@ -256,6 +258,7 @@ Hooks:PostHook(HUDTeammate, "set_revives_amount", "EIVHUD_HUDTeammate_set_revive
 			revive_amount_text:set_text(tostring(math_max(revive_amount - 1, 0)))
 			revive_amount_text:set_color(revive_amount > 1 and team_color or Color.red)
 			revive_amount_text:set_font_size(17)
+			revive_amount_text:stop()
 			revive_amount_text:animate(function(o)
 				over(1, function(p)
 					local n = 1 - math_sin((p / 2 ) * 180)
