@@ -50,10 +50,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		-- Change the icon textures for ecms and pagers
 		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 64, 4 * 64, 64, 64 }
 		local specialization_atlas = { "guis/textures/pd2/specialization/icons_atlas", 10 + 64, 4 * 64, 64, 64 }
-		self._icons = {
-			ecm = skilltree_atlas,
-			pager = specialization_atlas
-		}
+		self._icons = {ecm = skilltree_atlas, pager = specialization_atlas}
 
 		-- Set max number of pagers
 		local tweak_data_pager = tweak_data.player.alarm_pager
