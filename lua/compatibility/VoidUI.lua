@@ -257,20 +257,20 @@ elseif RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 			local secured_amount = managers.loot:get_secured_mandatory_bags_amount()
 			local bonus_amount = managers.loot:get_secured_bonus_bags_amount()
-			local body_bag = managers.groupai and managers.groupai:state():whisper_mode() and managers.localization:text("hud_body_bags")..": "..tostring(managers.player:get_body_bags_amount()).." | " or ""
+			local body_bag = managers.groupai and managers.groupai:state():whisper_mode() and managers.localization:text("hud_body_bags")..": "..tostring(managers.player:get_body_bags_amount()).." Ї " or ""
 			local hit_accuracy = managers.statistics:session_hit_accuracy()
 			local small_loot = managers.loot:get_real_total_small_loot_value()
 			local instant_cash = small_loot > 0 and " Ї "..managers.localization:text("hud_instant_cash")..": "..managers.experience:cash_string(small_loot) or ""
 			local accuracy = VoidUI.options.scoreboard_accuracy and hit_accuracy and utf8.to_lower(managers.localization:text("menu_stats_hit_accuracy")):gsub("^%l", string.upper).." ".. hit_accuracy.."%" or ""
 			local trade_delay = managers.money:get_trade_delay() > 30
-			local delay = VoidUI.options.scoreboard_delay and trade_delay and " | "..managers.localization:text("hud_trade_delay", {TIME = self:_trade_delay_time()}) or ""
+			local delay = VoidUI.options.scoreboard_delay and trade_delay and " Ї "..managers.localization:text("hud_trade_delay", {TIME = self:_trade_delay_time()}) or ""
 			local loot_amount = "";
 			if managers.interaction:get_current_total_loot_count() > 0 then
 				local border_crossing_fix = Global.game_settings.level_id == "mex" and  managers.interaction:get_current_total_loot_count() > 41 and "/4";
 				loot_amount = border_crossing_fix or "/" .. managers.interaction:get_current_total_loot_count();
 			end
 			local secured_loot = secured_amount + bonus_amount
-			local bags = " | "..utf8.to_lower(managers.localization:text("hud_stats_bags_secured")):gsub("^%l", string.upper)..": "..tostring(secured_loot .. loot_amount)
+			local bags = " Ї "..utf8.to_lower(managers.localization:text("hud_stats_bags_secured")):gsub("^%l", string.upper)..": "..tostring(secured_loot .. loot_amount)
 			top_panel:child("loot_stats"):set_text(body_bag..accuracy..delay..bags..instant_cash)
 			top_panel:child("loot_stats_shadow"):set_text(body_bag..accuracy..delay..bags..instant_cash)
 		end

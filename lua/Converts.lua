@@ -52,6 +52,7 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 			convert_icon:set_center_y(convert_box:h() / 2)
 			convert_box:set_right(convert_icon:left())
 			self:_refresh_minion_text()
+			self:change_position()
 		end
 		
 		function HUDConverts:_refresh_minion_text()
@@ -66,7 +67,6 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 			self._text:set_text(tostring(managers.player:num_local_minions()))
 			self._convert_panel:set_right(self._parent:left())
 			self._convert_panel:set_top(self._parent:top())
-			self:change_position()
 		end
 
 		function HUDConverts:change_position()
@@ -120,7 +120,7 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 	elseif RequiredScript == "lib/managers/hud/hudassaultcorner" then		
 		Hooks:PostHook(HUDAssaultCorner, "_set_hostage_offseted", "EIVHUD_follow_hostage_panel", function(self, is_offseted)
 			if managers.hud and managers.hud._hud_converts then
-				managers.hud._hud_converts:_refresh_minion_text()
+				managers.hud._hud_converts:change_position()
 			end
 		end)
 	end
