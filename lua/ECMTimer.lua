@@ -231,10 +231,11 @@ elseif RequiredScript == "lib/managers/group_ai_states/groupaistatebase" then
 		managers.hud._hud_stealth_panel:_refresh_pager_text()
 	end)
 
-	Hooks:PostHook(GroupAIStateBase, "set_whisper_mode", "EIVHUD_set_whisper_mode", function(self, enabled)
+	Hooks:PostHook(GroupAIStateBase, "set_whisper_mode", "EIVHUD_set_whisper_mode", function(self, ...)
+		local is_stealth = self._groupai and self._groupai:whisper_mode()
 		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
 		if stealth_panel and alive(stealth_panel._stealth_panel) then
-			stealth_panel._stealth_panel:set_visible(enabled)
+			stealth_panel._stealth_panel:set_visible(is_stealth)
 		end
 	end)
 

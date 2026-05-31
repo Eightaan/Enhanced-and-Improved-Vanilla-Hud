@@ -51,7 +51,6 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 			convert_icon:set_right(convert_box:parent():w())
 			convert_icon:set_center_y(convert_box:h() / 2)
 			convert_box:set_right(convert_icon:left())
-			self:_refresh_minion_text()
 			self:change_position()
 		end
 		
