@@ -55,12 +55,9 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 		end
 		
 		function HUDConverts:_refresh_minion_text()
-			local is_stealth = managers.groupai and managers.groupai:state():whisper_mode()
+			self:change_visibility()
 			local converts = managers.player:has_category_upgrade("player", "convert_enemies")
-			local hostage_panel = self._hud_panel:child("hostages_panel")
-			local hostages_visible = alive(hostage_panel) and hostage_panel:visible()
-			self._convert_panel:set_visible(hostages_visible and converts and not is_stealth)
-			if not (converts and hostages_visible) or is_stealth then
+			if not converts then
 				return
 			end
 			self._text:set_text(tostring(managers.player:num_local_minions()))
@@ -72,6 +69,17 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 			if alive(self._convert_panel) then
 				self._convert_panel:stop()
 				self._convert_panel:animate(callback(self, self, "_follow_hostages"))
+			end
+		end
+		
+		function HUDConverts:change_visibility()
+			local is_stealth = managers.groupai and managers.groupai:state():whisper_mode()
+			local converts = managers.player:has_category_upgrade("player", "convert_enemies")
+			local hostage_panel = self._hud_panel:child("hostages_panel")
+			local hostages_visible = alive(hostage_panel) and hostage_panel:visible()
+			local show_converts = hostages_visible and converts and not is_stealth or false
+			if alive(self._convert_panel) then
+				self._convert_panel:set_visible(show_converts)
 			end
 		end
 
@@ -120,6 +128,18 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 		Hooks:PostHook(HUDAssaultCorner, "_set_hostage_offseted", "EIVHUD_follow_hostage_panel", function(self, is_offseted)
 			if managers.hud and managers.hud._hud_converts then
 				managers.hud._hud_converts:change_position()
+			end
+		end)
+
+		Hooks:PostHook(HUDAssaultCorner, "show_point_of_no_return_timer", "EIVHUD_show_point_of_no_return_timer", function(self, ...)
+			if managers.hud and managers.hud._hud_converts then
+				managers.hud._hud_converts:change_visibility()
+			end
+		end)
+
+		Hooks:PostHook(HUDAssaultCorner, "hide_point_of_no_return_timer", "EIVHUD_hide_point_of_no_return_timer", function(self, ...)
+			if managers.hud and managers.hud._hud_converts then
+				managers.hud._hud_converts:change_visibility()
 			end
 		end)
 	end
