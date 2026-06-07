@@ -1,53 +1,138 @@
 if ArmStatic and MUIMenu and MUIMenu:ClassEnabled("MUITeammate") and MUIMenu:ClassEnabled("MUILegend") and MUIMenu:ClassEnabled("AnimatedList") then
 	if RequiredScript == "lib/managers/hud/hudteammate" then
-			function HUDTeammate:_set_infinite_ammo(state)
-				self._infinite_ammo = state;
-				if self._infinite_ammo then
-					self._primary_ammo_clip:set_color(Color.white);
-					self._primary_ammo_clip:set_text("8");
-					self._primary_ammo_clip:set_rotation(90);
-					self._secondary_ammo_clip:set_color(Color.white);
-					self._secondary_ammo_clip:set_text("8");
-					self._secondary_ammo_clip:set_rotation(90);
-				end
+		function HUDTeammate:_set_infinite_ammo(state)
+			self._infinite_ammo = state;
+			if self._infinite_ammo then
+				self._primary_ammo_clip:set_color(Color.white);
+				self._primary_ammo_clip:set_text("8");
+				self._primary_ammo_clip:set_rotation(90);
+				self._secondary_ammo_clip:set_color(Color.white);
+				self._secondary_ammo_clip:set_text("8");
+				self._secondary_ammo_clip:set_rotation(90);
+			end
+		end
+		
+		function HUDTeammate:_update_condition_display()
+			local timer = self._condition_timer
+			local armorer = self._armorer_time_left
+			local grace = self._grace_time_left
+			if not armorer and not grace then
+			timer:set_visible(false)
+				return
 			end
 
-			function HUDTeammate:_update_cooldown_timer(t)
-				local timer = self._condition_timer;
-				if t and t > 1 and timer then
-					timer:stop();
-					timer:animate(function(o)
-						o:set_visible(true);
-						local t_left = t;
-						while t_left >= 0.1 do
-							self._armor_invulnerability_timer = true;
-							t_left = t_left - coroutine.yield();
-							t_format = t_left < 9.9 and "%.1f" or "%.f";
-							o:set_text(string.format(t_format, t_left));
-							o:set_color(EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimerColor") or Color.blue);
-							o:set_alpha(self._main_player and not self._custardy and 1 or 0);
-						end
-						self._armor_invulnerability_timer = false;
-						o:set_visible(false);
-					end)
-				end
+			local t_left, color
+			if armorer and (not grace or armorer < grace) then
+				t_left = armorer
+				color = EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimerColor") or Color.blue
+			else
+				t_left = grace
+				color = EIVHUD.Options:GetValue("HUD/PLAYER/GraceCooldownTimerColor") or Color.green
 			end
 
-			function HUDTeammate:_animate_invulnerability(duration)
-				 self._ability_meter:animate(function(o)
-					o:set_color(Color(1, 1, 1, 1));
-					self._armor_invulnerability_timer = true;
-					o:set_visible(true);
-					over(duration, function(p)
-						o:set_color(Color(1, 1 - p, 1, 1));
-						o:set_alpha(self._main_player and not self._custardy and 1 or 0);
-					end)
-					if not EIVHUD.Options:GetValue("HUD/PLAYER/ArmorerCooldownTimer") then
-						self._armor_invulnerability_timer = false;
-					end
-					o:set_visible(false);
+			timer:set_visible(true)
+			timer:set_text(string.format(t_left < 9.9 and "%.1f" or "%.f", t_left))
+			timer:set_color(color)
+			timer:set_alpha(self._main_player and not self._custardy and 1 or 0)
+		end
+
+		function HUDTeammate:_update_cooldown_timer(t)
+			if not t or t <= 1 then
+				return
+			end
+
+			if not self._radial_armor then
+				self:create_radial_display()
+			end
+			self._radial_armor:animate(function()
+				local t_left = t
+				while t_left >= 0.1 do
+					t_left = t_left - coroutine.yield()
+					self._armorer_time_left = t_left
+
+					self:_update_condition_display()
+				end
+				self._armorer_time_left = nil
+				self:_update_condition_display()
+			end)
+		end
+		function HUDTeammate:_health_cooldown_timer(t)
+			if not t or t <= 1 then
+				return
+			end
+
+			if not self._radial_grace then
+				self:create_radial_display()
+			end
+
+			self._radial_grace:animate(function()
+				local t_left = t + 13
+
+				while t_left >= 0.1 do
+					t_left = t_left - coroutine.yield()
+
+					self._grace_time_left = t_left
+
+					self:_update_condition_display()
+				end
+
+				self._grace_time_left = nil
+
+				self:_update_condition_display()
+			end)
+		end
+		function HUDTeammate:_animate_invulnerability(duration)
+			if not self._radial_armor then self:create_radial_display() end
+			self._radial_armor:animate(function(o)
+				o:set_color(Color(1, 1, 1, 1));
+				o:set_visible(true);
+				over(duration, function(p)
+					o:set_color(Color(1, 1 - p, 1, 1));
+					o:set_alpha(self._main_player and not self._custardy and 1 or 0);
 				end)
-			end
+				o:set_visible(false);
+			end)
+		end
+		
+		function HUDTeammate:_animate_health_invulnerability(duration)
+			if not self._radial_health_panel then return; end
+			if not self._radial_grace then self:create_radial_display() end
+			self._radial_grace:animate(function (o)
+				o:set_color(Color(1, 1, 1, 1))
+				o:set_alpha(self._main_player and not self._custardy and 1 or 0);
+				o:set_visible(true)
+				over(duration, function (p)
+					o:set_color(Color(1, 1 - p, 1, 1))
+				end)
+				o:set_visible(false)
+			end)
+		end
+
+		function HUDTeammate:create_radial_display()
+			local panel = self._radial_health_panel
+			self._radial_armor = panel:bitmap({
+				texture = "guis/textures/pd2/hud_swansong",
+				name = "radial_armor",
+				blend_mode = "add",
+				visible = false,
+				render_template = "VertexColorTexturedRadial",
+				layer = 5,
+				color = Color(1, 0, 0, 0),
+				w = panel:w(),
+				h = panel:h()
+			})
+			self._radial_grace = panel:bitmap({
+				texture = "EIVHUD/animate_health_circle",
+				name = "radial_health",
+				blend_mode = "add",
+				visible = false,
+				render_template = "VertexColorTexturedRadial",
+				layer = 5,
+				color = Color(1, 0, 0, 0),
+				w = panel:w(),
+				h = panel:h()
+			})
+		end
 
 		function HUDTeammate:set_inf_ammo_amount_by_type()
 			if self._main_player and self._infinite_ammo then
