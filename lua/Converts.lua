@@ -41,7 +41,7 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 			local convert_icon = self._convert_panel:bitmap({
 				name = "convert_icon",
 				texture = "guis/textures/pd2/skilltree/icons_atlas",
-				texture_rect = { 6 * 64, 8 * 64, 64, 64 },
+				texture_rect = { 380, 8 * 64, 75, 64 },
 				valign = "top",
 				color = Color.white,
 				layer = 1,

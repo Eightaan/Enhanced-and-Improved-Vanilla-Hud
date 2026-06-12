@@ -57,7 +57,8 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		local icon_scale = 6
 		local inspire_icon = self._inspire_panel:bitmap({
 			name = "inspire_icon",
-			texture = "EIVHUD/hud_icon_inspire",
+			texture = "guis/textures/pd2/skilltree/icons_atlas",
+			texture_rect = { 252, 9 * 64, 77, 64 },
 			valign = "top",
 			color = Color.white,
 			layer = 1,
