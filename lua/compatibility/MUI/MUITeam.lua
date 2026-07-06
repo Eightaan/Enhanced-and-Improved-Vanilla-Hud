@@ -1,4 +1,4 @@
-if ArmStatic and MUIMenu and MUIMenu:ClassEnabled("MUITeammate") and MUIMenu:ClassEnabled("MUILegend") and MUIMenu:ClassEnabled("AnimatedList") then
+if MUIMenu and MUIMenu:ClassEnabled("MUITeammate") then
 	if RequiredScript == "lib/managers/hud/hudteammate" then
 		function HUDTeammate:_set_infinite_ammo(state)
 			self._infinite_ammo = state;
