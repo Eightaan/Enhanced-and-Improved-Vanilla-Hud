@@ -1,5 +1,5 @@
 <mod name="Enhanced Vanilla Hud" author="Eightan" global_key="EIVHUD" color="Color(0,0.66,1)" core_class="Core.lua">
-	<AssetUpdates id="43776" provider="modworkshop" version="5.7.7"/>
+	<AssetUpdates id="43776" provider="modworkshop" version="5.7.9"/>
 	<Hooks directory="lua">
 		<hook file="TabStats.lua" source_file="lib/managers/hud/hudstatsscreenskirmish"/>
 		<hook file="TabStats.lua" source_file="lib/managers/objectinteractionmanager"/>
@@ -42,6 +42,7 @@
 		<hook file="RemoveAds.lua" source_file="lib/managers/menu/menucomponentmanager"/>
 		<hook file="RemoveAds.lua" source_file="lib/managers/menumanager"/>
 
+		<hook file="Voice.lua" source_file="lib/managers/hudmanager"/>
 		<hook file="TeamPanel.lua" source_file="lib/managers/hud/hudteammate"/>
 		<hook file="Chat.lua" source_file="lib/managers/hud/hudchat"/>
 		<hook file="PacifiedCivs.lua" source_file="lib/managers/group_ai_states/groupaistatebase"/>
@@ -73,9 +74,9 @@
 
 				<divider name="override_divider" size="8"/>
 				<option_group name="PLAYER">
-					<option type="bool" default_value="false" name="Team_bg"/>-->
+					<option type="bool" default_value="false" name="Team_bg"/>
 					<divider name="override_divider" size="8"/>
-					<option type="bool" default_value="true" name="ArmorerCooldownRadial"/>-->
+					<option type="bool" default_value="true" name="ArmorerCooldownRadial"/>
 					<divider name="override_divider" size="8"/>
 					<option type="bool" default_value="true" name="ArmorerCooldownTimer"/>
 					<option type="color" default_value="Color(1, 0, 0.66, 1)" name="ArmorerCooldownTimerColor"/>
@@ -100,7 +101,8 @@
 				</option_group>
 
 				<divider name="override_divider" size="8"/>
-
+				<option type="bool" default_value="true" name="VoiceIcon"/>
+				<divider name="override_divider" size="8"/>
 				<option type="bool" default_value="true" name="ScreenEffect"/>
 				<divider name="override_divider" size="8"/>
 				<option type="bool" default_value="true" name="BagInfo"/>

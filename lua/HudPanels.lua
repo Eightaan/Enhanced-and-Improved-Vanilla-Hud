@@ -128,7 +128,7 @@ elseif RequiredScript == "lib/managers/hud/hudpresenter" then
 elseif RequiredScript == "lib/managers/hud/hudhint" then
 	Hooks:PostHook(HUDHint, "show", "EIVHUD_show", function(self, ...)
 		if EIVHUD.Options:GetValue("HUD/Hints") ~= 1 then
-			self._hint_panel:set_top(50)
+			self._hint_panel:set_top(85)
 		end
 	end)
 end
