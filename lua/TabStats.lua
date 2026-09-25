@@ -838,13 +838,13 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			framing_frame_3 = {gold = 16},
 			--Border Crystals
 			mex_cooking	= {roman_armor = 4},
+			--Watchdogs
+			--watchdogs_2 = { coke = 10 },
+			--watchdogs_2_day = { coke = 10 },
 			--Birth of Sky
 			pbr2 = {money = 8}
 		}
 		self.ignore_ids = {
-			--Watchdogs (10x Coke)
-			[100054] = true, [100058] = true, [100426] = true, [100427] = true, [100428] = true, 
-			[100429] = true, [100491] = true, [100492] = true, [100494] = true, [100495] = true,
 			--Transport: Underpass (8x Money)
 			[101237] = true, [101238] = true, [101239] = true, [103835] = true, 
 			[103836] = true, [103837] = true, [103838] = true, [101240] = true,
@@ -852,7 +852,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			[300047] = true, [300686] = true, [300457] = true, 
 			[300458] = true, [301343] = true, [301346] = true,
 			--Ukrainian Job (3x Money)
-			[101514] = true, [102052] = true, [102402] = true,
+			-- [101514] = true, [102052] = true, [102402] = true,
 			-- Henry's Rock (2x Artifact, 2x Painting)
 			[101757] = true, [400513] = true,
 			[400515] = true, [400617] = true,
@@ -860,8 +860,8 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			[400791] = true, 
 			[400792] = true,
 			--Jewelry Store (2x Money)
-			[102052] = true,
-			[102402] = true,
+			-- [102052] = true,
+			-- [102402] = true,
 			-- Mountain Master (2x Artifact)
 			[500849] = true,
 			[500608] = true,
@@ -940,7 +940,6 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 
 	Hooks:PostHook(ObjectInteractionManager, "add_unit", "EIVHUD_ObjectInteractionManager_add_unit", function(self, unit)
 		if alive(unit) then
-			local carry_id = unit:carry_data() and unit:carry_data():carry_id()
 			if get_unit_type(unit) == "loot_crates" then
 				table.insert(self.loot_crates, unit:id())
 				self:update_loot_crates()
@@ -952,8 +951,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "remove_unit", "EIVHUD_ObjectInteractionManager_remove_unit", function(self, unit)
 		if alive(unit) then
 			local unit_id = unit:id()
-			if not is_ignored_id(unit_id) then
-				local carry_id = unit:carry_data() and unit:carry_data():carry_id()
+			if not is_ignored_id(unit:editor_id()) then
 				if self._total_loot[unit_id] then
 					self._total_loot[unit_id] = nil
 					self:update_loot(-1)
@@ -962,13 +960,17 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			end
 			
 			local crate_index = table.index_of(self.loot_crates, unit_id)
-			if crate_index then
+			if crate_index ~= -1 then
 				table.remove(self.loot_crates, crate_index)
 				self:update_loot_crates()
 			end
 			
 			for i = #self._count_loot_bags, 1, -1 do
-				if self._count_loot_bags[i].unit:id() == unit_id then
+				local queued_unit = self._count_loot_bags[i].unit
+
+				if not alive(queued_unit) then
+					table.remove(self._count_loot_bags, i)
+				elseif queued_unit:id() == unit_id then
 					table.remove(self._count_loot_bags, i)
 					break
 				end
