@@ -449,7 +449,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		
 		placer:new_row()
 		
-			local crate_text = placer:add_bottom(loot_panel:fine_text({
+		local crate_text = placer:add_bottom(loot_panel:fine_text({
 			keep_w = true,
 			text = managers.localization:text("hud_stats_unopened_crates"),
 			font = medium_font,
@@ -459,9 +459,9 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 		placer:add_right(nil, 0)
 
-		local firestarter_fix = Global.game_settings.level_id == "firestarter_1" and managers.interaction:get_current_crate_count() > 50 and 0
+
 		local rats_fix = Global.game_settings.level_id == "alex_3" and managers.interaction:get_current_crate_count() > 14 and managers.interaction:get_current_crate_count() - 16
-		local crate_info = firestarter_fix or rats_fix or managers.interaction:get_current_crate_count()
+		local crate_info = rats_fix or managers.interaction:get_current_crate_count()
 		local bag_texture, bag_rect = tweak_data.hud_icons:get_icon_data("bag_icon")
 		local crate_icon = placer:add_left(loot_panel:fit_bitmap({
 			w = 16,
@@ -827,6 +827,19 @@ elseif RequiredScript == "lib/managers/trademanager" then
 		end
 	end)
 
+elseif RequiredScript == "lib/managers/hudmanagerpd2" then
+	Hooks:PostHook(HUDManager, "feed_heist_time", "EIVHUD_HUDManager_feed_heist_time", function (self, time, ...)
+		if self._hud_statsscreen and self._hud_statsscreen.feed_heist_time then
+			self._hud_statsscreen:feed_heist_time(time)
+		end
+	end)
+
+	Hooks:PostHook(HUDManager, "modify_heist_time", "EIVHUD_HUDManager_modify_heist_time", function (self, time, ...)
+		if self._hud_statsscreen and self._hud_statsscreen.modify_heist_time then
+			self._hud_statsscreen:modify_heist_time(time)
+		end
+	end)
+
 elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "init", "EIVHUD_ObjectInteractionManager_init", function(self)
 		self._total_loot = {}
@@ -838,24 +851,29 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			framing_frame_3 = {gold = 16},
 			--Border Crystals
 			mex_cooking	= {roman_armor = 4},
-			--Watchdogs
-			--watchdogs_2 = { coke = 10 },
-			--watchdogs_2_day = { coke = 10 },
 			--Birth of Sky
 			pbr2 = {money = 8}
 		}
 		self.ignore_ids = {
 			--Transport: Underpass (8x Money)
-			[101237] = true, [101238] = true, [101239] = true, [103835] = true, 
-			[103836] = true, [103837] = true, [103838] = true, [101240] = true,
+			[101237] = true, [101238] = true, 
+			[101239] = true, [103835] = true,
+			[103836] = true, [103837] = true, 
+			[103838] = true, [101240] = true,
 			--The Diamond (RNG)
-			[300047] = true, [300686] = true, [300457] = true, 
-			[300458] = true, [301343] = true, [301346] = true,
+			[302577] = true, [302586] = true, 
+			[302597] = true, [302599] = true,
+			[300047] = true, [300686] = true, 
+			[300457] = true, [300458] = true, 
+			[301343] = true, [301346] = true,
 			--Ukrainian Job (3x Money)
 			-- [101514] = true, [102052] = true, [102402] = true,
 			-- Henry's Rock (2x Artifact, 2x Painting)
-			[101757] = true, [400513] = true,
-			[400515] = true, [400617] = true,
+			[101757] = true, 
+			[400513] = true,
+			[400515] = true, 
+			[400617] = true,
+			[400511] = true,
 			-- Shacklethorne Auction (2x Artifact)
 			[400791] = true, 
 			[400792] = true,
@@ -879,12 +897,35 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			-- Resevoir Dogs (1x Money)
 			[100296] = true
 		}
+		self.pbr_loot_crates = {
+			[156100] = true, [156175] = true,
+			[156250] = true, [156325] = true,
+			[156400] = true, [156475] = true,
+			[156550] = true, [156625] = true,
+			[156700] = true, [156775] = true,
+			[156850] = true, [156925] = true,
+			[157000] = true, [157075] = true,
+			[157150] = true, [157225] = true,
+			[157300] = true, [157375] = true,
+			[157450] = true, [157525] = true,
+			[157600] = true, [157675] = true,
+			[157750] = true, [157900] = true
+		}
+		self.ignore_crate_levels = {
+			["pbr2"] = true,
+			["born"] = true,
+			["election_day_2"] = true,
+			["moon"] = true
+		}
+		self.ignore_loot = {
+			-- Framing Frame Day 3
+			framing_frame_3 = {coke = true},
+			-- Scarface Mansion
+			friend = {painting = true}
+		}
 	end)
-
 	local function is_valid_unit(unit)
-		return unit and alive(unit) and unit:interaction() and unit:interaction():active() 
-		and (not unit:carry_data() or unit:carry_data():carry_id() ~= "vehicle_falcogini" 
-		and unit:carry_data():carry_id() ~= "turret_part")
+		return unit and alive(unit) and unit:interaction() and unit:interaction():active() and (not unit:carry_data() or unit:carry_data():carry_id() ~= "vehicle_falcogini" and unit:carry_data():carry_id() ~= "turret_part")
 	end
 
 	local function is_ignored_id(unit_id)
@@ -894,19 +935,35 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	local function get_unit_type(unit)
 		local interact_type = unit:interaction().tweak_data
 		return (interact_type and table.contains({
-			Global.game_settings.level_id == "election_day_2" and "" or "money_briefcase",
-			"gen_pku_warhead_box",
-			"weapon_case",
-			"weapon_case_axis_z",
+			"money_briefcase",
 			"hold_open_xmas_present",
-			"hold_open_case",
+			"hold_open_case", --BCI Helmet case
 			"crate_loot",
 			"crate_loot_crowbar"
 		}, interact_type)) and "loot_crates" or nil
 	end
 
+	local function is_loot_case(unit)
+		local interact_type = unit:interaction() and unit:interaction().tweak_data
+		return interact_type and table.contains({
+			"weapon_case",
+			"weapon_case_axis_z",
+			"gen_pku_warhead_box"
+		}, interact_type)
+	end
+	
 	local function is_equipment_bag(carry_id)
-		return carry_id and tweak_data.carry[carry_id].skip_exit_secure == true
+		if carry_id == "hydraulic_opener" or carry_id == "bike_part_heavy" or carry_id == "bike_part_light" then
+			return true
+		end
+		return carry_id and tweak_data.carry[carry_id] and tweak_data.carry[carry_id].skip_exit_secure == true
+	end
+
+	local function is_ignored_loot(carry_id)
+		local level_id = Global.game_settings.level_id
+		local ignore_loot = managers.interaction.ignore_loot
+
+		return ignore_loot and ignore_loot[level_id] and ignore_loot[level_id][carry_id]
 	end
 
 	local function process_loot_count(manager, carry_id)
@@ -929,7 +986,12 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			if is_valid_unit(unit) then
 				local carry_id = unit:carry_data() and unit:carry_data():carry_id()
 				local unit_id = unit:editor_id()
-				if carry_id and not is_equipment_bag(carry_id) and not is_ignored_id(unit_id) then
+
+				if is_loot_case(unit) then
+					self._total_loot[unit:id()] = true
+					self:update_loot(1)
+					managers.hud:loot_value_updated()
+				elseif carry_id and not is_equipment_bag(carry_id) and not is_ignored_id(unit_id) and not is_ignored_loot(carry_id) then
 					self._total_loot[unit:id()] = true
 					process_loot_count(self, carry_id)
 				end
@@ -937,12 +999,29 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			table.remove(self._count_loot_bags, i)
 		end
 	end)
+	
+	local function is_loot_crate(unit)
+		local level_id = Global.game_settings.level_id
+		local manager = managers.interaction
+
+		if manager.ignore_crate_levels[level_id] then
+			return false
+		end
+
+		if level_id == "pbr" then
+			return manager.pbr_loot_crates[unit:editor_id()] == true
+		end
+
+		return true
+	end
 
 	Hooks:PostHook(ObjectInteractionManager, "add_unit", "EIVHUD_ObjectInteractionManager_add_unit", function(self, unit)
 		if alive(unit) then
-			if get_unit_type(unit) == "loot_crates" then
-				table.insert(self.loot_crates, unit:id())
-				self:update_loot_crates()
+			if get_unit_type(unit) == "loot_crates" and is_loot_crate(unit) then
+				if not table.contains(self.loot_crates, unit:id()) then
+					table.insert(self.loot_crates, unit:id())
+					self:update_loot_crates()
+				end
 			end
 		end
 		table.insert(self._count_loot_bags, { unit = unit })
@@ -993,17 +1072,40 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	function ObjectInteractionManager:get_current_total_loot_count()
 		return self.loot_count.loot_amount or 0
 	end
-	
-elseif RequiredScript == "lib/managers/hudmanagerpd2" then
-	Hooks:PostHook(HUDManager, "feed_heist_time", "EIVHUD_HUDManager_feed_heist_time", function (self, time, ...)
-		if self._hud_statsscreen and self._hud_statsscreen.feed_heist_time then
-			self._hud_statsscreen:feed_heist_time(time)
-		end
-	end)
 
-	Hooks:PostHook(HUDManager, "modify_heist_time", "EIVHUD_HUDManager_modify_heist_time", function (self, time, ...)
-		if self._hud_statsscreen and self._hud_statsscreen.modify_heist_time then
-			self._hud_statsscreen:modify_heist_time(time)
+elseif RequiredScript == "lib/managers/mission/missionscriptelement" then
+	Hooks:PostHook(MissionScriptElement, "on_executed", "EIVHUD_on_executed", function(self, instigator)
+		if Global.game_settings.level_id ~= "des" or self._id ~= 102491 then
+			return
 		end
+
+		local manager = managers.interaction
+		if not manager then
+			return
+		end
+
+		local unit = managers.worlddefinition:get_unit(400511)
+		if not alive(unit) then
+			return
+		end
+
+		local carry_data = unit:carry_data()
+		local interaction = unit:interaction()
+
+		if not carry_data or not interaction or not interaction:active() then
+			return
+		end
+
+		local unit_id = unit:id()
+
+		manager.ignore_ids[400511] = nil
+
+		if manager._total_loot[unit_id] then
+			return
+		end
+
+		manager._total_loot[unit_id] = true
+		manager:update_loot(1)
+		managers.hud:loot_value_updated()
 	end)
 end
