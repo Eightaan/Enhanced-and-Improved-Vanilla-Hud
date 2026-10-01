@@ -291,7 +291,7 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 		local point_of_no_return = assault_corner and assault_corner._point_of_no_return
 		local hide_converts = EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/ShowHostages") ~= 2 or is_whisper_mode
 		local show_converts = not hide_converts
-		if managers.player:has_category_upgrade("player", "convert_enemies") and show_converts or point_of_no_return then
+		if managers.player:has_category_upgrade("player", "convert_enemies") and (show_converts or point_of_no_return) then
 			local minion_text = placer:add_bottom(loot_panel:fine_text({
 				keep_w = true,
 				text = managers.localization:text("hud_stats_enemies_converted"),
