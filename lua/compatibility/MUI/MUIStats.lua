@@ -3,36 +3,15 @@ if EIVHUD and EIVHUD.Options:GetValue("HUD/Tab") then
 	local _MUI_loot_value_updated = MUIStats.loot_value_updated
 	function MUIStats:loot_value_updated()
 		_MUI_loot_value_updated(self)
-		local loot = self._loot_panel
-		local bag = self._bag_panel
-		local acquired = bag:child("amount")
-		
-		local global = managers.loot._global
-		local secured = global.secured
-		local carry = tweak_data.carry
-		local carry_id = global.mandatory_bags.carry_id
-		local mandatory =  global.mandatory_bags.amount or 0
-		local required, bonus = 0, 0
-		local packages, remaining = self:count_gage_units()
-
-		for _, data in ipairs(secured) do
-			local value = carry.small_loot[data.carry_id]
-			if not value then
-				if (carry_id == "none" or carry_id == data.carry_id) and mandatory > required then 
-					required = required + 1
-				else
-					bonus = bonus + 1
-				end
-			end
-		end
-
-		local carrying = managers.interaction:get_current_carry_count()
-		local total_loot = managers.interaction:get_current_total_loot_count() + required + bonus
-		local loot_amount = total_loot == 0 and "" or ("/" .. total_loot + carrying)
+		local loot = self._bag_panel:child("amount")
+		local secured = managers.loot:get_secured_mandatory_bags_amount() + managers.loot:get_secured_bonus_bags_amount()
+		local carrying, loot_amount = managers.interaction:get_current_carry_count(), managers.interaction:get_current_total_loot_count()
+		local total = loot_amount + carrying + secured
+		local loot_text = total > 0 and "/" .. total or ""
 		local total_crates = managers.interaction:get_current_crate_count()
-		local crate_amount = total_crates == 0 and "" or total_crates
+		local crate_text = total_crates > 0 and " + (" .. total_crates .. ")" or ""
 
-		acquired:set_text(tostring(required + bonus) .. loot_amount .. (crate_amount ~= "" and " + (" .. crate_amount .. ")" or ""))
+		loot:set_text(tostring(secured) .. loot_text .. crate_text)
 		self:resize_loot()
 	end
 end
