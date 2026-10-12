@@ -1020,7 +1020,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 		return true
 	end
 
-	Hooks:PostHook(ObjectInteractionManager, "update", "EIVHUD_ObjectInteractionManager_Update", function(self, t, dt)
+	Hooks:PostHook(ObjectInteractionManager, "update", "EIVHUD_ObjectInteractionManager_Update", function(self)
 		for i = #self._count_loot_bags, 1, -1 do
 			local data = self._count_loot_bags[i]
 			local unit = data.unit
