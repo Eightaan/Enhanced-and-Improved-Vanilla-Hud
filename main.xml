@@ -53,9 +53,8 @@
 		<hook file="ScreenEffects.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="Scale.lua" source_file="lib/managers/hudmanagerpd2"/>
 
-		<hook file="compatibility/MUI/MUITeam.lua" source_file="lib/managers/hud/hudteammate"/>
-		<hook file="compatibility/MUI/MUITeam.lua" source_file="lib/managers/hudmanagerpd2"/>
-		<hook file="compatibility/MUI/MUIManager.lua" source_file="lib/managers/hudmanagerpd2"/>
+		<hook file="compatibility/MUI.lua" source_file="lib/managers/hud/hudteammate"/>
+		<hook file="compatibility/MUI.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="compatibility/RestorationHud.lua" source_file="lib/managers/hudmanagerpd2"/>
 		<hook file="compatibility/RestorationHud.lua" source_file="lib/managers/hud/hudassaultcorner"/>
 		<hook file="compatibility/RestorationHud.lua" source_file="lib/managers/hud/hudteammate"/>
