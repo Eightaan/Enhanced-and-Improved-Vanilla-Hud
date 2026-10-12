@@ -390,10 +390,9 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 
 		local secured_amount = managers.loot:get_secured_mandatory_bags_amount()
 		local bonus_amount = managers.loot:get_secured_bonus_bags_amount()
-		local carrying = managers.interaction:get_current_carry_count()
 		local loot_amount = managers.interaction:get_current_total_loot_count()
 		local secured = secured_amount + bonus_amount
-		local total = loot_amount + carrying + secured
+		local total = loot_amount + secured
 		local loot_text = total > 0 and secured .. "/" .. total or secured
 		local bag_text = placer:add_bottom(loot_panel:fine_text({
 			keep_w = true,
@@ -813,6 +812,16 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" then
 		end
 	end)
 
+	local original_loot_value_updated = HUDManager.loot_value_updated
+	function HUDManager:loot_value_updated(...)
+		DelayedCalls:Remove("EIVHUD_LootRefresh")
+		DelayedCalls:Add("EIVHUD_LootRefresh", 0.25, function()
+			if managers.hud then
+				original_loot_value_updated(managers.hud)
+			end
+		end)
+	end
+
 elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 	Hooks:PostHook(ObjectInteractionManager, "init", "EIVHUD_ObjectInteractionManager_init", function(self)
 		self._total_loot = {}
@@ -968,7 +977,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			current_amount.ignore = current_amount.ignore - 1
 		else
 			manager:update_loot(1)
-			managers.hud:loot_value_updated()
+			manager:update_loot_hud()
 		end
 	end
 
@@ -1011,7 +1020,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 		return true
 	end
 
-	Hooks:PostHook(ObjectInteractionManager, "update", "EIVHUD_ObjectInteractionManager_Update", function(self, ...)
+	Hooks:PostHook(ObjectInteractionManager, "update", "EIVHUD_ObjectInteractionManager_Update", function(self, t, dt)
 		for i = #self._count_loot_bags, 1, -1 do
 			local data = self._count_loot_bags[i]
 			local unit = data.unit
@@ -1023,7 +1032,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 				if is_loot_case(unit) then
 					self._total_loot[unit:id()] = true
 					self:update_loot(1)
-					managers.hud:loot_value_updated()
+					self:update_loot_hud()
 				elseif is_valid_carry(carry_id) and not is_ignored_id(unit_id) then
 					self._total_loot[unit:id()] = true
 					process_loot_count(self, carry_id)
@@ -1052,7 +1061,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 				if self._total_loot[unit_id] then
 					self._total_loot[unit_id] = nil
 					self:update_loot(-1)
-					managers.hud:loot_value_updated()
+					self:update_loot_hud()
 				end
 			end
 			
@@ -1075,12 +1084,29 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 		end
 	end)
 
+	function ObjectInteractionManager:update_loot_hud()
+		if managers.hud then
+			managers.hud:loot_value_updated()
+		end
+	end
+
 	function ObjectInteractionManager:set_player_carry(peer, carry_id)
 		if not peer then
 			return
 		end
 
-		self._player_carry[peer:id()] = is_valid_carry(carry_id) and carry_id or nil
+		local peer_id = peer:id()
+		local player = self._player_carry[peer_id]
+		local carry = is_valid_carry(carry_id) and carry_id or nil
+
+		if not player and carry then
+			self:update_loot(1)
+			self:update_loot_hud()
+		elseif player and not carry then
+			self:update_loot(-1)
+			self:update_loot_hud()
+		end
+		self._player_carry[peer_id] = carry
 	end
 
 	function ObjectInteractionManager:get_current_carry_count()
@@ -1152,7 +1178,7 @@ elseif RequiredScript == "lib/managers/mission/missionscriptelement" then
 
 		manager._total_loot[unit_id] = true
 		manager:update_loot(1)
-		managers.hud:loot_value_updated()
+		manager:update_loot_hud()
 	end)
 
 elseif RequiredScript == "lib/managers/playermanager" then
@@ -1162,7 +1188,7 @@ elseif RequiredScript == "lib/managers/playermanager" then
 		end
 	end)
 
-	Hooks:PreHook(PlayerManager, "remove_synced_carry", "EIVHUD_PlayerManager_remove_synced_carry", function(self, peer, ...)
+	Hooks:PostHook(PlayerManager, "remove_synced_carry", "EIVHUD_PlayerManager_remove_synced_carry", function(self, peer, ...)
 		if managers.interaction then
 			managers.interaction:set_player_carry(peer)
 		end

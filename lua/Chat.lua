@@ -2,24 +2,28 @@ if not EIVHUD.Options:GetValue("HUD/Chat") then
 	return
 end
 
-local Color = Color
-
 Hooks:PostHook(HUDChat, "init", "EIVHUD_HUDChat_init", function(self)
-	local o = self._panel:child("output_panel")
-	if alive(o) and alive(o:child("output_bg")) then
-		local alpha = {blend_mode = "normal", gradient_points = {0, Color.black:with_alpha(0), 1, Color.black:with_alpha(0)}}
-		o:child("output_bg"):configure(alpha)
-		self._input_panel:child("input_bg"):configure(alpha)
+	local output = self._panel:child("output_panel")
+	local input = self._input_panel
+	if alive(output) then
+		local bg = output:child("output_bg")
+		if alive(bg) then
+			bg:set_visible(false)
+		end
 	end
-	self._panel:set_bottom(self._panel:parent():h() - (EIVHUD.Options:GetValue("HUD/ChatPosition") * 10))
+	if alive(input) then
+		local bg = input:child("input_bg")
+		if alive(bg) then
+			bg:set_visible(false)
+		end
+	end
 end)
 
-Hooks:PostHook(HUDChat, "update_caret", "EIVHUD_HUDChat_update_caret", function(self, ...)
-	if self._panel and self._input_panel then
-		local input_bg = self._input_panel:child("input_bg")
-		if input_bg then
-			input_bg:set_gradient_points({0, Color.white:with_alpha(0), 0, Color.white:with_alpha(0), 1, Color.white:with_alpha(0)})
-		end
+local function update_chat_position(self)
+	if alive(self._panel) then
 		self._panel:set_bottom(self._panel:parent():h() - (EIVHUD.Options:GetValue("HUD/ChatPosition") * 10))
 	end
-end)
+end
+
+Hooks:PostHook(HUDChat, "update_caret", "EIVHUD_HUDChat_update_caret", update_chat_position)
+Hooks:PostHook(HUDChat, "receive_message", "EIVHUD_HUDChat_receive_message", update_chat_position)
