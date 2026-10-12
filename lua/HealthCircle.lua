@@ -222,8 +222,6 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 			o:set_color(Color(1, 1, 1, 1))
 			self._stamina_circle:set_alpha(0)
 			self._armor_invulnerability_timer = true
-
-
 			o:set_visible(true)
 			over(duration, function (p)
 				o:set_color(Color(1, 1 - p, 1, 1))
@@ -262,12 +260,9 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 						o:set_visible(false)
 					end
 				end
-
 				self._grace_time_left = 0
 				self._health_timer = false
-
 				o:set_visible(false)
-
 				self._stamina_circle:set_alpha(not self._armor_invulnerability_timer and 1 or 0)
 			end)
 		end
@@ -277,7 +272,6 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 		if not self._radial_health_panel:child("animate_health_circle") then return end
 		self._invulnerability = true
 		self._radial_health_panel:child("animate_health_circle"):animate(function (o)
-
 			o:set_color(Color(1, 1, 1, 1))
 			self._radial_health_panel:child("animate_health_circle"):set_alpha(1)
 			self._stamina_circle:set_alpha(0)
@@ -293,7 +287,6 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 					self._stamina_circle:set_alpha(1)
 				end
 				self._health_timer = false
-
 			end
 			o:set_visible(false)
 		end)
