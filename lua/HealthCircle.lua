@@ -86,7 +86,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 			texture = "guis/dlcs/coco/textures/pd2/hud_absorb_stack_fg",
 			render_template = "VertexColorTexturedRadial",
 			w = radial_health_panel:w() * 0.7,
-			visible = true,
+			visible = EIVHUD.Options:GetValue("HUD/PLAYER/Stamina"),
 			h = radial_health_panel:h() * 0.7,
 			layer = 3,
 		})
@@ -306,7 +306,7 @@ elseif RequiredScript == "lib/managers/hud/hudteammate" then
 	function HUDTeammate:set_stamina_current(value)
 		if self._stamina_circle then
 			self._stamina_circle:set_color(Color(1, value/self._max_stamina, 0, 0))
-			self:set_stamina_visibility(not self._condition_icon:visible())
+			self:set_stamina_visibility(not self._condition_icon:visible() and EIVHUD.Options:GetValue("HUD/PLAYER/Stamina"))
 		end
 	end
 	
