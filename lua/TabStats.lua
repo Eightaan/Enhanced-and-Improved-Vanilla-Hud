@@ -813,11 +813,11 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" then
 	end)
 
 	local original_loot_value_updated = HUDManager.loot_value_updated
-	function HUDManager:loot_value_updated(...)
+	function HUDManager:loot_value_updated()
 		DelayedCalls:Remove("EIVHUD_LootRefresh")
 		DelayedCalls:Add("EIVHUD_LootRefresh", 0.25, function()
 			if managers.hud then
-				original_loot_value_updated(managers.hud)
+				original_loot_value_updated(self)
 			end
 		end)
 	end
@@ -1115,6 +1115,7 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 
 	function ObjectInteractionManager:update_loot_crates()
 		self.loot_count.crate_amount = #self.loot_crates
+		self:update_loot_hud()
 	end
 
 	function ObjectInteractionManager:update_loot(update)
