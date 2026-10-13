@@ -816,7 +816,7 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" then
 	function HUDManager:loot_value_updated()
 		DelayedCalls:Remove("EIVHUD_LootRefresh")
 		DelayedCalls:Add("EIVHUD_LootRefresh", 0.25, function()
-			if managers.hud then
+			if managers.hud == self then
 				original_loot_value_updated(self)
 			end
 		end)
