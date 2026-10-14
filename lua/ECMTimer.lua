@@ -56,6 +56,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			ecm = skilltree_atlas,
 			pager = {pager_texture, unpack(pager_rect)}
 		}
+		self._icon_size = box:w()
 
 		-- Set max number of pagers
 		local tweak_data_pager = tweak_data.player.alarm_pager
@@ -118,6 +119,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		self._stealth_panel:set_visible(true)
 		self._ecm_timer = end_time
 		self._icon:set_image(unpack(self._icons.ecm))
+		self._icon:set_size(self._icon_size, self._icon_size)
 
 		self._text:stop()
 		self._text:animate(function(o)
@@ -151,8 +153,9 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 
 		if not self._ecm_active then
 			self._icon:set_image(unpack(self._icons.pager))
+			self._icon:set_size(self._icon_size * 0.8, self._icon_size * 0.8)
+			self._text:set_text(pagers_used .. "/" .. self._max_pagers)
 		end
-		self._text:set_text(pagers_used .. "/" .. self._max_pagers)
 		self._stealth_panel:set_visible(true)
 	end
 
@@ -242,11 +245,38 @@ elseif RequiredScript == "lib/managers/group_ai_states/groupaistatebase" then
 		managers.hud._hud_stealth_panel:_refresh_pager_text()
 	end)
 
-	Hooks:PostHook(GroupAIStateBase, "set_whisper_mode", "EIVHUD_set_whisper_mode", function(self, ...)
-		local is_stealth = self._groupai and self._groupai:whisper_mode()
+	Hooks:PostHook(GroupAIStateBase, "load", "EIVHUD_GroupAIStateBase_load", function(self)
+		if not EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers") then
+			return
+		end
+
 		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
 		if stealth_panel and alive(stealth_panel._stealth_panel) then
-			stealth_panel._stealth_panel:set_visible(is_stealth)
+			stealth_panel:_refresh_pager_text()
+		end
+	end)
+
+	Hooks:PostHook(GroupAIStateBase, "sync_alarm_pager_bluff", "EIVHUD_sync_alarm_pager_bluff", function(self)
+		if not EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers") then
+			return
+		end
+
+		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+		if stealth_panel and alive(stealth_panel._stealth_panel) then
+			stealth_panel:_refresh_pager_text()
+		end
+	end)
+
+	Hooks:PostHook(GroupAIStateBase, "set_whisper_mode", "EIVHUD_set_whisper_mode", function(self, ...)
+		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+		if not stealth_panel or not alive(stealth_panel._stealth_panel) then
+			return
+		end
+
+		if not self:whisper_mode() then
+			stealth_panel._stealth_panel:set_visible(false)
+		elseif EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers") and not stealth_panel._ecm_active then
+			stealth_panel:_refresh_pager_text()
 		end
 	end)
 
