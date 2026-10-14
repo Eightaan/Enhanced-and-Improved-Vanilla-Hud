@@ -49,8 +49,13 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 
 		-- Change the icon textures for ecms and pagers
 		local skilltree_atlas = { "guis/textures/pd2/skilltree/icons_atlas", 64, 4 * 64, 64, 64 }
-		local specialization_atlas = { "guis/textures/pd2/specialization/icons_atlas", 10 + 64, 4 * 64, 64, 64 }
-		self._icons = {ecm = skilltree_atlas, pager = specialization_atlas}
+		local pager_texture, pager_rect = tweak_data.hud_icons:get_icon_data("pagers_used")
+		pager_rect = {unpack(pager_rect)}
+		pager_rect[1] = pager_rect[1] + 1
+		self._icons = {
+			ecm = skilltree_atlas,
+			pager = {pager_texture, unpack(pager_rect)}
+		}
 
 		-- Set max number of pagers
 		local tweak_data_pager = tweak_data.player.alarm_pager
@@ -106,7 +111,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 	function StealthPanel:start_ecm_timer(end_time)
 		local is_stealth = self._groupai and self._groupai:whisper_mode()
 
-		if not is_stealth then
+		if not is_stealth or end_time <= self._ecm_timer then
 			return
 		end
 		self._ecm_active = true
@@ -176,6 +181,10 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 		self:SetPeersID(self._owner_id or 0)
 	end)
 
+	Hooks:PostHook(ECMJammerBase, "load", "EIVHUD_ECMJammerBase_load", function(self, data, ...)
+		self:SetPeersID(data.ECMJammerBase.owner_id or 0)
+	end)
+
 	function ECMJammerBase:SetPeersID(peer_id)
 		local id = peer_id or 0
 		self._EIVHUD_peer_id = id
@@ -186,23 +195,25 @@ elseif RequiredScript == "lib/units/equipment/ecm_jammer/ecmjammerbase" then
 	Hooks:PostHook(ECMJammerBase, "set_active", "EIVHUD_ECMJammerBase_set_active", function(self, active, ...)
 		if active and EIVHUD.Options:GetValue("HUD/TIMER/Infoboxes") then
 			local battery_life = self:battery_life()
-			if battery_life == 0 then
+			if battery_life <= 0 then
 				return
 			end
-			local jam_pagers = false
+
+			local peer_id = self._EIVHUD_peer_id
+			local jam_pagers = true
 			if self._EIVHUD_local_peer then
 				jam_pagers = managers.player:has_category_upgrade("ecm_jammer", "affects_pagers")
-			elseif self._EIVHUD_peer_id ~= 0 then
-				local peer = managers.network:session():peer(self._EIVHUD_peer_id)
-				if peer and peer._unit and peer._unit.base then
-					jam_pagers = peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers")
+			elseif peer_id and peer_id ~= 0 then
+				local peer = managers.network:get_peer_safe(peer_id)
+				local unit = peer and peer._unit
+
+				if unit and alive(unit) and unit.base then
+					jam_pagers = unit:base():upgrade_value("ecm_jammer", "affects_pagers")
 				end
 			end
-			if jam_pagers or not EIVHUD.Options:GetValue("HUD/TIMER/PagerJam") then
+			if not EIVHUD.Options:GetValue("HUD/TIMER/PagerJam") or jam_pagers ~= false then
 				local end_time = TimerManager:game():time() + battery_life
 				managers.hud._hud_stealth_panel:start_ecm_timer(end_time)
-			else
-				return
 			end
 		end
 	end)

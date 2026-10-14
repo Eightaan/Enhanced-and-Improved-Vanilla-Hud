@@ -103,6 +103,18 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 			end
 		end
 
+		Hooks:PostHook(HUDManager, "update", "EIVHUD_convert_update", function(self, t, dt)
+			local hud = self._hud_converts
+			if hud and alive(hud._convert_panel) then
+				local converts = managers.player:has_category_upgrade("player", "convert_enemies")
+
+				if hud._has_convert_skill ~= converts then
+					hud._has_convert_skill = converts
+					hud:_refresh_minion_text()
+				end
+			end
+		end)
+
 	elseif RequiredScript == "lib/managers/playermanager" then
 		Hooks:PostHook(PlayerManager, "count_up_player_minions", "EIVHUD_count_up_player_minions", function(self)
 			if managers.hud and managers.hud._hud_converts then
