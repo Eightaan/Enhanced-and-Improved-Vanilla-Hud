@@ -112,6 +112,8 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 					hud._has_convert_skill = converts
 					hud:_refresh_minion_text()
 				end
+
+				hud:change_visibility()
 			end
 		end)
 
