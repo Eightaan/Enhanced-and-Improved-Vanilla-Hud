@@ -1,4 +1,4 @@
-if not Holo and Holo.ShouldModify and Holo:ShouldModify("HUD", "Teammate") then
+if not (Holo and Holo.ShouldModify and Holo:ShouldModify("HUD", "Teammate")) then
 	return
 end
 
