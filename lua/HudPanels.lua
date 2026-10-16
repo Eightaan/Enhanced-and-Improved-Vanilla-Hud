@@ -1,18 +1,10 @@
 if RequiredScript == "lib/managers/hud/hudassaultcorner" then
-	local function safe_child(parent, name)
-		return parent and parent:child(name)
-	end
-
-	local function hide_element(element)
-		if alive(element) then
-			element:set_visible(false)
-			element:set_alpha(0)
-		end
-	end
-
 	local function hide_elements(elements)
 		for _, element in ipairs(elements) do
-			hide_element(element)
+			if alive(element) then
+				element:set_visible(false)
+				element:set_alpha(0)
+			end
 		end
 	end
 
@@ -25,10 +17,10 @@ if RequiredScript == "lib/managers/hud/hudassaultcorner" then
 
 
 	function HUDAssaultCorner:hostages_display()
-		local hostages_panel = safe_child(self._hud_panel, "hostages_panel")
+		local hostages_panel = alive(self._hud_panel) and self._hud_panel:child("hostages_panel")
 		hide_elements({
 			self._hostages_bg_box,
-			safe_child(hostages_panel, "hostages_icon")
+			alive(hostages_panel) and hostages_panel:child("hostages_icon")
 		})
 	end
 	
@@ -41,16 +33,17 @@ if RequiredScript == "lib/managers/hud/hudassaultcorner" then
 	if EIVHUD.Options:GetValue("HUD/ShowWaves") ~= 1 then
 		Hooks:PostHook(HUDAssaultCorner, "setup_wave_display", "EIVHUD_HUDAssaultCorner_setup_wave_display", function(self, ...)
 			if not self.should_display_waves or not self:should_display_waves() then return end
-			local wave_panel = safe_child(self._hud_panel, "wave_panel")
+			local wave_panel = alive(self._hud_panel) and self._hud_panel:child("wave_panel")
+			local wave_bg = self._wave_bg_box
 			hide_elements({
 				wave_panel,
-				self._wave_bg_box and safe_child(self._wave_bg_box, "bg"),
-				self._wave_bg_box and safe_child(self._wave_bg_box, "left_top"),
-				self._wave_bg_box and safe_child(self._wave_bg_box, "left_bottom"),
-				self._wave_bg_box and safe_child(self._wave_bg_box, "right_top"),
-				self._wave_bg_box and safe_child(self._wave_bg_box, "right_bottom"),
-				safe_child(wave_panel, "waves_icon"),
-				self._wave_bg_box and safe_child(self._wave_bg_box, "num_waves")
+				alive(wave_bg) and wave_bg:child("bg"),
+				alive(wave_bg) and wave_bg:child("left_top"),
+				alive(wave_bg) and wave_bg:child("left_bottom"),
+				alive(wave_bg) and wave_bg:child("right_top"),
+				alive(wave_bg) and wave_bg:child("right_bottom"),
+				alive(wave_panel) and wave_panel:child("waves_icon"),
+				alive(wave_bg) and wave_bg:child("num_waves")
 			})
 		end)
 	end
@@ -75,10 +68,12 @@ elseif RequiredScript == "lib/managers/hud/hudheisttimer" then
 				self:set_timer_text()
 			end
 		end)
+
 		function HUDHeistTimer:set_timer_text()
 			self._timer_text:set_alpha(0)
 		end
 	end
+
 elseif RequiredScript == "lib/managers/hud/hudpresenter" then
 	Hooks:PostHook(HUDPresenter, "_present_information", "EIVHUD_HUDPresenter_present_information", function(self, params, ...)
 		if EIVHUD.Options:GetValue("HUD/Presenter") ~= 1 then
@@ -86,31 +81,13 @@ elseif RequiredScript == "lib/managers/hud/hudpresenter" then
 				local present_panel = self._hud_panel:child("present_panel")
 				local title = self._bg_box:child("title")
 				local text = self._bg_box:child("text")
-
-				title:set_text(utf8.to_upper(params.title or ""))
-				text:set_text(utf8.to_upper(params.text))
-				title:set_visible(false)
-				text:set_visible(false)
-
 				local _, _, w, _ = title:text_rect()
-
-				title:set_w(w)
-
 				local _, _, w2, _ = text:text_rect()
-
-				text:set_w(w2)
-
 				local tw = math.max(w, w2)
 
 				self._bg_box:set_w(tw + 16)
 				self._bg_box:set_left(self._bg_box:parent():w() - self._bg_box:w())
 				self._bg_box:set_y(150)
-
-				if params.icon then end
-
-				if params.event then
-					managers.hud._sound_source:post_event(params.event)
-				end
 
 				local callback_params = {
 					has_title = params.title ~= nil,
@@ -120,8 +97,6 @@ elseif RequiredScript == "lib/managers/hud/hudpresenter" then
 				}
 
 				present_panel:animate(callback(self, self, "_animate_present_information"), callback_params)
-
-				self._presenting = true
 			end
 		end
 	end)

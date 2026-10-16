@@ -2,7 +2,10 @@ if not EIVHUD.Options:GetValue("HUD/Chat") then
 	return
 end
 
-Hooks:PostHook(HUDChat, "init", "EIVHUD_HUDChat_init", function(self)
+local function update_chat_position(self)
+	if alive(self._panel) then
+		self._panel:set_bottom(self._panel:parent():h() - (EIVHUD.Options:GetValue("HUD/ChatPosition") * 10))
+	end
 	local output = self._panel:child("output_panel")
 	local input = self._input_panel
 	if alive(output) then
@@ -16,12 +19,6 @@ Hooks:PostHook(HUDChat, "init", "EIVHUD_HUDChat_init", function(self)
 		if alive(bg) then
 			bg:set_visible(false)
 		end
-	end
-end)
-
-local function update_chat_position(self)
-	if alive(self._panel) then
-		self._panel:set_bottom(self._panel:parent():h() - (EIVHUD.Options:GetValue("HUD/ChatPosition") * 10))
 	end
 end
 

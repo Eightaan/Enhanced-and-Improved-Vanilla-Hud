@@ -3,20 +3,19 @@ if _G.IS_VR then
 end
 
 local Color = Color
-
 local math_round = math.round
 local math_lerp = math.lerp
 local math_sin = math.sin
 local math_max = math.max
 
-local hud_ammo = EIVHUD.Options:GetValue("HUD/PLAYER/Trueammo")
-
 Hooks:PostHook(HUDTeammate, "init", "EIVHUD_hud_teammate_init", function(self, ...)
 	if EIVHUD.Options:GetValue("HUD/PLAYER/Team_bg") then
 		local function hide_bg(panel, ...)
 			for _, name in ipairs({...}) do
-				local child = panel and panel:child(name)
-				if child then child:set_visible(false) end
+				local child = alive(panel) and panel:child(name)
+				if alive(child) then 
+					child:set_visible(false) 
+				end
 			end
 		end
 
@@ -79,10 +78,9 @@ function HUDTeammate:_set_infinite_ammo(state)
 		return
 	end
 
-	local pammo_clip = self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("ammo_clip")
-	local sammo_clip = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel"):child("ammo_clip")
-
 	if state then
+		local pammo_clip = self._player_panel:child("weapons_panel"):child("primary_weapon_panel"):child("ammo_clip")
+		local sammo_clip = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel"):child("ammo_clip")
 		local hudinfo = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2)
 
 		self._prim_ammo:stop()
@@ -102,7 +100,7 @@ function HUDTeammate:_set_infinite_ammo(state)
 		sammo_clip:set_text("8")
 		sammo_clip:set_rotation(90)
 
-		if hud_ammo then
+		if EIVHUD.Options:GetValue("HUD/PLAYER/Trueammo") then
 			pammo_clip:set_font_size(30)
 			sammo_clip:set_font_size(30)
 		end
@@ -115,73 +113,47 @@ function HUDTeammate:_set_infinite_ammo(state)
 	end
 end
 
-if hud_ammo then
-	local function selected(o)
-		over(0.5, function(p)
-			o:set_alpha(math_lerp(0.5, 1, p))
-		end)
-	end
-	local function unselected(o)
-		over(0.5, function(p)
-			o:set_alpha(math_lerp(1, 0.5, p))
-		end)
-	end
-	Hooks:PreHook(HUDTeammate, "set_weapon_selected", "HMH_HUDTeammate_set_weapon_selected", function(self, id, hud_icon, ...)
-		if not self._player_panel:child("weapons_panel"):child("secondary_weapon_panel") then return end
-		local is_secondary = id == 1
-		local secondary_weapon_panel = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel")
-		local primary_weapon_panel = self._player_panel:child("weapons_panel"):child("primary_weapon_panel")
-
-		secondary_weapon_panel:stop()
-		primary_weapon_panel:stop()
-
-		if is_secondary then
-			primary_weapon_panel:animate(unselected)
-			secondary_weapon_panel:animate(selected)
-		else
-			secondary_weapon_panel:animate(unselected)
-			primary_weapon_panel:animate(selected)
-		end
+local function selected(o)
+	over(0.5, function(p)
+		o:set_alpha(math_lerp(0.5, 1, p))
 	end)
 end
+
+local function unselected(o)
+	over(0.5, function(p)
+		o:set_alpha(math_lerp(1, 0.5, p))
+	end)
+end
+
+Hooks:PostHook(HUDTeammate, "set_weapon_selected", "EIVHUD_HUDTeammate_set_weapon_selected", function(self, id, hud_icon, ...)
+	if not EIVHUD.Options:GetValue("HUD/PLAYER/Trueammo") or not self._player_panel:child("weapons_panel"):child("secondary_weapon_panel") then return end
+
+	local is_secondary = id == 1
+	local secondary_weapon_panel = self._player_panel:child("weapons_panel"):child("secondary_weapon_panel")
+	local primary_weapon_panel = self._player_panel:child("weapons_panel"):child("primary_weapon_panel")
+
+	secondary_weapon_panel:stop()
+	primary_weapon_panel:stop()
+
+	if is_secondary then
+		primary_weapon_panel:animate(unselected)
+		secondary_weapon_panel:animate(selected)
+	else
+		secondary_weapon_panel:animate(unselected)
+		primary_weapon_panel:animate(selected)
+	end
+end)
 
 Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_ammo_amount_by_type", function(self, type, max_clip, current_clip, current_left, max, weapon_panel)
 	local weapon_panel = self._player_panel:child("weapons_panel"):child(type .. "_weapon_panel")
 	local ammo_clip = weapon_panel:child("ammo_clip")
 
-	if self._alt_ammo and ammo_clip:visible() then
-		current_left = math_max(0, current_left - max_clip - (current_clip - max_clip))
-	end
+	if EIVHUD.Options:GetValue("HUD/PLAYER/Trueammo") then
+		if self._alt_ammo and ammo_clip:visible() then
+			current_left = math_max(0, current_left - max_clip - (current_clip - max_clip))
+		end
 
-	local low_ammo_color = Color(1, 0.9, 0.9, 0.3)
-	local total_ammo_color = Color.white
-	local clip_ammo_color = Color.white
-	local low_ammo = current_left <= math_round(max_clip / 2)
-	local low_clip = current_clip <= math_round(max_clip / 4)
-	local out_of_clip = current_clip <= 0
-	local out_of_ammo = current_left <= 0
-	local color_total = out_of_ammo and Color(1 , 0.9 , 0.3 , 0.3)
-	
-	color_total = color_total or low_ammo and (low_ammo_color)
-	color_total = color_total or (total_ammo_color)
-	
-	local color_clip = out_of_clip and Color(1 , 0.9 , 0.3 , 0.3)
-	
-	color_clip = color_clip or low_clip and (low_ammo_color)
-	color_clip = color_clip or (clip_ammo_color)
-	
-	local ammo_total = weapon_panel:child("ammo_total")
-	local zero = current_left < 10 and "00" or current_left < 100 and "0" or ""
-	
-	ammo_total:set_text(zero ..tostring(current_left))
-	ammo_total:set_color(color_total)
-	ammo_total:set_range_color(0, string.len(zero), color_total:with_alpha(0.5))
-	
-	local zero_clip = current_clip < 10 and "00" or current_clip < 100 and "0" or ""
-	ammo_clip:set_color(color_clip)
-	ammo_clip:set_range_color(0, string.len(zero_clip), color_clip:with_alpha(0.5))
-		
-	if hud_ammo then
+		local ammo_total = weapon_panel:child("ammo_total")
 		local ammo_font = string.len(current_left) < 4 and 24 or 20
 		ammo_total:stop()
 		ammo_clip:stop()
@@ -208,8 +180,8 @@ Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_a
 					local low_ammo = value <= math_round(max_clip / 2)
 					local out_of_ammo = value <= 0
 					local color_total = out_of_ammo and Color(1, 0.9, 0.3, 0.3)
-					color_total = color_total or low_ammo and low_ammo_color
-					color_total = color_total or (total_ammo_color)
+					color_total = color_total or low_ammo and Color(1, 0.9, 0.9, 0.3)
+					color_total = color_total or (Color.white)
 
 					ammo_total:set_text(zero .. text)
 					ammo_total:set_color(color_total)
@@ -235,8 +207,8 @@ Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_a
 					local out_of_clip = value <= 0
 					local color_clip = out_of_clip and Color(1, 0.9, 0.3, 0.3)
 
-					color_clip = color_clip or low_clip and low_ammo_color
-					color_clip = color_clip or (clip_ammo_color)
+					color_clip = color_clip or low_clip and Color(1, 0.9, 0.9, 0.3)
+					color_clip = color_clip or (Color.white)
 
 					ammo_clip:set_text(zero .. text)
 					ammo_clip:set_color(color_clip)
@@ -252,7 +224,7 @@ Hooks:PostHook(HUDTeammate, "set_ammo_amount_by_type", "EIVHUD_HUDTeammate_set_a
 		ammo_clip:set_color(Color.white)
 		ammo_clip:set_text("8")
 		ammo_clip:set_rotation(90)
-		if hud_ammo then
+		if EIVHUD.Options:GetValue("HUD/PLAYER/Trueammo") then
 			ammo_clip:set_font_size(30)
 		end
 	else
@@ -267,7 +239,10 @@ Hooks:PostHook(HUDTeammate, "set_revives_amount", "EIVHUD_HUDTeammate_set_revive
 		local revive_amount_text = revive_panel:child("revive_amount")
 		local revive_arrow = revive_panel:child("revive_arrow")
 		local revive_bg = revive_panel:child("revive_bg")
-		local team_color = self._peer_id and tweak_data.chat_colors[self._peer_id] or (not self._ai and tweak_data.chat_colors[managers.network:session():local_peer():id()]) or Color.white
+		local session = managers.network:session()
+		local peer = session and session:local_peer()
+		local peer_id = self._peer_id or (not self._ai and peer and peer:id())
+		local team_color = peer_id and tweak_data.chat_colors[peer_id] or Color.white
 		local bg_alpha = EIVHUD.Options:GetValue("HUD/PLAYER/Team_bg") and 0 or 0.6
 		
 		if revive_amount_text then

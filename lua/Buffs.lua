@@ -31,7 +31,6 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			w = 200,
 			h = 200
 		})
-		self._inspire_panel:set_right(self._hud_panel:w() + 5)
 		
 		local inspire_box = HUDBGBox_create(self._inspire_panel, { w = 38, h = 38, },  {})
 		if EIVHUD.Options:GetValue("HUD/TIMER/HideBox") then
@@ -68,13 +67,11 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		inspire_icon:set_right(inspire_box:parent():w())
 		inspire_icon:set_center_y(inspire_box:h() / 2)
 		inspire_box:set_right(inspire_icon:left())
-
-		self._show_hostages = EIVHUD.Options:GetValue("HUD/ShowHostages")
-		self._show_waves = EIVHUD.Options:GetValue("HUD/ShowWaves")
 	end
 
 	function HUDInspire:inspire_timer(duration)
 		if duration and duration > 0.1 then
+			self:update_position()
 			self._inspire_panel:set_visible(true)
 			self._text:stop()
 			self._text:animate(function(o)
@@ -82,16 +79,13 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 
 				while true do
 					t_left = t_left - coroutine.yield()
-				self:update_position()
+					self:update_position()
 					if t_left <= 0 then
 						self._inspire_panel:set_visible(false)
 						break
 					end
 
-					o:set_text(string.format(
-						t_left < 9.9 and "%.1f" or "%.f",
-						t_left
-					))
+					o:set_text(string.format(t_left < 9.9 and "%.1f" or "%.f", t_left))
 				end
 			end)
 		end
@@ -99,16 +93,17 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 
 	function HUDInspire:update_position()
 		local offset = 5
-
+		local show_hostages = EIVHUD.Options:GetValue("HUD/ShowHostages")
+		local show_waves = EIVHUD.Options:GetValue("HUD/ShowWaves")
 		local hostages_panel = self._hud_panel:child("hostages_panel")
-		if hostages_panel and alive(hostages_panel) and self._show_hostages == 1 then
+		if hostages_panel and alive(hostages_panel) and show_hostages == 1 then
 			self._inspire_panel:set_top(hostages_panel:bottom() + offset)
 			self._inspire_panel:set_right(hostages_panel:right() + offset)
 			return
 		end
 
 		local assault_corner = managers.hud and managers.hud._hud_assault_corner		
-		if assault_corner and assault_corner:should_display_waves() and self._show_waves == 1 then
+		if assault_corner and assault_corner:should_display_waves() and show_waves == 1 then
 			local wave_panel = self._hud_panel:child("wave_panel")
 
 			if wave_panel and alive(wave_panel) then
@@ -118,20 +113,13 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			end
 		end
 
-		if assault_corner and assault_corner._assault and self._show_hostages ~= 1 then
+		if assault_corner and (assault_corner._assault or assault_corner._remove_hostage_offset) and show_hostages ~= 1 then
 			local assault_panel = self._hud_panel:child("assault_panel")
 			if assault_panel and alive(assault_panel) then
-				local delay = 1.5
-				self._assault_end_delay = TimerManager:game():time() + delay
 				self._inspire_panel:set_top(assault_panel:bottom() - (offset * 10))
 				return
 			end
 		end
-
-		if self._assault_end_delay and TimerManager:game():time() < self._assault_end_delay then
-			return
-		end
-
 		self._inspire_panel:set_top(0)
 		self._inspire_panel:set_right(self._hud_panel:w() + offset)
 	end

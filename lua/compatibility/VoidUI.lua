@@ -1,21 +1,19 @@
 if not VoidUI then return end
 if RequiredScript == "lib/managers/hud/hudteammate" and VoidUI.options.teammate_panels then
-	local init_original = HUDTeammate.init
 	local set_ammo_amount_by_type_original = HUDTeammate.set_ammo_amount_by_type
-	local set_custom_radial_orig = HUDTeammate.set_custom_radial
 
 	function HUDTeammate:infinite_ammo_glow()
 		local hud_scale = VoidUI.options.hud_main_scale 
 		self._primary_ammo = self._custom_player_panel:child("weapons_panel"):child("primary_ammo_panel"):bitmap({
-			align           = "center",
-			w 				= 100 * hud_scale,
-			h 				= 45 * hud_scale,
-			name 			= "primary_ammo",
-			visible 		= false,
-			texture 		= "guis/textures/pd2/crimenet_marker_glow",
-			color 			= Color("00AAFF"),
-			layer 			= 2,
-			blend_mode 		= "add"
+			align = "center",
+			w = 100 * hud_scale,
+			h = 45 * hud_scale,
+			name = "primary_ammo",
+			visible = false,
+			texture = "guis/textures/pd2/crimenet_marker_glow",
+			color = Color("00AAFF"),
+			layer = 2,
+			blend_mode 	= "add"
 		})
 		self._primary_ammo_text = self._custom_player_panel:child("weapons_panel"):child("primary_ammo_panel"):text({
 			align = "center",
@@ -29,19 +27,19 @@ if RequiredScript == "lib/managers/hud/hudteammate" and VoidUI.options.teammate_
 			layer = 4
 		})
 		self._secondary_ammo = self._custom_player_panel:child("weapons_panel"):child("secondary_ammo_panel"):bitmap({
-			align           = "center",
-			w 				= 100 * hud_scale,
-			h 				= 45 * hud_scale,
-			name 			= "secondary_ammo",
-			visible 		= false,
-			texture 		= "guis/textures/pd2/crimenet_marker_glow",
-			color 			= Color("00AAFF"),
-			layer 			= 2,
-			blend_mode 		= "add"
+			align = "center",
+			w = 100 * hud_scale,
+			h = 45 * hud_scale,
+			name = "secondary_ammo",
+			visible = false,
+			texture = "guis/textures/pd2/crimenet_marker_glow",
+			color = Color("00AAFF"),
+			layer = 2,
+			blend_mode = "add"
 		})
 		self._secondary_ammo_text = self._custom_player_panel:child("weapons_panel"):child("secondary_ammo_panel"):text({
 			align = "center",
-			name = "primary_ammo_text",
+			name = "secondary_ammo_text",
 			visible = false,
 			text = "8",
 			font = tweak_data.menu.pd2_large_font,
@@ -72,9 +70,17 @@ if RequiredScript == "lib/managers/hud/hudteammate" and VoidUI.options.teammate_
 	end 
 
 	function HUDTeammate:_set_infinite_ammo(state)
+		if self._bullet_storm == state then
+			return
+		end
+
 		self._bullet_storm = state
-	 
-		if self._bullet_storm then
+
+		if not self._primary_ammo then
+			return
+		end
+
+		if state then
 			local hudinfo = managers.hud:script(PlayerBase.PLAYER_INFO_HUD_PD2)
 			local weapons_panel = self._custom_player_panel:child("weapons_panel")
 			local primary_ammo_panel = weapons_panel:child("primary_ammo_panel")
@@ -82,32 +88,26 @@ if RequiredScript == "lib/managers/hud/hudteammate" and VoidUI.options.teammate_
 			local primary_ammo_amount = primary_ammo_panel:child("primary_ammo_amount")
 			local secondary_ammo_amount = secondary_ammo_panel:child("secondary_ammo_amount")
 
+			self._primary_ammo:stop()
+			self._secondary_ammo:stop()
+
 			self._primary_ammo:set_visible(true)
 			self._secondary_ammo:set_visible(true)
 			self._primary_ammo_text:set_visible(true)
 			self._secondary_ammo_text:set_visible(true)
+
 			self._primary_ammo:animate(hudinfo.flash_icon, 4000000000)
 			self._secondary_ammo:animate(hudinfo.flash_icon, 4000000000)
-			primary_ammo_amount:set_text( "" )
-			secondary_ammo_amount:set_text( "" )
+			primary_ammo_amount:set_text("")
+			secondary_ammo_amount:set_text("")
 		else
+			self._primary_ammo:stop()
+			self._secondary_ammo:stop()
+
 			self._primary_ammo:set_visible(false)
-			self._secondary_ammo:set_visible(false)		
+			self._secondary_ammo:set_visible(false)
 			self._primary_ammo_text:set_visible(false)
 			self._secondary_ammo_text:set_visible(false)
-		end
-	end
-
-	function HUDTeammate:set_custom_radial(data)
-		set_custom_radial_orig(self, data)
-		local duration = data.current / data.total
-		local aced = managers.player:upgrade_level("player", "berserker_no_ammo_cost", 0) == 1
-		if self._main_player and EIVHUD.Options:GetValue("HUD/PLAYER/Bulletstorm") and aced then
-			if duration > 0 then
-				managers.hud:set_bulletstorm(true)
-			else
-				managers.hud:set_bulletstorm(false)
-			end
 		end
 	end
 
@@ -215,7 +215,8 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" and VoidUI.options.enable_
 			
 			local inspire_icon = self._inspire_panel:bitmap({
 				name = "inspire_icon",
-				texture = "EIVHUD/hud_icon_inspire",
+				texture = "guis/textures/pd2/skilltree/icons_atlas",
+				texture_rect = { 252, 9 * 64, 77, 64 },
 				valign = "top",
 				alpha = 0.6,
 				layer = 2,
@@ -246,7 +247,7 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" and VoidUI.options.enable_
 
 	function StealthPanel:_refresh_pager_text() end
 	if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/ShowHostages") == 1 then
-		function HUDConverts:_refresh_minion_text() end
+		function HUDConverts:change_visibility() end
 	end
 
 elseif RequiredScript == "lib/managers/hud/newhudstatsscreen" then
@@ -264,13 +265,11 @@ elseif RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			local accuracy = VoidUI.options.scoreboard_accuracy and hit_accuracy and utf8.to_lower(managers.localization:text("menu_stats_hit_accuracy")):gsub("^%l", string.upper).." ".. hit_accuracy.."%" or ""
 			local trade_delay = managers.money:get_trade_delay() > 30
 			local delay = VoidUI.options.scoreboard_delay and trade_delay and " Ї "..managers.localization:text("hud_trade_delay", {TIME = self:_trade_delay_time()}) or ""
-			local loot_amount = "";
-			if managers.interaction:get_current_total_loot_count() > 0 then
-				local border_crossing_fix = Global.game_settings.level_id == "mex" and  managers.interaction:get_current_total_loot_count() > 41 and "/4";
-				loot_amount = border_crossing_fix or "/" .. managers.interaction:get_current_total_loot_count();
-			end
+			local loot_amount = managers.interaction:get_current_total_loot_count()
 			local secured_loot = secured_amount + bonus_amount
-			local bags = " Ї "..utf8.to_lower(managers.localization:text("hud_stats_bags_secured")):gsub("^%l", string.upper)..": "..tostring(secured_loot .. loot_amount)
+			local total = loot_amount + secured_loot
+			local loot_text = total > 0 and "/" .. total or ""
+			local bags = " Ї "..utf8.to_lower(managers.localization:text("hud_stats_bags_secured")):gsub("^%l", string.upper)..": "..tostring(secured_loot .. loot_text)
 			top_panel:child("loot_stats"):set_text(body_bag..accuracy..delay..bags..instant_cash)
 			top_panel:child("loot_stats_shadow"):set_text(body_bag..accuracy..delay..bags..instant_cash)
 		end

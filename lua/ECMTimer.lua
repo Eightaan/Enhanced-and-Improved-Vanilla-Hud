@@ -74,22 +74,21 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 		self._max_pagers = max_num_pagers
 
 		-- Some jobs are not set as ghostable but pagers might still be nice to see
-		self._show_pagers_jobs = {
+		local show_pagers_jobs = {
 			["welcome_to_the_jungle_2"] = true,
 			["mallcrasher"] = true,
 			["election_day_3_skip1"] = true
 		}
 		-- Some jobs are set as ghostable but pagers have no meaning
-		self._hide_pagers_jobs = {
+		local hide_pagers_jobs = {
 			["nmh"] = true,
 			["welcome_to_the_jungle_1"] = true,
 			["firestarter_1"] = true
-		
 		}
 		-- Set if pagers should be shown or hidden on specific levels
 		local level_id = Global.game_settings.level_id
-		self._show_pagers = self._show_pagers_jobs[level_id]
-		self._hide_pagers = self._hide_pagers_jobs[level_id]
+		self._show_pagers = show_pagers_jobs[level_id]
+		self._hide_pagers = hide_pagers_jobs[level_id]
 
 		self._groupai = managers.groupai and managers.groupai:state()
 		self._is_ghostable = managers.job:is_level_ghostable(managers.job:current_level_id())
@@ -234,12 +233,8 @@ elseif RequiredScript == "lib/units/beings/player/playerinventory" then
 
 elseif RequiredScript == "lib/managers/group_ai_states/groupaistatebase" then
 	Hooks:PostHook(GroupAIStateBase, "on_successful_alarm_pager_bluff", "EIVHUD_on_successful_alarm_pager_bluff", function(self)
-		if not EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers") then
-			return
-		end
 		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
-
-		if not stealth_panel then
+		if not stealth_panel or not EIVHUD.Options:GetValue("HUD/TIMER/ShowPagers") then
 			return
 		end
 		managers.hud._hud_stealth_panel:_refresh_pager_text()
@@ -288,14 +283,13 @@ elseif RequiredScript == "lib/managers/hud/hudassaultcorner" then
 		end
 	end)
 
-	Hooks:PostHook(HUDAssaultCorner, "hide_casing", "EIVHUD_hide_casing", function(self)
-		local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
-		if stealth_panel then
-			DelayedCalls:Add("EIVHUD_CasingDelay", 1.2, function()
-				if stealth_panel and alive(stealth_panel._stealth_panel) then
-					stealth_panel:_set_panel_position(false)
-				end
-			end)
+	Hooks:PostHook(HUDAssaultCorner, "_hide_icon_assaultbox", "EIVHUD_hide_casing_icon", function(self, icon)
+		if icon:name() == "icon_casingbox" then
+			local stealth_panel = managers.hud and managers.hud._hud_stealth_panel
+
+			if stealth_panel and alive(stealth_panel._stealth_panel) then
+				stealth_panel:_set_panel_position(false)
+			end
 		end
 	end)
 end

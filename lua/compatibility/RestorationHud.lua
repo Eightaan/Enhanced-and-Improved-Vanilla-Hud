@@ -43,7 +43,7 @@ elseif RequiredScript == "lib/managers/hudmanagerpd2" and restoration:all_enable
 	end
 
 	if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/ShowHostages") == 1 then
-		function HUDConverts:_refresh_minion_text() end
+		function HUDConverts:change_visibility() end
 	end
 
 elseif RequiredScript == "lib/managers/hud/hudassaultcorner" and restoration:all_enabled("HUD/MainHUD", "HUD/AssaultPanel") then
