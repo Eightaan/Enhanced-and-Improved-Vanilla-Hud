@@ -48,45 +48,40 @@ if EIVHUD.Options:GetValue("HUD/Converts") and EIVHUD.Options:GetValue("HUD/Show
 		end
 		
 		function HUDConverts:_refresh_minion_text()
-			self:change_visibility()
-			local converts = managers.player:has_category_upgrade("player", "convert_enemies")
-			if not converts then
-				return
-			end
 			self._text:set_text(tostring(managers.player:num_local_minions()))
-		end
-
-		function HUDConverts:update_position()
-			if alive(self._convert_panel) and alive(self._parent) then
-				self._convert_panel:set_right(self._parent:left())
-				self._convert_panel:set_top(self._parent:top())
-			end
 		end
 		
 		function HUDConverts:change_visibility()
+			local panel = self._convert_panel
 			local is_stealth = managers.groupai and managers.groupai:state():whisper_mode()
 			local converts = managers.player:has_category_upgrade("player", "convert_enemies")
 			local hostage_panel = self._hud_panel:child("hostages_panel")
 			local hostages_visible = alive(hostage_panel) and hostage_panel:visible()
-			local show_converts = hostages_visible and converts and not is_stealth or false
-			if alive(self._convert_panel) then
-				self._convert_panel:set_visible(show_converts)
-			end
-		end
-		
-		Hooks:PostHook(HUDManager, "update", "EIVHUD_convert_update", function(self, t, dt)
-			local hud = self._hud_converts
-			if hud and alive(hud._convert_panel) then
-				local converts = managers.player:has_category_upgrade("player", "convert_enemies")
 
-				if hud._has_convert_skill ~= converts then
-					hud._has_convert_skill = converts
-					hud:_refresh_minion_text()
+			local show_converts = hostages_visible and converts and not is_stealth or false
+			if panel:visible() ~= show_converts then
+				panel:set_visible(show_converts)
+			end
+
+			if show_converts then
+				local right = self._parent:left()
+				local top = self._parent:top()
+				if panel:right() ~= right then
+					panel:set_right(right)
 				end
 
-				hud:change_visibility()
-				hud:update_position()
+				if panel:top() ~= top then
+					panel:set_top(top)
+				end
 			end
+		end
+
+		Hooks:PostHook(HUDManager, "update", "EIVHUD_convert_update", function(self)
+			local hud = self._hud_converts
+			if not hud or not alive(hud._convert_panel) or not alive(hud._parent) then
+				return
+			end
+			hud:change_visibility()
 		end)
 
 	elseif RequiredScript == "lib/managers/playermanager" then

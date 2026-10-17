@@ -113,7 +113,7 @@ if RequiredScript == "lib/managers/hudmanagerpd2" then
 			end
 		end
 
-		if assault_corner and (assault_corner._assault or assault_corner._remove_hostage_offset) and show_hostages ~= 1 then
+		if assault_corner and (assault_corner._assault or assault_corner._remove_hostage_offset) then
 			local assault_panel = self._hud_panel:child("assault_panel")
 			if assault_panel and alive(assault_panel) then
 				self._inspire_panel:set_top(assault_panel:bottom() - (offset * 10))
