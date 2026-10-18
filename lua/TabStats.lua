@@ -891,6 +891,9 @@ elseif RequiredScript == "lib/managers/objectinteractionmanager" then
 			welcome_to_the_jungle_1 = {-- Big Oil (1x Money, 1x Gold)
 				ignore_ids = {[100886] = true, [100872] = true}
 			},
+			welcome_to_the_jungle_1_night = {-- Big Oil (1x Money, 1x Gold)
+				ignore_ids = {[100886] = true, [100872] = true}
+			},
 			sah = {-- Shacklethorne Auction (2x Artifact)
 				ignore_ids = {[400791] = true, [400792] = true}
 			},
