@@ -247,17 +247,17 @@ if RequiredScript == "lib/managers/hud/newhudstatsscreen" then
 			nmh = true
 		}
 
-		local stars = managers.job:current_difficulty_stars()
-		local gage, max_units, remaining = managers.gage_assignment, math.min((stars + 1) * 2, 10), 0
-		if gage and gage._spawned_units then
-			for _, unit in pairs(gage._spawned_units) do
-				if alive(unit) and unit:base()._picked_up ~= true then
-					remaining = remaining + 1
+		if not excluded_levels[current_level_id] then
+			local stars = managers.job:current_difficulty_stars()
+			local gage, max_units, remaining = managers.gage_assignment, math.min((stars + 1) * 2, 10), 0
+			if gage and gage._spawned_units then
+				for _, unit in pairs(gage._spawned_units) do
+					if alive(unit) and unit:base()._picked_up ~= true then
+						remaining = remaining + 1
+					end
 				end
 			end
-		end
 
-		if not excluded_levels[current_level_id] then
 			placer:add_bottom(self._left:fine_text({
 				keep_w = true,
 				font = tweak_data.hud_stats.objectives_font,
